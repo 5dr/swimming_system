@@ -6,8 +6,9 @@
 package controller;
 
 import com.jfoenix.controls.*;
-import java.awt.Button;
-import static java.awt.SystemColor.menu;
+import com.sun.javafx.print.PrintHelper;
+import com.sun.javafx.print.Units;
+import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import javafx.geometry.Rectangle2D;
@@ -16,19 +17,26 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.print.PageLayout;
+import javafx.print.PageOrientation;
+import javafx.print.Printer;
 import javafx.print.PrinterJob;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import static javafx.scene.paint.Color.rgb;
+import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import model.all_information_for_group;
 import model.swimmer;
@@ -78,6 +86,32 @@ public class HomeController implements Initializable {
 //        if (actionEvent.getSource() == btnSettings) {
 //        }
     }
+ public void print(ActionEvent actionEvent) {
+ //  Node p_home = new Circle(100, 200, 200);
+  PrinterJob job = PrinterJob.createPrinterJob();
+ if (job != null ) {
+  PageLayout pageLayout = job.getJobSettings().getPageLayout();
+  double scaleX = 1.0;
+  if (pageLayout.getPrintableWidth() < p_home.getBoundsInParent().getWidth()) {
+   scaleX = pageLayout.getPrintableWidth() / p_home.getBoundsInParent().getWidth();
+  }
+  double scaleY = 1.0;
+  if (pageLayout.getPrintableHeight() < p_home.getBoundsInParent().getHeight()) {
+   scaleY = pageLayout.getPrintableHeight() / p_home.getBoundsInParent().getHeight();
+  }
+  double scaleXY = Double.min(scaleX, scaleY);
+  Scale scale = new Scale(scaleXY, scaleXY);
+  p_home.getTransforms().add(scale);
+  boolean success = job.printPage(p_home);
+  p_home.getTransforms().remove(scale);
+  if (success) {
+   job.endJob();
+  }
+ }
+}
+
+ 
+
 
     DB allDb;
     Rectangle2D bounds;
@@ -138,16 +172,10 @@ public class HomeController implements Initializable {
                 }
 
             });
-            //BuildHome();
 
-//       PrinterJob job = PrinterJob.createPrinterJob();
-//    if (job != null) {
-//        boolean success = job.printPage(big_Stack);
-//        if (success) {
-//            System.out.println("PRINTING FINISHED");
-//            job.endJob();
-//        }
-//    }
+   
+
+
         } catch (SQLException ex) {
             System.out.println("initialize" + ex);
         }
