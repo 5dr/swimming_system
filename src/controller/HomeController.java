@@ -15,10 +15,16 @@ import javafx.geometry.Rectangle2D;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.IntStream;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,6 +47,14 @@ import javafx.stage.Screen;
 import model.all_information_for_group;
 import model.swimmer;
 import service.DB;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import model.coach;
 
 /**
  * FXML Controller class
@@ -53,30 +67,42 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private AnchorPane anchorpane;
+    private Button b_home, b_add_group;
+    @FXML
+    private AnchorPane anchorpane, pane_table;
     @FXML
     private VBox p_list;
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home;
+    private Pane p_home,p_add_group;
     @FXML
     private JFXComboBox<Time> combobox_all_group;
     @FXML
-    private Label l_rotate;
+    private JFXComboBox<String> combobox_all_group_day;
     @FXML
     private ScrollPane scrooll;
+    
+    @FXML
+    private JFXTextField add_group_level;
 
     @FXML
-    private AnchorPane pane_table;
+    private JFXComboBox<String> add_group_coach,add_group_day;
+
+    @FXML
+    private JFXTimePicker add_group_time;
+
+    @FXML
+    private JFXComboBox<?> add_group_line;
 
     public void swi(ActionEvent actionEvent) {
-//        if (actionEvent.getSource() == btnCustomers) {
-//            //   pnlCustomer.setStyle("-fx-background-color : #1620A1");
-//        }
-//         if (actionEvent.getSource() == btnAddSiwmer) {
-//            //   pnlCustomer.setStyle("-fx-background-color : #1620A1");
-//        }
+        if (actionEvent.getSource() == b_home) {
+            p_home.toFront();
+        }
+        if (actionEvent.getSource() == b_add_group) {
+            p_add_group.toFront();
+        }
+         
 //        if (actionEvent.getSource() == btnMenus) {
 //           
 //        }
@@ -86,105 +112,61 @@ public class HomeController implements Initializable {
 //        if (actionEvent.getSource() == btnSettings) {
 //        }
     }
- public void print(ActionEvent actionEvent) {
- //  Node p_home = new Circle(100, 200, 200);
-  PrinterJob job = PrinterJob.createPrinterJob();
- if (job != null ) {
-  PageLayout pageLayout = job.getJobSettings().getPageLayout();
-  double scaleX = 1.0;
-  if (pageLayout.getPrintableWidth() < p_home.getBoundsInParent().getWidth()) {
-   scaleX = pageLayout.getPrintableWidth() / p_home.getBoundsInParent().getWidth();
-  }
-  double scaleY = 1.0;
-  if (pageLayout.getPrintableHeight() < p_home.getBoundsInParent().getHeight()) {
-   scaleY = pageLayout.getPrintableHeight() / p_home.getBoundsInParent().getHeight();
-  }
-  double scaleXY = Double.min(scaleX, scaleY);
-  Scale scale = new Scale(scaleXY, scaleXY);
-  p_home.getTransforms().add(scale);
-  boolean success = job.printPage(p_home);
-  p_home.getTransforms().remove(scale);
-  if (success) {
-   job.endJob();
-  }
- }
-}
 
- 
-
+    public void print(ActionEvent actionEvent) {
+        //  Node p_home = new Circle(100, 200, 200);
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            PageLayout pageLayout = job.getJobSettings().getPageLayout();
+            double scaleX = 1.0;
+            if (pageLayout.getPrintableWidth() < table.getBoundsInParent().getWidth()) {
+                scaleX = pageLayout.getPrintableWidth() / table.getBoundsInParent().getWidth();
+            }
+            double scaleY = 1.0;
+            if (pageLayout.getPrintableHeight() < table.getBoundsInParent().getHeight()) {
+                scaleY = pageLayout.getPrintableHeight() / table.getBoundsInParent().getHeight();
+            }
+            double scaleXY = Double.min(scaleX, scaleY);
+            Scale scale = new Scale(scaleXY, scaleXY);
+            table.getTransforms().add(scale);
+            boolean success = job.printPage(table);
+            table.getTransforms().remove(scale);
+            if (success) {
+                job.endJob();
+            }
+        }
+    }
 
     DB allDb;
     Rectangle2D bounds;
-    List<all_information_for_group> id ;
+    List<all_information_for_group> id;
     List<Integer> all_g_id;
-    List<List<swimmer>> t ;
+    List<List<swimmer>> t;
+    List<coach> coach;
+    boolean bool;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        ///////////////////////initialize//////////////
-        allDb = new DB();
-        Screen screen = Screen.getPrimary();
-        bounds = screen.getVisualBounds();
-        combobox_all_group.setStyle("-fx-font-size: 20px;");
-        table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-        table.setLayoutX(0);
-        table.setLayoutY(0);
-        table.setStyle("-fx-background-color:   #fff;");
-        scrooll.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-        pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-        id = new ArrayList<all_information_for_group>();
-        all_g_id=new ArrayList<Integer>();
-        t = new ArrayList<List<swimmer>>();
-        
-        ///////////////////////initialize//////////////
-        //////////////size//////////
-        p_list.setPrefSize(bounds.getWidth() * 0.20, bounds.getHeight());
-        big_Stack.setPrefSize(bounds.getWidth() * (1 - 0.18), bounds.getHeight());
-
-        System.out.println(bounds.getHeight());
-        System.out.println(bounds.getWidth());
-        //////////////size//////////
-
         try {
-            //////////////Show//////////
+            initialize_home();
+            coach = new ArrayList<coach>();
             allDb.DB_connection();
-            combobox_all_group.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            coach = allDb.allcoach();
             allDb.DB_close();
-
-            combobox_all_group.setOnAction((event) -> {
-                try {
-                    allDb.DB_connection();
-                    id = allDb.get_all_group_with_time(combobox_all_group.getValue());
-                    all_g_id.clear();
-                    for(int i=0;i<id.size();i++){
-                    all_g_id.add(id.get(i).getG_id());
-                    }
-                    System.out.println(all_g_id);
-                    t=allDb.get_swimmerWithgroup(all_g_id);
-                    //System.out.println(t.get(0).get(0));
-                    pane_table.getChildren().clear();
-                    table.getChildren().clear();
-                    pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-                    BuildHome(id,t);
-                    allDb.DB_close();
-                } catch (SQLException ex) {
-                    System.out.println("initialize" + ex);
-                }
-
+            coach.forEach((co) -> {
+            add_group_coach.getItems().add(co.getName());
             });
-
-   
-
-
+            add_group_day.getItems().addAll("Saturday", "Sunday");
+           // add_group_line
         } catch (SQLException ex) {
-            System.out.println("initialize" + ex);
         }
-
     }
 
+    ////////////////////////////////home/////////////
     VBox table = new VBox();
 
-    private void BuildHome(List<all_information_for_group> id,List<List<swimmer>> all_S) throws SQLException {
+    private void BuildHome(List<all_information_for_group> id, List<List<swimmer>> all_S) throws SQLException {
 
         Label num = make_lable("num", .039);
         Label name = make_lable("Name", 0.1735);
@@ -240,17 +222,71 @@ public class HomeController implements Initializable {
             la.setAlignment(Pos.CENTER);
 
             HBox all_att = new HBox();
-            for (int j = 0; j < 12; j++) {
+            for (int j = 12; j > 0; j--) {
                 VBox att = new VBox();
                 att.setStyle("-fx-background-color:   #00f;");
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < all_S.get(z).size(); i++) {
                     JFXCheckBox ch = new JFXCheckBox();
                     ch.setCheckedColor(rgb(42, 115, 255));
                     ch.setTextFill(rgb(255, 255, 255));
                     ch.setStyle("-fx-font-size: 16px;-fx-background-color:#0f0;-fx-border-color:#000;");
-                    //ch.setSelected(true);
                     ch.setPrefSize(bounds.getWidth() * .023, 0);
                     ch.setAlignment(Pos.CENTER_RIGHT);
+                    ch.setId(all_S.get(z).get(i).getS_id() + "|" + j + "|" + i);
+
+                    if (allDb.get_att(all_S.get(z).get(i).getS_id(), j)) {
+                        ch.setSelected(true);
+                    }
+
+                    LocalDate currentdate = LocalDate.now();
+                    int currentYear = currentdate.getYear();
+                    Month currentMonth = currentdate.getMonth();
+////////////SATURDAY
+                    System.out.println("SATURDAY");
+                    if (bool == false) {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
+                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 13) {
+                            ldate.remove(12);
+                        }
+                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                            ch.setDisable(true);
+                        }
+                    } else {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
+                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 13) {
+                            ldate.remove(12);
+                        }
+                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                            ch.setDisable(true);
+                        }
+
+                    }
+                    ch.setOnAction((event) -> {
+                        try {
+                            String[] companies = ch.getId().split("\\|");
+
+                            allDb.DB_connection();
+                            if (!ch.isSelected()) {
+                                allDb.delet_attend_swimmer(Integer.parseInt(companies[0]));
+
+                            } else {
+                                System.out.println(Integer.parseInt(companies[0]) + "  " + Integer.parseInt(companies[1]));
+                                allDb.Add_attend_swimmer(Integer.parseInt(companies[0]), Integer.parseInt(companies[1]));
+                            }
+                            allDb.DB_close();
+                        } catch (Exception ex) {
+                            System.out.println("check :" + ex);
+                        }
+
+                    });
                     att.getChildren().add(ch);
                 }
                 all_att.getChildren().add(att);
@@ -266,12 +302,30 @@ public class HomeController implements Initializable {
 
             VBox all_nots = new VBox();
             all_nots.setStyle("-fx-background-color:   #00f;");
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < all_S.get(z).size(); i++) {
 
                 TextField t = new TextField();
                 t.setPrefWidth(bounds.getWidth() * .19);
                 t.setStyle("-fx-font-size: 12px;-fx-background-color:#0f0;-fx-border-color:#000;");
                 t.setAlignment(Pos.CENTER);
+                t.setId(all_S.get(z).get(i).getS_id() + "");
+                t.setText(allDb.get_note_id(Integer.parseInt(t.getId())));
+                t.setOnKeyPressed((event) -> {
+                    if (event.getCode().equals(KeyCode.ENTER)) {
+                       
+                        try {
+                            allDb.DB_connection();
+                            if(allDb.is_note_exist(Integer.parseInt(t.getId()))){
+                            allDb.update_note(Integer.parseInt(t.getId()), t.getText());
+                            }
+                            else{
+                            allDb.Add_note_swimmer(Integer.parseInt(t.getId()), t.getText());
+                            }
+                            allDb.DB_close();
+                        } catch (Exception ex) {
+                        }
+                    }
+                });
                 all_nots.getChildren().add(t);
 
             }
@@ -303,4 +357,89 @@ public class HomeController implements Initializable {
 
         return l;
     }
+
+    private void initialize_home(){
+     ///////////////////////initialize//////////////
+        Time sqlTime = Time.valueOf("03:00:00");
+        allDb = new DB();
+        Screen screen = Screen.getPrimary();
+        bounds = screen.getVisualBounds();
+        //combobox_all_group.setStyle("-fx-font-size: 20px;");
+        table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
+        table.setLayoutX(0);
+        table.setLayoutY(0);
+        table.setStyle("-fx-background-color:   #fff;");
+        scrooll.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
+        pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
+        id = new ArrayList<all_information_for_group>();
+        all_g_id = new ArrayList<Integer>();
+        t = new ArrayList<List<swimmer>>();
+        combobox_all_group_day.getItems().addAll("Saturday", "Sunday");
+        combobox_all_group_day.setValue("Saturday");
+        combobox_all_group.setValue(sqlTime);
+
+        ///////////////////////initialize//////////////
+        //////////////size//////////
+        p_list.setPrefSize(bounds.getWidth() * 0.20, bounds.getHeight());
+        big_Stack.setPrefSize(bounds.getWidth() * (1 - 0.18), bounds.getHeight());
+
+        System.out.println(bounds.getHeight());
+        System.out.println(bounds.getWidth());
+        //////////////size//////////
+
+        try {
+            //////////////Show//////////
+            allDb.DB_connection();
+            combobox_all_group.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            id = allDb.get_all_group_with_time(combobox_all_group.getValue(), false);
+            all_g_id.clear();
+            for (int i = 0; i < id.size(); i++) {
+                all_g_id.add(id.get(i).getG_id());
+            }
+            t = allDb.get_swimmerWithgroup(all_g_id);
+            //System.out.println(t.get(0).get(0));
+            pane_table.getChildren().clear();
+            table.getChildren().clear();
+            pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
+            BuildHome(id, t);
+
+            allDb.DB_close();
+
+            combobox_all_group.setOnAction((event) -> {
+                try {
+
+                    if (combobox_all_group_day.getValue().equals("Saturday")) {
+                        bool = false;
+                    } else {
+                        bool = true;
+                    }
+                    allDb.DB_connection();
+                    id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
+                    all_g_id.clear();
+                    for (int i = 0; i < id.size(); i++) {
+                        all_g_id.add(id.get(i).getG_id());
+                    }
+                    System.out.println(all_g_id);
+                    t = allDb.get_swimmerWithgroup(all_g_id);
+                    //System.out.println(t.get(0).get(0));
+                    pane_table.getChildren().clear();
+                    table.getChildren().clear();
+                    pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
+                    BuildHome(id, t);
+                    allDb.DB_close();
+
+                } catch (SQLException ex) {
+                    System.out.println("initialize" + ex);
+                }
+
+            });
+
+        } catch (SQLException ex) {
+            System.out.println("initialize" + ex);
+        }
+
+    
+    }
+//////////////////////////home/////////////
+    
 }
