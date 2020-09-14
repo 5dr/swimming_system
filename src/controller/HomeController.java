@@ -187,7 +187,7 @@ public class HomeController implements Initializable {
         Label notes = make_lable("notes", .19);
 
         HBox title = new HBox();
-        title.setStyle("-fx-background-color:   #f00;");
+        title.setStyle("-fx-background-color: #ffffff;");
         title.setPrefSize(1000, 0);
         title.setMaxSize(10000, 10000);
         title.getChildren().addAll(notes, level, l12, l11, l10, l9, l8, l7, l6, l5, l4, l3, l2, l1, coach, name, num);
@@ -196,11 +196,11 @@ public class HomeController implements Initializable {
 
         for (int z = 0; z < id.size(); z++) {
             HBox row = new HBox();
-            row.setStyle("-fx-background-color:   #f00;");
+            row.setStyle("-fx-background-color:  #ffffff;");
             row.setAlignment(Pos.CENTER_RIGHT);
 
             VBox all_num = new VBox();
-            all_num.setStyle("-fx-background-color:   #00f;");
+            all_num.setStyle("-fx-background-color:  #ffffff;");
 
             for (int i = 0; i < 8; i++) {
                 Label l = make_lable("" + (i + 1), .039);
@@ -208,7 +208,7 @@ public class HomeController implements Initializable {
             }
 
             VBox Swimer = new VBox();
-            Swimer.setStyle("-fx-background-color:   #00f;");
+            Swimer.setStyle("-fx-background-color:  #ffffff;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getName(), 0.1735);
                 Swimer.getChildren().add(la);
@@ -218,18 +218,18 @@ public class HomeController implements Initializable {
             Label la = new Label(id.get(z).getName() + " \n " + id.get(z).getTrack() + "");
             la.setPrefWidth(bounds.getWidth() * 0.07);
             la.setMaxHeight(1000);
-            la.setStyle("-fx-font-size: 16px;-fx-background-color:#0f0;-fx-border-color:#000;");
+            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;-fx-border-color:#000;");
             la.setAlignment(Pos.CENTER);
 
             HBox all_att = new HBox();
             for (int j = 12; j > 0; j--) {
                 VBox att = new VBox();
-                att.setStyle("-fx-background-color:   #00f;");
+                att.setStyle("-fx-background-color:   #ffffff;");
                 for (int i = 0; i < all_S.get(z).size(); i++) {
                     JFXCheckBox ch = new JFXCheckBox();
                     ch.setCheckedColor(rgb(42, 115, 255));
                     ch.setTextFill(rgb(255, 255, 255));
-                    ch.setStyle("-fx-font-size: 16px;-fx-background-color:#0f0;-fx-border-color:#000;");
+                    ch.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;-fx-border-color:#000;");
                     ch.setPrefSize(bounds.getWidth() * .023, 0);
                     ch.setAlignment(Pos.CENTER_RIGHT);
                     ch.setId(all_S.get(z).get(i).getS_id() + "|" + j + "|" + i);
@@ -293,7 +293,7 @@ public class HomeController implements Initializable {
             }
 
             VBox all_level = new VBox();
-            all_level.setStyle("-fx-background-color:   #00f;");
+            all_level.setStyle("-fx-background-color:     #ffffff;");
             for (int i = 0; i < 8; i++) {
                 Label l = make_lable(id.get(z).getG_level(), .05);
                 all_level.getChildren().add(l);
@@ -301,12 +301,12 @@ public class HomeController implements Initializable {
             }
 
             VBox all_nots = new VBox();
-            all_nots.setStyle("-fx-background-color:   #00f;");
+            all_nots.setStyle("-fx-background-color:    #ffffff;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
 
                 TextField t = new TextField();
                 t.setPrefWidth(bounds.getWidth() * .19);
-                t.setStyle("-fx-font-size: 12px;-fx-background-color:#0f0;-fx-border-color:#000;");
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
                 t.setAlignment(Pos.CENTER);
                 t.setId(all_S.get(z).get(i).getS_id() + "");
                 t.setText(allDb.get_note_id(Integer.parseInt(t.getId())));
@@ -352,7 +352,7 @@ public class HomeController implements Initializable {
 
         Label l = new Label(name);
         l.setPrefWidth(bounds.getWidth() * d);
-        l.setStyle("-fx-font-size: 16px;-fx-background-color:#0f0;-fx-border-color:#000;");
+        l.setStyle("-fx-font-size: 16px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
         l.setAlignment(Pos.CENTER);
 
         return l;
