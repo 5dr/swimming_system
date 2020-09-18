@@ -38,8 +38,8 @@ public class DB {
     public void DB_connection() throws SQLException {
 
         try {
-           // connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/swimming", "root", "");
-            connection = (Connection)DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "");
+            // connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/swimming", "root", "");
+            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "");
             System.out.println("connected");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -293,10 +293,38 @@ public class DB {
         return id;
     }
 
+    public void Add_group(int c_id, String track, String level, String day, Time t) {
+
+        try {
+            int b = day == "Saturday" ? 0 : 1;
+            statement = connection.createStatement();
+            statement.executeUpdate("INSERT INTO `groups` (`g_id`, `c_id`, `track`, `level`, `g_time`, `g_day`) VALUES (NULL, '" + c_id + "', '" + track + "', '" + level + "', '" + t + "', '" + b + "');");
+        } catch (SQLException ex) {
+            System.out.println(" Add_attend_swimmer :" + ex);
+        }
+
+    }
+
+    public boolean is_group_exist(int c_id, String day, Time t) {
+        boolean bool = false;
+        try {
+
+            int b = day == "Saturday" ? 0 : 1;
+            statement = connection.createStatement();
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` WHERE `c_id` = " + c_id + " AND `g_time` = '" + t + "' AND `g_day` = " + b + " ");
+            bool = r.next();
+        } catch (SQLException ex) {
+            System.out.println(" is_group_exist :" + ex);
+        }
+        return bool;
+    }
+//SELECT * FROM `groups` WHERE `c_id` = 1000 AND `g_time` = '03:00' AND `g_day` = 0 
 //SELECT DISTINCT g_time FROM `groups`
 //SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='03:00'
 //////////////////////////////Group//////////////////////
     //////////////////////////////attend_couch//////////////////////
+
     public List<attend_couch> attend_couch(int couch) {
 
         List<attend_couch> id = new ArrayList<attend_couch>();
@@ -415,16 +443,16 @@ public class DB {
         }
 
     }
-    
-     public String get_note_id(int id) {
+
+    public String get_note_id(int id) {
 
         boolean b = false;
-        String s=null;
+        String s = null;
         try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `note` WHERE `s_id` = "+id+"");
+                    .executeQuery("SELECT * FROM `note` WHERE `s_id` = " + id + "");
             while (r.next()) {
                 s = r.getString("note");
             }
@@ -434,11 +462,11 @@ public class DB {
         }
         return s;
     }
-    
-     public void update_note(int id,String n){
-     
-      boolean b = false;
-      String t = null;
+
+    public void update_note(int id, String n) {
+
+        boolean b = false;
+        String t = null;
         try {
 //            statement = connection.createStatement();
 //
@@ -449,31 +477,30 @@ public class DB {
 //            }
             System.out.println(id);
             statement = connection.createStatement();
-            statement.executeUpdate("UPDATE `note` SET `note` = '"+n +"' WHERE `note`.`s_id` = "+id+";");
+            statement.executeUpdate("UPDATE `note` SET `note` = '" + n + "' WHERE `note`.`s_id` = " + id + ";");
 
         } catch (SQLException ex) {
             System.out.println(" get_note_id :" + ex);
         }
-     }
-     
-      public boolean is_note_exist(int id){
-                boolean b = false;
+    }
 
-                try {
+    public boolean is_note_exist(int id) {
+        boolean b = false;
+
+        try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `note` WHERE `s_id` = "+id+"");
-            
-            b =r.next();
-            
-         
+                    .executeQuery("SELECT * FROM `note` WHERE `s_id` = " + id + "");
+
+            b = r.next();
+
         } catch (SQLException ex) {
             System.out.println(" get_note_id :" + ex);
         }
-                return b;
-      }
-    
+        return b;
+    }
+    //SELECT * FROM `groups` WHERE `c_id` = 1000 AND `g_time` = '03:00' AND `g_day` = 0   
 //SELECT * FROM `note` WHERE `s_id` = 3000
 //INSERT INTO `note`(`note_id`, `note`, `s_id`) VALUES ([value-1],[value-2],[value-3])
 //SELECT * FROM `attend_swimmer` WHERE 1

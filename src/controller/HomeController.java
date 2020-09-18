@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
+import javax.swing.JOptionPane;
 import model.coach;
 
 /**
@@ -67,7 +68,7 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private Button b_home, b_add_group;
+    private Button b_home, b_add_group,b_add_swimmer,b_add_coach;
     @FXML
     private AnchorPane anchorpane, pane_table;
     @FXML
@@ -75,25 +76,19 @@ public class HomeController implements Initializable {
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home,p_add_group;
+    private Pane p_home, p_add_group,p_s_add,p_C_add;
     @FXML
     private JFXComboBox<Time> combobox_all_group;
     @FXML
     private JFXComboBox<String> combobox_all_group_day;
     @FXML
     private ScrollPane scrooll;
-    
-    @FXML
-    private JFXTextField add_group_level;
 
     @FXML
-    private JFXComboBox<String> add_group_coach,add_group_day;
+    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level;
 
     @FXML
     private JFXTimePicker add_group_time;
-
-    @FXML
-    private JFXComboBox<?> add_group_line;
 
     public void swi(ActionEvent actionEvent) {
         if (actionEvent.getSource() == b_home) {
@@ -102,13 +97,14 @@ public class HomeController implements Initializable {
         if (actionEvent.getSource() == b_add_group) {
             p_add_group.toFront();
         }
-         
-//        if (actionEvent.getSource() == btnMenus) {
-//           
-//        }
-//        if (actionEvent.getSource() == btnOverview) {
-//           // pnlOverview.setStyle("-fx-background-color : #02030A");
-//        }
+
+        if (actionEvent.getSource() == b_add_swimmer) {
+           p_s_add.toFront();
+        }
+        if (actionEvent.getSource() == b_add_coach) {
+                   p_C_add.toFront();
+
+    }
 //        if (actionEvent.getSource() == btnSettings) {
 //        }
     }
@@ -137,6 +133,37 @@ public class HomeController implements Initializable {
         }
     }
 
+    public void add_group(ActionEvent actionEvent) throws SQLException {
+
+        if(add_group_coach.getSelectionModel().isEmpty()){
+        JOptionPane.showMessageDialog(null,"لم يتم اختيار الكابتن");
+        }
+       else if(add_group_day.getSelectionModel().isEmpty()){
+        JOptionPane.showMessageDialog(null,"لم يتم اختيار اليوم");
+        }
+       else if(add_group_level.getSelectionModel().isEmpty()){
+        JOptionPane.showMessageDialog(null,"لم يتم اختيار المستوى");
+        }
+       else if(add_group_line.getSelectionModel().isEmpty()){
+        JOptionPane.showMessageDialog(null,"لم يتم اختيار الحارة");
+        }
+        else{
+            System.out.println(add_group_coach.getValue());
+        Time time = Time.valueOf(add_group_time.getValue());
+        
+        allDb.DB_connection();
+        if(allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)){
+        JOptionPane.showMessageDialog(null,"الكابتن  "+add_group_coach.getValue()+" "+" عنده مجموعة ف نفس المعاد");
+        }else{
+        allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
+                add_group_level.getValue(), add_group_day.getValue(), time);
+                JOptionPane.showMessageDialog(null, "تم اضافة الجروب");
+
+        }
+        allDb.DB_close();
+        }
+    }
+
     DB allDb;
     Rectangle2D bounds;
     List<all_information_for_group> id;
@@ -155,10 +182,13 @@ public class HomeController implements Initializable {
             coach = allDb.allcoach();
             allDb.DB_close();
             coach.forEach((co) -> {
-            add_group_coach.getItems().add(co.getName());
+                add_group_coach.getItems().add(co.getName());
             });
             add_group_day.getItems().addAll("Saturday", "Sunday");
-           // add_group_line
+            add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
+                    "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+            add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+           add_group_time.setValue(LocalTime.MIN);
         } catch (SQLException ex) {
         }
     }
@@ -312,14 +342,13 @@ public class HomeController implements Initializable {
                 t.setText(allDb.get_note_id(Integer.parseInt(t.getId())));
                 t.setOnKeyPressed((event) -> {
                     if (event.getCode().equals(KeyCode.ENTER)) {
-                       
+
                         try {
                             allDb.DB_connection();
-                            if(allDb.is_note_exist(Integer.parseInt(t.getId()))){
-                            allDb.update_note(Integer.parseInt(t.getId()), t.getText());
-                            }
-                            else{
-                            allDb.Add_note_swimmer(Integer.parseInt(t.getId()), t.getText());
+                            if (allDb.is_note_exist(Integer.parseInt(t.getId()))) {
+                                allDb.update_note(Integer.parseInt(t.getId()), t.getText());
+                            } else {
+                                allDb.Add_note_swimmer(Integer.parseInt(t.getId()), t.getText());
                             }
                             allDb.DB_close();
                         } catch (Exception ex) {
@@ -358,8 +387,8 @@ public class HomeController implements Initializable {
         return l;
     }
 
-    private void initialize_home(){
-     ///////////////////////initialize//////////////
+    private void initialize_home() {
+        ///////////////////////initialize//////////////
         Time sqlTime = Time.valueOf("03:00:00");
         allDb = new DB();
         Screen screen = Screen.getPrimary();
@@ -438,8 +467,7 @@ public class HomeController implements Initializable {
             System.out.println("initialize" + ex);
         }
 
-    
     }
 //////////////////////////home/////////////
-    
+
 }
