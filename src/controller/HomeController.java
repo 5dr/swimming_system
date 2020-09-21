@@ -6,6 +6,7 @@
 package controller;
 
 import com.jfoenix.controls.*;
+import com.mysql.jdbc.Connection;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
 import java.awt.print.Book;
@@ -13,7 +14,10 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import javafx.geometry.Rectangle2D;
 import java.net.URL;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -52,6 +56,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
@@ -68,7 +75,9 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private Button b_home, b_add_group,b_add_swimmer,b_add_coach;
+    private TextField add_s_name, add_s_phone, add_s_age;
+    @FXML
+    private Button b_home, b_add_group, b_add_swimmer, b_add_coach;
     @FXML
     private AnchorPane anchorpane, pane_table;
     @FXML
@@ -76,11 +85,12 @@ public class HomeController implements Initializable {
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home, p_add_group,p_s_add,p_C_add;
+    private Pane p_home, p_add_group, p_s_add, p_C_add;
     @FXML
     private JFXComboBox<Time> combobox_all_group;
     @FXML
-    private JFXComboBox<String> combobox_all_group_day;
+
+    private JFXComboBox<String> add_s_gender, coach_swimmer, day_swimmer, combobox_all_group_day, time_swimmer;
     @FXML
     private ScrollPane scrooll;
 
@@ -99,14 +109,62 @@ public class HomeController implements Initializable {
         }
 
         if (actionEvent.getSource() == b_add_swimmer) {
-           p_s_add.toFront();
+            p_s_add.toFront();
         }
         if (actionEvent.getSource() == b_add_coach) {
-                   p_C_add.toFront();
+            p_C_add.toFront();
 
-    }
+        }
 //        if (actionEvent.getSource() == btnSettings) {
 //        }
+    }
+
+    public void add_swimmer(ActionEvent actionEvent) throws SQLException {
+        if (add_s_name.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
+        } else if (add_s_phone.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
+        } else if (add_s_age.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال العمر");
+        } else if (add_s_gender.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+        } else if (day_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+        } else if (time_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+        } else if (coach_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار المدرب");
+        } else {
+  
+            Time times = Time.valueOf(time_swimmer.getValue());
+            int b = day_swimmer.getValue() == "Saturday" ? 0 : 1;
+            String age = String.valueOf(add_s_age.getText());
+            allDb.DB_connection();
+            Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+
+            Statement s = connection.createStatement();
+            ResultSet r = s.executeQuery("SELECT COUNT(*) AS rowcountSELECT  FROM groups INNER JOIN couch ON groups.c_id=couch.c_id where groups.g_time=" + time_swimmer.getValue() + "and groups.g_day= " + b + "and couch.name= " + add_s_name.getText());
+   System.err.println("aamny");
+           int count = r.getInt("rowcount") ;
+r.close() ;
+System.out.println("MyTable has " + count + " row(s).");
+            System.err.println(count);
+            r.close();
+            if (allDb.is_group_exist(coach.get(coach_swimmer.getSelectionModel().getSelectedIndex()).getC_id(), day_swimmer.getValue(), times)) {
+
+                if (count != 8) {
+                    allDb.Add_swimmer(add_s_name.getText(), add_s_phone.getText(), age, coach_swimmer.getValue(), times,
+                            day_swimmer.getValue(), add_s_gender.getValue());
+                    JOptionPane.showMessageDialog(null, "تم اضافه السباح");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "الكابتن  " + coach_swimmer.getValue() + " " + "مفيش مجموعة ف نفس المعاد");
+
+                }
+            }
+            allDb.DB_close();
+        }
+
     }
 
     public void print(ActionEvent actionEvent) {
@@ -135,32 +193,28 @@ public class HomeController implements Initializable {
 
     public void add_group(ActionEvent actionEvent) throws SQLException {
 
-        if(add_group_coach.getSelectionModel().isEmpty()){
-        JOptionPane.showMessageDialog(null,"لم يتم اختيار الكابتن");
-        }
-       else if(add_group_day.getSelectionModel().isEmpty()){
-        JOptionPane.showMessageDialog(null,"لم يتم اختيار اليوم");
-        }
-       else if(add_group_level.getSelectionModel().isEmpty()){
-        JOptionPane.showMessageDialog(null,"لم يتم اختيار المستوى");
-        }
-       else if(add_group_line.getSelectionModel().isEmpty()){
-        JOptionPane.showMessageDialog(null,"لم يتم اختيار الحارة");
-        }
-        else{
+        if (add_group_coach.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الكابتن");
+        } else if (add_group_day.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+        } else if (add_group_level.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+        } else if (add_group_line.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+        } else {
             System.out.println(add_group_coach.getValue());
-        Time time = Time.valueOf(add_group_time.getValue());
-        
-        allDb.DB_connection();
-        if(allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)){
-        JOptionPane.showMessageDialog(null,"الكابتن  "+add_group_coach.getValue()+" "+" عنده مجموعة ف نفس المعاد");
-        }else{
-        allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
-                add_group_level.getValue(), add_group_day.getValue(), time);
+            Time time = Time.valueOf(add_group_time.getValue());
+
+            allDb.DB_connection();
+            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)) {
+                JOptionPane.showMessageDialog(null, "الكابتن  " + add_group_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
+            } else {
+                allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
+                        add_group_level.getValue(), add_group_day.getValue(), time);
                 JOptionPane.showMessageDialog(null, "تم اضافة الجروب");
 
-        }
-        allDb.DB_close();
+            }
+            allDb.DB_close();
         }
     }
 
@@ -188,7 +242,7 @@ public class HomeController implements Initializable {
             add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
             add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
-           add_group_time.setValue(LocalTime.MIN);
+            add_group_time.setValue(LocalTime.MIN);
         } catch (SQLException ex) {
         }
     }
@@ -277,7 +331,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -289,7 +343,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -387,7 +441,7 @@ public class HomeController implements Initializable {
         return l;
     }
 
-    private void initialize_home() {
+    private void initialize_home() throws SQLException {
         ///////////////////////initialize//////////////
         Time sqlTime = Time.valueOf("03:00:00");
         allDb = new DB();
@@ -406,6 +460,37 @@ public class HomeController implements Initializable {
         combobox_all_group_day.getItems().addAll("Saturday", "Sunday");
         combobox_all_group_day.setValue("Saturday");
         combobox_all_group.setValue(sqlTime);
+        day_swimmer.getItems().addAll("Saturday", "Sunday");
+        Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+
+        Statement statement = connection.createStatement();
+        ResultSet r = statement.executeQuery("SELECT DISTINCT g_time FROM `groups`");
+        ObservableList<String> time = FXCollections.observableArrayList();
+
+        while (r.next()) {
+            time.add(r.getString("g_time"));
+
+        }
+
+        time_swimmer.setItems(time);
+
+        ResultSet rsu = statement.executeQuery("SELECT DISTINCT name FROM `couch`");
+        ObservableList<String> coach = FXCollections.observableArrayList();
+
+        while (rsu.next()) {
+            coach.add(rsu.getString("name")
+            );
+        }
+        coach_swimmer.setItems(coach);
+
+        ResultSet rsg = statement.executeQuery("SELECT DISTINCT gender FROM `swimmer`");
+        ObservableList<String> gender = FXCollections.observableArrayList();
+
+        while (rsg.next()) {
+            gender.add(rsg.getString("gender")
+            );
+        }
+        add_s_gender.setItems(gender);
 
         ///////////////////////initialize//////////////
         //////////////size//////////
@@ -468,6 +553,4 @@ public class HomeController implements Initializable {
         }
 
     }
-//////////////////////////home/////////////
-
 }
