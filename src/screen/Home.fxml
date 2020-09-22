@@ -146,12 +146,17 @@
                               <Font size="42.0" />
                            </font>
                         </JFXButton>
-                        <Label layoutX="265.0" layoutY="68.0" prefHeight="58.0" prefWidth="212.0" text="Add Group" textFill="#258bbf">
+                        <Label layoutX="265.0" layoutY="68.0" prefHeight="58.0" prefWidth="212.0" text="add_grouproup" textFill="#258bbf">
                            <font>
                               <Font name="System Bold Italic" size="40.0" />
                            </font>
                         </Label>
                         <Label layoutX="75.0" layoutY="232.0" prefHeight="25.0" prefWidth="43.0" text="Time" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                         <Label layoutX="75.0" layoutY="500.0" prefHeight="25.0" prefWidth="43.0" text="coach" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -190,40 +195,45 @@
                               <Font size="16.0" />
                            </font>
                         </JFXTextField>
-                        <JFXTextField fx:id="add_s_adress" focusColor="BLACK" layoutX="157.0" layoutY="228.0" prefHeight="30.0" prefWidth="494.0" style="-fx-background-color: #ffffff;">
+                   
+                        <JFXTextField fx:id="add_s_phone" focusColor="BLACK" layoutX="156.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </JFXTextField>
-                        <JFXTextField fx:id="add_s_phone" focusColor="BLACK" layoutX="156.0" layoutY="296.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </JFXTextField>
-                        <JFXTextField fx:id="add_s_age" focusColor="BLACK" layoutX="500.0" layoutY="287.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
+                        <JFXTextField fx:id="add_s_age" focusColor="BLACK" layoutX="500.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </JFXTextField>
                         <JFXComboBox fx:id="add_s_gender" layoutX="500.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
-                        <JFXComboBox fx:id="add_s_group" layoutX="156.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
-                        <Label layoutX="74.0" layoutY="231.0" prefHeight="25.0" prefWidth="60.0" text="Address" textFill="#258bbf">
+                        <JFXComboBox fx:id="day_swimmer" layoutX="156.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
+                          <JFXComboBox fx:id="time_swimmer" layoutX="156.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
+                         <JFXComboBox fx:id="coach_swimmer" layoutX="500.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
+                        <Label layoutX="75.0" layoutY="280.0" prefHeight="25.0" prefWidth="57.0" text="Phone" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Label layoutX="75.0" layoutY="303.0" prefHeight="25.0" prefWidth="57.0" text="Phone" textFill="DODGERBLUE">
+                        <Label layoutX="76.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="day" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Label layoutX="76.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="Group" textFill="DODGERBLUE">
+                        <Label layoutX="76.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="time" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
+                         <Label layoutX="425.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="coach" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                       
                         <ImageView fitHeight="170.0" fitWidth="200.0" layoutX="900.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
-                        <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="467.0" prefHeight="32.0" prefWidth="494.0" style="-fx-background-color: #258bbf;" text="Add" textFill="WHITE">
+
+                        <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="467.0" onAction="#add_swimmer" prefHeight="32.0" prefWidth="494.0" style="-fx-background-color: #258bbf;" text="Add" textFill="WHITE">
                            <font>
                               <Font size="42.0" />
                            </font>
@@ -233,7 +243,7 @@
                               <Font name="System Bold Italic" size="40.0" />
                            </font>
                         </Label>
-                        <Label layoutX="435.0" layoutY="291.0" prefHeight="25.0" prefWidth="31.0" text="Age" textFill="DODGERBLUE">
+                        <Label layoutX="435.0" layoutY="280.0" prefHeight="25.0" prefWidth="31.0" text="Age" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
