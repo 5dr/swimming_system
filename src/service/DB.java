@@ -20,7 +20,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.all_information_for_group;
+import model.all_information_for_swimmer;
 import model.attend_couch;
+import model.attend_swimmer;
 import model.coach;
 import model.overview;
 import model.swimmer;
@@ -132,6 +134,29 @@ public class DB {
         }
 
     }
+    
+        public String coach_by_name(int id) throws SQLException {
+
+        String name = null ;
+        try {
+            statement = connection.createStatement();
+            ResultSet r = statement
+                    .executeQuery("SELECT name FROM `couch` WHERE c_id="+id+"");
+
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+           name=r.getString("name");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "coach_by_name :" + ex);
+        }
+
+        return name;
+    }
+    
+   // SELECT name FROM `couch` WHERE c_id=1000
+
     //////////////////////////////couch//////////////////////
 
     //////////////////////////////swimmer//////////////////////
@@ -430,6 +455,24 @@ public class DB {
         }
         return b;
     }
+    
+    public List<attend_swimmer> get_att_swimmer(int id) {
+
+        List<attend_swimmer> s=new ArrayList<attend_swimmer>();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` WHERE `s_id` = " + id);
+            while( r.next()){
+            s.add(new attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"),r.getDate("day")));
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(" get_att_swimmer :" + ex);
+        }
+        return s;
+    }
     //////////////////////////////attend_swimmer//////////////////////
 
     //////////////////////////////note//////////////////////
@@ -500,7 +543,920 @@ public class DB {
         }
         return b;
     }
-    //SELECT * FROM `groups` WHERE `c_id` = 1000 AND `g_time` = '03:00' AND `g_day` = 0   
+
+    ////////////////////////////////////////////////search/////////////
+    public List<String> search_group_by_name() {
+
+        List<String> name = new ArrayList<String>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT DISTINCT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id");
+            while (r.next()) {
+                name.add(r.getString("couch.name"));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name : " + ex);
+        }
+        return name;
+
+    }
+
+    public List<String> get_all_name_swimmer() {
+
+        List<String> name = new ArrayList<String>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT name FROM `swimmer`");
+            while (r.next()) {
+                name.add(r.getString("name"));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_all_name_swimmer : " + ex);
+        }
+        return name;
+
+    }
+
+    ////////////////////////////////////////////////search_group/////////////
+    // 0 0 0 0 0
+    public List<all_information_for_group> search_group_all() {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id ");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 0 0 0 1
+    public List<all_information_for_group> search_group_by_level(String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }// 0 0 0 1 0
+
+    public List<all_information_for_group> search_group_by_line(String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }// 0 0 0 1 1
+
+    public List<all_information_for_group> search_group_by_line_and_level(String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 0 1 0 0
+
+    public List<all_information_for_group> search_group_by_day(boolean b) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 0 1 0 1
+
+    public List<all_information_for_group> search_group_by_day_and_level(boolean b, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + " AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 0 1 1 0
+
+    public List<all_information_for_group> search_group_by_day_and_line(boolean b, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + "  AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 0 1 1 1
+
+    public List<all_information_for_group> search_group_by_day_and_line_and_level(boolean b, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 1 0 0 0
+
+    public List<all_information_for_group> search_group_by_time(Time t) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 1 0 0 1
+
+    public List<all_information_for_group> search_group_by_time_and_level(Time t, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 0 1 0 1 0
+
+    public List<all_information_for_group> search_group_by_time_and_line(Time t, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 1 0 1 1
+    public List<all_information_for_group> search_group_by_time_and_line_and_level(Time t, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 1 1 0 0
+    public List<all_information_for_group> search_group_by_time_and_day(Time t, boolean b) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 1 1 0 1
+    public List<all_information_for_group> search_group_by_time_and_day_and_level(Time t, boolean b, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + " AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 1 1 1 0
+    public List<all_information_for_group> search_group_by_time_and_day_and_line(Time t, boolean b, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_time_and_day_and_line : " + ex);
+        }
+        return id;
+
+    }
+    // 0 1 1 1 1
+
+    public List<all_information_for_group> search_group_by_time_and_day_and_line_and_level(Time t, boolean b, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+//1 0 0 0 0 
+    public List<all_information_for_group> search_group_by_name(String name) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name : " + ex);
+        }
+        return id;
+
+    }
+    // 1 0 0 0 1
+
+    public List<all_information_for_group> search_group_by_name_and_level(String name, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "' AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 0 0 1 0
+
+    public List<all_information_for_group> search_group_by_name_and_line(String name, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "' AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_line : " + ex);
+        }
+        return id;
+
+    }        // 1 0 0 1 1
+
+    public List<all_information_for_group> search_group_by_name_and_line_and_level(String name, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }        // 1 0 1 0 0
+
+    public List<all_information_for_group> search_group_by_name_and_day(String name, boolean b) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_day : " + ex);
+        }
+        return id;
+
+    }        // 1 0 1 0 1
+
+    public List<all_information_for_group> search_group_by_name_and_day_and_level(String name, boolean b, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 1 0 1 1 0
+    public List<all_information_for_group> search_group_by_name_and_day_and_line(String name, boolean b, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 0 1 1 1
+
+    public List<all_information_for_group> search_group_by_name_and_day_and_line_and_level(String name, boolean b, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
+    // 1 1 0 0 0 
+    public List<all_information_for_group> search_group_by_name_and_time(String name, Time t) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 0 0 1
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_level(String name, Time t, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 0 1 0
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_line(String name, Time t, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 0 1 1
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_line_and_level(String name, Time t, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 1 0 0
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_day(String name, Time t, boolean b) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 1 0 1
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_day_and_level(String name, Time t, boolean b, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    //1 1 1 1 0
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_day_and_line(String name, Time t, boolean b, String line) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 1 1 1
+
+    public List<all_information_for_group> search_group_by_name_and_time_and_day_and_line_and_level(String name, Time t, boolean b, String line, String level) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+    ////////////////////////////////////////////////search_group/////////////
+
+    ////////////////////////////////////////////////search_swimmer/////////////
+    public List<all_information_for_swimmer> search_swimmer_name(String name) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.name='" + name + "'");
+            while (r.next()) {
+                System.out.println("nnnnnnnnnnnnnnnnnn : " + r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }
+
+    // 0 0 0
+    public List<all_information_for_swimmer> search_swimmer_all() {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }
+    // 0 0 1
+
+    public List<all_information_for_swimmer> search_swimmer_by_gender(String gender) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.gender='" + gender + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }       // 0 1 0
+
+    public List<all_information_for_swimmer> search_swimmer_by_day( boolean b) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_day=" + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }       // 0 1 1
+
+    public List<all_information_for_swimmer> search_swimmer_by_day_and_gender( boolean b, String gender) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_day=" + b + " AND swimmer.gender='" + gender + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }       // 1 0 0
+
+    public List<all_information_for_swimmer> search_swimmer_by_time(Time t) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_time='" + t +"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }       // 1 0 1
+
+    public List<all_information_for_swimmer> search_swimmer_by_time_and_gender(Time t, String gender) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_time='" + t + "' AND swimmer.gender='" + gender + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }    
+    // 1 1 0
+
+    public List<all_information_for_swimmer> search_swimmer_by_time_and_day(Time t, boolean b) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_time='" + t + "' AND groups.g_day=" + b);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }
+    // 1 1 1
+
+    public List<all_information_for_swimmer> search_swimmer_by_time_and_day_and_gender(Time t, boolean b, String gender) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_time='" + t + "' AND groups.g_day=" + b + " AND swimmer.gender='" + gender + "'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }
+    ////////////////////////////////////////////////search_swimmer/////////////
+
+    ////////////////////////////////////////////////search_attend/////////////
+
+    ////////////////////////////////////////////////search/////////////
+    
+    //SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id
+//SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id
+//SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id
+//SELECT DISTINCT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id
+//SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='tttt'  
+//SELECT * FROM `groups` WHERE `c_id` = 1000 AND `g_time` = '03:00' AND `g_day` = 0   
 //SELECT * FROM `note` WHERE `s_id` = 3000
 //INSERT INTO `note`(`note_id`, `note`, `s_id`) VALUES ([value-1],[value-2],[value-3])
 //SELECT * FROM `attend_swimmer` WHERE 1
