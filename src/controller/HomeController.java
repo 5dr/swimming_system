@@ -9,6 +9,7 @@ import com.jfoenix.controls.*;
 import com.mysql.jdbc.Connection;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
+import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
@@ -61,8 +62,14 @@ import javafx.collections.ObservableList;
 import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javax.swing.JOptionPane;
+import model.all_information_for_swimmer;
+import model.attend_swimmer;
 import model.coach;
+import org.controlsfx.control.textfield.TextFields;
 
 /**
  * FXML Controller class
@@ -77,28 +84,46 @@ public class HomeController implements Initializable {
     @FXML
     private TextField add_s_name, add_s_phone, add_s_age;
     @FXML
-    private Button b_home, b_add_group, b_add_swimmer, b_add_coach;
+    private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search;
+
     @FXML
-    private AnchorPane anchorpane, pane_table;
+    private AnchorPane anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox p_list;
+    private VBox p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend;
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home, p_add_group, p_s_add, p_C_add;
+    private Pane p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer;
     @FXML
-    private JFXComboBox<Time> combobox_all_group;
+    private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time;
     @FXML
 
     private JFXComboBox<String> add_s_gender, coach_swimmer, day_swimmer, combobox_all_group_day, time_swimmer;
     @FXML
-    private ScrollPane scrooll;
+    private ScrollPane scrooll, scroll_search;
 
     @FXML
     private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level;
 
     @FXML
     private JFXTimePicker add_group_time;
+    @FXML
+    private JFXButton search_group, search_coach, search_swimmer;
+
+    @FXML
+    private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name;
+
+    @FXML
+    private TextField search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day;
+
+    @FXML
+    private JFXComboBox<String> search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender;
+
+    @FXML
+    private HBox hbox_select_search;
+    
+    @FXML
+    private JFXTextField text_s_note;
 
     public void swi(ActionEvent actionEvent) {
         if (actionEvent.getSource() == b_home) {
@@ -115,8 +140,9 @@ public class HomeController implements Initializable {
             p_C_add.toFront();
 
         }
-//        if (actionEvent.getSource() == btnSettings) {
-//        }
+        if (actionEvent.getSource() == b_search) {
+            p_search.toFront();
+        }
     }
 
     public void add_swimmer(ActionEvent actionEvent) throws SQLException {
@@ -218,9 +244,593 @@ System.out.println("MyTable has " + count + " row(s).");
         }
     }
 
+    public void switch_search(ActionEvent actionEvent) throws SQLException {
+        if (actionEvent.getSource() == search_group) {
+            search_group.setStyle("-fx-background-color: #ffffff;");
+            search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+
+            vbox_search_group.setDisable(false);
+            vbox_search_coach.setDisable(true);
+            vbox_search_swimmer.setDisable(true);
+
+            try {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_all();
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            } catch (SQLException ex) {
+            }
+
+        }
+
+        if (actionEvent.getSource() == search_coach) {
+            search_group.setStyle("-fx-background-color:   #181a1b;");
+            search_coach.setStyle("-fx-background-color:  #ffffff;");
+            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+
+            vbox_search_group.setDisable(true);
+            vbox_search_coach.setDisable(false);
+            vbox_search_swimmer.setDisable(true);
+
+        }
+        if (actionEvent.getSource() == search_swimmer) {
+            search_group.setStyle("-fx-background-color:   #181a1b;");
+            search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_swimmer.setStyle("-fx-background-color:  #ffffff;");
+
+            vbox_search_group.setDisable(true);
+            vbox_search_coach.setDisable(true);
+            vbox_search_swimmer.setDisable(false);
+
+            try {
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_all();
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+    }
+
+    public void group_search(ActionEvent actionEvent) throws SQLException {
+// 1 1 1 1 1
+        if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_day_and_line_and_level(search_g_name.getText(), search_g_time.getValue(), b, search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 1 1 1 1 0
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected() && r_g_line.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_day_and_line(search_g_name.getText(), search_g_time.getValue(), b, search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 1 0 1 1
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_line_and_level(search_g_name.getText(), search_g_time.getValue(), search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 1 1 0 1
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_day_and_level(search_g_name.getText(), search_g_time.getValue(), b, search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        } //1 0 1 1 1
+        else if (r_g_name.isSelected() && r_g_day.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_day_and_line_and_level(search_g_name.getText(), b, search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        } //0 1 1 1 1
+        else if (r_g_time.isSelected() && r_g_day.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_day_and_line_and_level(search_g_time.getValue(), b, search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 1 1 1 0 0
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_day(search_g_name.getText(), search_g_time.getValue(), b);
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 1 0 1 0
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_line.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_line(search_g_name.getText(), search_g_time.getValue(), search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 1 0 0 1
+        else if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time_and_level(search_g_name.getText(), search_g_time.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 0 1 1 1
+        else if (r_g_level.isSelected() && r_g_line.isSelected() && r_g_day.isSelected()) {
+            if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_day_and_line_and_level(b, search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 1 0 1 1
+        else if (r_g_level.isSelected() && r_g_line.isSelected() && r_g_time.isSelected()) {
+            if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_line_and_level(search_g_time.getValue(), search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 1 1 0 1
+        else if (r_g_level.isSelected() && r_g_day.isSelected() && r_g_time.isSelected()) {
+            if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_day_and_level(search_g_time.getValue(), b, search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 1 1 1 0
+        else if (r_g_day.isSelected() && r_g_line.isSelected() && r_g_time.isSelected()) {
+            if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_day_and_line(search_g_time.getValue(), b, search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 1 0 1
+        else if (r_g_name.isSelected() && r_g_day.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_day_and_level(search_g_name.getText(), b, search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 0 1 1
+        else if (r_g_name.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_line_and_level(search_g_name.getText(), search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 1 1 0
+        else if (r_g_name.isSelected() && r_g_day.isSelected() && r_g_line.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_day_and_line(search_g_name.getText(), b, search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        } // 1 1 0 0 0 
+        else if (r_g_name.isSelected() && r_g_time.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_time(search_g_name.getText(), search_g_time.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 1 0 0
+        else if (r_g_name.isSelected() && r_g_day.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_day(search_g_name.getText(), b);
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 0 1 0
+        else if (r_g_name.isSelected() && r_g_line.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_line(search_g_name.getText(), search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//1 0 0 0 1
+        else if (r_g_name.isSelected() && r_g_level.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name_and_level(search_g_name.getText(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 0 0 1 1
+        else if (r_g_line.isSelected() && r_g_level.isSelected()) {
+            if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_line_and_level(search_g_line.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 0 1 0 1
+        else if (r_g_day.isSelected() && r_g_level.isSelected()) {
+            if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_day_and_level(b, search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 0 1 1 0
+        else if (r_g_line.isSelected() && r_g_day.isSelected()) {
+            if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_day_and_line(b, search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 1 0 0 1
+        else if (r_g_time.isSelected() && r_g_level.isSelected()) {
+            if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_level(search_g_time.getValue(), search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 1 0 1 0
+        else if (r_g_line.isSelected() && r_g_time.isSelected()) {
+            if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+            } else if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_line(search_g_time.getValue(), search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }//0 1 1 0 0
+        else if (r_g_time.isSelected() && r_g_day.isSelected()) {
+            if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time_and_day(search_g_time.getValue(), b);
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 1 0 0 0 0
+        else if (r_g_name.isSelected()) {
+            if (search_g_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_name(search_g_name.getText());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 1 0 0 0
+        else if (r_g_time.isSelected()) {
+            if (search_g_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_time(search_g_time.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 0 1 0 0
+        else if (r_g_day.isSelected()) {
+            if (search_g_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_day(b);
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 0 0 1 0
+        else if (r_g_line.isSelected()) {
+            if (search_g_line.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+            } else {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_line(search_g_line.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }// 0 0 0 0 1
+        else if (r_g_level.isSelected()) {
+            if (search_g_level.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+            } else {
+                allDb.DB_connection();
+                search_group_list = allDb.search_group_by_level(search_g_level.getValue());
+                allDb.DB_close();
+                BuildSearch(search_group_list);
+            }
+        }
+
+    }
+
+    public void swimmer_search(ActionEvent actionEvent) throws SQLException {
+        // 1 1 1
+        if (r_s_day.isSelected() && r_s_time.isSelected() && r_s_gender.isSelected()) {
+            if (search_s_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_s_gender.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+            } else if (search_s_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_time_and_day_and_gender(search_s_time.getValue(), b, search_s_gender.getValue());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_time.isSelected() && r_s_gender.isSelected()) {
+            if (search_s_gender.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+            } else if (search_s_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_time_and_gender(search_s_time.getValue(), search_s_gender.getValue());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_day.isSelected() && r_s_gender.isSelected()) {
+            if (search_s_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_s_gender.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+            } else {
+                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_day_and_gender(b, search_s_gender.getValue());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_day.isSelected() && r_s_time.isSelected()) {
+            if (search_s_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_s_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_time_and_day(search_s_time.getValue(), b);
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_day.isSelected()) {
+            if (search_s_day.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_day(b);
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_time.isSelected()) {
+            if (search_s_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                // boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_time(search_s_time.getValue());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_gender.isSelected()) {
+            if (search_s_gender.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+            } else {
+                //  boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_by_gender(search_s_gender.getValue());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_s_name.isSelected()) {
+            if (search_s_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else {
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_name(search_s_name.getText());
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            }
+        }
+    }
+
     DB allDb;
     Rectangle2D bounds;
     List<all_information_for_group> id;
+    List<all_information_for_group> search_group_list;
+    List<all_information_for_swimmer> search_swimmer_list;
     List<Integer> all_g_id;
     List<List<swimmer>> t;
     List<coach> coach;
@@ -243,8 +853,144 @@ System.out.println("MyTable has " + count + " row(s).");
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
             add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
             add_group_time.setValue(LocalTime.MIN);
+
         } catch (SQLException ex) {
         }
+
+        ///////////////////////search group//////
+        search_group_list = new ArrayList<all_information_for_group>();
+        search_g_day.getItems().addAll("Saturday", "Sunday");
+        search_g_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
+                "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+        search_g_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+
+        try {
+            allDb.DB_connection();
+            search_g_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            TextFields.bindAutoCompletion(search_g_name, allDb.search_group_by_name());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+        r_g_name.setOnAction((event) -> {
+            if (r_g_name.isSelected()) {
+                search_g_name.setDisable(false);
+            } else {
+                search_g_name.setText("");
+                search_g_name.setDisable(true);
+            }
+
+        });
+        r_g_time.setOnAction((event) -> {
+            if (r_g_time.isSelected()) {
+                search_g_time.setDisable(false);
+            } else {
+                search_g_time.setValue(null);
+                search_g_time.setDisable(true);
+            }
+        });
+        r_g_day.setOnAction((event) -> {
+            if (r_g_day.isSelected()) {
+                search_g_day.setDisable(false);
+            } else {
+                search_g_day.setValue(null);
+                search_g_day.setDisable(true);
+            }
+        });
+        r_g_line.setOnAction((event) -> {
+            if (r_g_line.isSelected()) {
+                search_g_line.setDisable(false);
+            } else {
+                search_g_line.setValue(null);
+                search_g_line.setDisable(true);
+            }
+        });
+        r_g_level.setOnAction((event) -> {
+            if (r_g_level.isSelected()) {
+                search_g_level.setDisable(false);
+            } else {
+                search_g_level.setValue(null);
+                search_g_level.setDisable(true);
+            }
+        });
+
+        scroll_search.setPrefSize(bounds.getWidth() * 0.55, bounds.getHeight() * 0.51);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        select_pane_search.setPrefWidth(bounds.getWidth() * 0.55);
+        hbox_select_search.setPrefWidth(bounds.getWidth() * 0.55);
+
+        try {
+            allDb.DB_connection();
+            search_group_list = allDb.search_group_all();
+            allDb.DB_close();
+            BuildSearch(search_group_list);
+        } catch (SQLException ex) {
+        }
+
+        ///////////////////////search group//////
+        ///////////////////////search swimmer//////
+        search_swimmer_list = new ArrayList<all_information_for_swimmer>();
+        search_s_day.getItems().addAll("Saturday", "Sunday");
+        search_s_gender.getItems().addAll("male", "female");
+        try {
+            allDb.DB_connection();
+            search_swimmer_list = allDb.search_swimmer_all();
+            search_s_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            TextFields.bindAutoCompletion(search_s_name, allDb.get_all_name_swimmer());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+
+        r_s_name.setOnAction((event) -> {
+            if (r_s_name.isSelected()) {
+                search_s_name.setDisable(false);
+                r_s_day.setSelected(false);
+                r_s_gender.setSelected(false);
+                r_s_time.setSelected(false);
+                search_s_time.setValue(null);
+                search_s_time.setDisable(true);
+                search_s_gender.setValue(null);
+                search_s_gender.setDisable(true);
+                search_s_day.setValue(null);
+                search_s_day.setDisable(true);
+            } else {
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            }
+        });
+        r_s_time.setOnAction((event) -> {
+            if (r_s_time.isSelected()) {
+                search_s_time.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_time.setValue(null);
+                search_s_time.setDisable(true);
+            }
+        });
+        r_s_day.setOnAction((event) -> {
+            if (r_s_day.isSelected()) {
+                search_s_day.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_day.setValue(null);
+                search_s_day.setDisable(true);
+            }
+        });
+        r_s_gender.setOnAction((event) -> {
+            if (r_s_gender.isSelected()) {
+                search_s_gender.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_gender.setValue(null);
+                search_s_gender.setDisable(true);
+            }
+        });
+
     }
 
     ////////////////////////////////home/////////////
@@ -435,7 +1181,16 @@ System.out.println("MyTable has " + count + " row(s).");
 
         Label l = new Label(name);
         l.setPrefWidth(bounds.getWidth() * d);
-        l.setStyle("-fx-font-size: 16px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+        l.setStyle("-fx-font-size: 16px;-fx-background-color:#ffb3b3;-fx-border-color:#000;");
+        l.setAlignment(Pos.CENTER);
+
+        return l;
+    }
+       private Label make_lable_g(String name, double d) throws SQLException {
+
+        Label l = new Label(name);
+        l.setPrefWidth(bounds.getWidth() * d);
+        l.setStyle("-fx-font-size: 16px;-fx-border-color:#000;");
         l.setAlignment(Pos.CENTER);
 
         return l;
@@ -552,5 +1307,180 @@ System.out.println("MyTable has " + count + " row(s).");
             System.out.println("initialize" + ex);
         }
 
+    }
+//////////////////////////home/////////////
+
+    ////////////////////////search//////////
+    VBox table_search = new VBox();
+
+    private void BuildSearch(List<all_information_for_group> id) throws SQLException {
+        table_search.getChildren().clear();
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        Label num = make_lable_search_head("num", .039, "b6bec2", 20);
+        Label name = make_lable_search_head("Name", 0.1, "b6bec2", 20);
+        Label level = make_lable_search_head("level", .1, "b6bec2", 20);
+        Label track = make_lable_search_head("Line", .1, "b6bec2", 20);
+        Label time = make_lable_search_head("Time", .1, "b6bec2", 20);
+        Label day = make_lable_search_head("Day", .1, "b6bec2", 20);
+
+        HBox title = new HBox();
+        title.setStyle("-fx-background-color:  #b6bec2;");
+        title.setPrefSize(bounds.getWidth() * .54, 0);
+        title.getChildren().addAll(day, time, track, level, name, num);
+        title.setAlignment(Pos.CENTER_RIGHT);
+        table_search.getChildren().add(title);
+
+        for (int i = 0; i < id.size(); i++) {
+            Label num1 = make_lable_g((i + 1) + "", .039);
+            Label name1 = make_lable_g(id.get(i).getName(), 0.1);
+            Label level1 = make_lable_g(id.get(i).getG_level(), .1);
+            Label track1 = make_lable_g(id.get(i).getTrack(), .1);
+            Label time1 = make_lable_g(id.get(i).getTime() + "", .1);
+            Label day1 = make_lable_g(id.get(i).isDay() ? "Sunday" : "Saturday", .1);
+
+            HBox title1 = new HBox();
+            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.getChildren().addAll(day1, time1, track1, level1, name1, num1);
+            title1.setAlignment(Pos.CENTER_RIGHT);
+            title1.setOnMouseEntered(event -> {
+                title1.setStyle("-fx-background-color :#b6bec2");
+            });
+            title1.setOnMouseExited(event -> {
+                title1.setStyle("-fx-background-color :#ffb3b3 ");
+            });
+            table_search.getChildren().add(title1);
+
+            if (i > 15) {
+
+                pane_search_table.setPrefHeight(pane_search_table.getPrefHeight() + bounds.getWidth() * .017);
+            }
+        }
+
+        pane_search_table.getChildren().clear();
+        pane_search_table.getChildren().add(table_search);
+    }
+
+    private Label make_lable_search_head(String name, double d, String color, int font) throws SQLException {
+
+        Label l = new Label(name);
+        l.setPrefWidth(bounds.getWidth() * d);
+        l.setStyle("-fx-background-color:#" + color + ";-fx-border-color:#000;");
+        l.setFont(Font.font("Verdana", FontWeight.BOLD, font));
+        l.setAlignment(Pos.CENTER);
+
+        return l;
+    }
+
+    private void BuildSearch_Swimmer(List<all_information_for_swimmer> id) throws SQLException {
+        table_search.getChildren().clear();
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+
+        Label num = make_lable_search_head("num", .04, "b6bec2", 17);
+        Label name = make_lable_search_head("Name", 0.09, "b6bec2", 17);
+        Label address = make_lable_search_head("Address", 0.07, "b6bec2", 17);
+        Label age = make_lable_search_head("Age", 0.047, "b6bec2", 17);
+        Label gender = make_lable_search_head("Gender", 0.065, "b6bec2", 17);
+        Label phone = make_lable_search_head("Phone", 0.06, "b6bec2", 17);
+        Label level = make_lable_search_head("level", .05, "b6bec2", 17);
+        Label s_day = make_lable_search_head("Start Day", .073, "b6bec2", 17);
+        Label e_day = make_lable_search_head("End Day", .065, "b6bec2", 17);
+        Label time = make_lable_search_head("Time", .05, "b6bec2", 17);
+        Label day = make_lable_search_head("Day", .05, "b6bec2", 17);
+
+        HBox title = new HBox();
+        title.setStyle("-fx-background-color:  #b6bec2;");
+        title.setPrefSize(bounds.getWidth() * .54, 0);
+        title.getChildren().addAll(day, time, e_day, s_day, level, phone, gender, age, address, name, num);
+        title.setAlignment(Pos.CENTER_RIGHT);
+        table_search.getChildren().add(title);
+
+        for (int i = 0; i < id.size(); i++) {
+            Label num1 = make_lable_search_swimmer((i + 1) + "", .04);
+            Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.09);
+            Label address1 = make_lable_search_swimmer(id.get(i).getAdress(), 0.07);
+            Label age1 = make_lable_search_swimmer(id.get(i).getAge() + "", .047);
+            Label gender1 = make_lable_search_swimmer(id.get(i).getGender(), 0.065);
+            Label phone1 = make_lable_search_swimmer(id.get(i).getPhone(), .06);
+            Label level1 = make_lable_search_swimmer(id.get(i).getLevel(), .05);
+            Label s_day1 = make_lable_search_swimmer(id.get(i).getStart() + "", .073);
+            Label e_day1 = make_lable_search_swimmer(id.get(i).getEnd() + "", .065);
+            Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .05);
+            Label day1 = make_lable_search_swimmer(id.get(i).isDay() ? "Sunday" : "Saturday", .05);
+
+            HBox title1 = new HBox();
+            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.setAlignment(Pos.CENTER_RIGHT);
+            title1.getChildren().addAll(day1, time1, e_day1, s_day1, level1, phone1, gender1, age1, address1, name1, num1);
+            title1.setOnMouseEntered(event -> {
+                title1.setStyle("-fx-background-color :#b6bec2");
+            });
+            title1.setOnMouseExited(event -> {
+                title1.setStyle("-fx-background-color :#ffb3b3 ");
+            });
+            title1.setOnMouseClicked((event) -> {
+                List<attend_swimmer> s = new ArrayList<attend_swimmer>();
+
+                inf_s_name.setText(name1.getText());
+                inf_s_address.setText(address1.getText());
+                inf_s_age.setText(age1.getText());
+                try {
+                    allDb.DB_connection();
+                    //
+                    text_s_note.setText(allDb.get_note_id(id.get(Integer.parseInt(num1.getText()) - 1).getS_id()));
+                    inf_s_coach.setText(allDb.coach_by_name(id.get(Integer.parseInt(num1.getText()) - 1).getC_id()));
+                    s = allDb.get_att_swimmer(id.get(Integer.parseInt(num1.getText()) - 1).getS_id());
+                    allDb.DB_close();
+                } catch (SQLException ex) {
+                }
+                inf_s_day.setText(day1.getText());
+                inf_s_end_day.setText(e_day1.getText());
+                inf_s_gender.setText(gender1.getText());
+                inf_s_level.setText(level1.getText());
+                inf_s_phone.setText(phone1.getText());
+                inf_s_start_day.setText(s_day1.getText());
+                inf_s_time.setText(time1.getText());
+
+                v_s_attend.getChildren().clear();
+                s.forEach((t) -> {
+
+                    HBox att = new HBox();
+                    //att.setStyle("-fx-background-color: #ffb3b3;");
+                    att.setPrefSize(bounds.getWidth() * .1, 0);
+                    att.setAlignment(Pos.CENTER);
+                    att.setSpacing(10);
+
+                    try {
+                        Label att_num = make_lable_search_swimmer(t.getNum() + "", .04);
+                        Label att_day = make_lable_search_swimmer(t.getDay() + "", .07);
+                        att.getChildren().addAll(att_day, att_num);
+                    } catch (SQLException ex) {
+                    }
+                    v_s_attend.getChildren().add(att);
+                });
+
+                information_swimmer.toFront();
+            });
+            table_search.getChildren().add(title1);
+
+            if (i > 15) {
+
+                pane_search_table.setPrefHeight(pane_search_table.getPrefHeight() + bounds.getWidth() * .017);
+            }
+        }
+
+        pane_search_table.getChildren().clear();
+        pane_search_table.getChildren().add(table_search);
+    }
+
+    private Label make_lable_search_swimmer(String name, double d) throws SQLException {
+
+        Label l = new Label(name);
+        l.setPrefWidth(bounds.getWidth() * d);
+        l.setStyle("-fx-font-size: 14px;-fx-border-color:#000;");
+        l.setAlignment(Pos.CENTER);
+
+        return l;
     }
 }
