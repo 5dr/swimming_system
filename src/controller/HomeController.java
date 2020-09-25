@@ -6,7 +6,6 @@
 package controller;
 
 import com.jfoenix.controls.*;
-import com.mysql.jdbc.Connection;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
@@ -15,10 +14,8 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import javafx.geometry.Rectangle2D;
 import java.net.URL;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -57,15 +54,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javax.swing.JOptionPane;
+import model.all_information_for_attend_swimmer;
 import model.all_information_for_swimmer;
 import model.attend_swimmer;
 import model.coach;
@@ -82,23 +77,19 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private TextField add_s_name, add_s_phone, add_s_age;
-    @FXML
     private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search;
-
     @FXML
     private AnchorPane anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend;
+    private VBox p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend, vbox_group_inf;
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer;
+    private Pane p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer, p_group_inf;
     @FXML
-    private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time;
+    private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time, search_att_time;
     @FXML
-
-    private JFXComboBox<String> add_s_gender, coach_swimmer, day_swimmer, combobox_all_group_day, time_swimmer;
+    private JFXComboBox<String> combobox_all_group_day;
     @FXML
     private ScrollPane scrooll, scroll_search;
 
@@ -111,19 +102,25 @@ public class HomeController implements Initializable {
     private JFXButton search_group, search_coach, search_swimmer;
 
     @FXML
-    private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name;
+    private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
 
     @FXML
-    private TextField search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day;
+    private TextField search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
 
     @FXML
     private JFXComboBox<String> search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender;
 
     @FXML
+    private JFXComboBox<Integer> search_att_num;
+
+    @FXML
     private HBox hbox_select_search;
-    
+
     @FXML
     private JFXTextField text_s_note;
+
+    @FXML
+    private JFXDatePicker search_att_day;
 
     public void swi(ActionEvent actionEvent) {
         if (actionEvent.getSource() == b_home) {
@@ -143,54 +140,6 @@ public class HomeController implements Initializable {
         if (actionEvent.getSource() == b_search) {
             p_search.toFront();
         }
-    }
-
-    public void add_swimmer(ActionEvent actionEvent) throws SQLException {
-        if (add_s_name.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
-        } else if (add_s_phone.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
-        } else if (add_s_age.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم ادخال العمر");
-        } else if (add_s_gender.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
-        } else if (day_swimmer.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
-        } else if (time_swimmer.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
-        } else if (coach_swimmer.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار المدرب");
-        } else {
-  
-            Time times = Time.valueOf(time_swimmer.getValue());
-            int b = day_swimmer.getValue() == "Saturday" ? 0 : 1;
-            String age = String.valueOf(add_s_age.getText());
-            allDb.DB_connection();
-            Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
-
-            Statement s = connection.createStatement();
-            ResultSet r = s.executeQuery("SELECT COUNT(*) AS rowcountSELECT  FROM groups INNER JOIN couch ON groups.c_id=couch.c_id where groups.g_time=" + time_swimmer.getValue() + "and groups.g_day= " + b + "and couch.name= " + add_s_name.getText());
-   System.err.println("aamny");
-           int count = r.getInt("rowcount") ;
-r.close() ;
-System.out.println("MyTable has " + count + " row(s).");
-            System.err.println(count);
-            r.close();
-            if (allDb.is_group_exist(coach.get(coach_swimmer.getSelectionModel().getSelectedIndex()).getC_id(), day_swimmer.getValue(), times)) {
-
-                if (count != 8) {
-                    allDb.Add_swimmer(add_s_name.getText(), add_s_phone.getText(), age, coach_swimmer.getValue(), times,
-                            day_swimmer.getValue(), add_s_gender.getValue());
-                    JOptionPane.showMessageDialog(null, "تم اضافه السباح");
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "الكابتن  " + coach_swimmer.getValue() + " " + "مفيش مجموعة ف نفس المعاد");
-
-                }
-            }
-            allDb.DB_close();
-        }
-
     }
 
     public void print(ActionEvent actionEvent) {
@@ -272,6 +221,14 @@ System.out.println("MyTable has " + count + " row(s).");
             vbox_search_group.setDisable(true);
             vbox_search_coach.setDisable(false);
             vbox_search_swimmer.setDisable(true);
+
+            try {
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer();
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
 
         }
         if (actionEvent.getSource() == search_swimmer) {
@@ -826,11 +783,106 @@ System.out.println("MyTable has " + count + " row(s).");
         }
     }
 
+    public void att_search(ActionEvent actionEvent) throws SQLException {
+
+        if (r_att_day.isSelected() && r_att_num.isSelected() && r_att_time.isSelected()) {
+            if (search_att_day.getValue() == null) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_att_num.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار رقم اليوم");
+            } else if (search_att_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_day_and_time_and_num(sqlDate, search_att_time.getValue(), search_att_num.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_day.isSelected() && r_att_time.isSelected()) {
+            if (search_att_day.getValue() == null) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_att_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_day_and_time(sqlDate, search_att_time.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_day.isSelected() && r_att_num.isSelected()) {
+            if (search_att_day.getValue() == null) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else if (search_att_num.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار رقم اليوم");
+            } else {
+                Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_day_and_num(sqlDate, search_att_num.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_num.isSelected() && r_att_time.isSelected()) {
+            if (search_att_num.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار رقم اليوم");
+            } else if (search_att_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                // Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_time_and_num(search_att_time.getValue(), search_att_num.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_day.isSelected()) {
+            if (search_att_day.getValue() == null) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+            } else {
+                Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_day(sqlDate);
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_time.isSelected()) {
+            if (search_att_time.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+            } else {
+                // Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_time(search_att_time.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_num.isSelected()) {
+            if (search_att_num.getSelectionModel().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار رقم اليوم");
+            } else {
+                // Date sqlDate = java.sql.Date.valueOf(search_att_day.getValue());
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_num(search_att_num.getValue());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        } else if (r_att_s_name.isSelected()) {
+            if (search_att_name.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+            } else {
+                allDb.DB_connection();
+                search_att_swimmer_list = allDb.search_attend_swimmer_by_name(search_att_name.getText());
+                BuildSearch_att(search_att_swimmer_list);
+                allDb.DB_close();
+            }
+        }
+    }
+
     DB allDb;
     Rectangle2D bounds;
     List<all_information_for_group> id;
     List<all_information_for_group> search_group_list;
     List<all_information_for_swimmer> search_swimmer_list;
+    List<all_information_for_attend_swimmer> search_att_swimmer_list;
     List<Integer> all_g_id;
     List<List<swimmer>> t;
     List<coach> coach;
@@ -853,143 +905,19 @@ System.out.println("MyTable has " + count + " row(s).");
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
             add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
             add_group_time.setValue(LocalTime.MIN);
-
         } catch (SQLException ex) {
         }
 
         ///////////////////////search group//////
-        search_group_list = new ArrayList<all_information_for_group>();
-        search_g_day.getItems().addAll("Saturday", "Sunday");
-        search_g_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
-                "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
-        search_g_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
-
-        try {
-            allDb.DB_connection();
-            search_g_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
-            TextFields.bindAutoCompletion(search_g_name, allDb.search_group_by_name());
-            allDb.DB_close();
-        } catch (SQLException ex) {
-        }
-        r_g_name.setOnAction((event) -> {
-            if (r_g_name.isSelected()) {
-                search_g_name.setDisable(false);
-            } else {
-                search_g_name.setText("");
-                search_g_name.setDisable(true);
-            }
-
-        });
-        r_g_time.setOnAction((event) -> {
-            if (r_g_time.isSelected()) {
-                search_g_time.setDisable(false);
-            } else {
-                search_g_time.setValue(null);
-                search_g_time.setDisable(true);
-            }
-        });
-        r_g_day.setOnAction((event) -> {
-            if (r_g_day.isSelected()) {
-                search_g_day.setDisable(false);
-            } else {
-                search_g_day.setValue(null);
-                search_g_day.setDisable(true);
-            }
-        });
-        r_g_line.setOnAction((event) -> {
-            if (r_g_line.isSelected()) {
-                search_g_line.setDisable(false);
-            } else {
-                search_g_line.setValue(null);
-                search_g_line.setDisable(true);
-            }
-        });
-        r_g_level.setOnAction((event) -> {
-            if (r_g_level.isSelected()) {
-                search_g_level.setDisable(false);
-            } else {
-                search_g_level.setValue(null);
-                search_g_level.setDisable(true);
-            }
-        });
-
-        scroll_search.setPrefSize(bounds.getWidth() * 0.55, bounds.getHeight() * 0.51);
-        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
-        select_pane_search.setPrefWidth(bounds.getWidth() * 0.55);
-        hbox_select_search.setPrefWidth(bounds.getWidth() * 0.55);
-
-        try {
-            allDb.DB_connection();
-            search_group_list = allDb.search_group_all();
-            allDb.DB_close();
-            BuildSearch(search_group_list);
-        } catch (SQLException ex) {
-        }
-
+        initialize_search_group();
         ///////////////////////search group//////
+
         ///////////////////////search swimmer//////
-        search_swimmer_list = new ArrayList<all_information_for_swimmer>();
-        search_s_day.getItems().addAll("Saturday", "Sunday");
-        search_s_gender.getItems().addAll("male", "female");
-        try {
-            allDb.DB_connection();
-            search_swimmer_list = allDb.search_swimmer_all();
-            search_s_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
-            TextFields.bindAutoCompletion(search_s_name, allDb.get_all_name_swimmer());
-            allDb.DB_close();
-        } catch (SQLException ex) {
-        }
-
-        r_s_name.setOnAction((event) -> {
-            if (r_s_name.isSelected()) {
-                search_s_name.setDisable(false);
-                r_s_day.setSelected(false);
-                r_s_gender.setSelected(false);
-                r_s_time.setSelected(false);
-                search_s_time.setValue(null);
-                search_s_time.setDisable(true);
-                search_s_gender.setValue(null);
-                search_s_gender.setDisable(true);
-                search_s_day.setValue(null);
-                search_s_day.setDisable(true);
-            } else {
-                search_s_name.setText("");
-                search_s_name.setDisable(true);
-            }
-        });
-        r_s_time.setOnAction((event) -> {
-            if (r_s_time.isSelected()) {
-                search_s_time.setDisable(false);
-                r_s_name.setSelected(false);
-                search_s_name.setText("");
-                search_s_name.setDisable(true);
-            } else {
-                search_s_time.setValue(null);
-                search_s_time.setDisable(true);
-            }
-        });
-        r_s_day.setOnAction((event) -> {
-            if (r_s_day.isSelected()) {
-                search_s_day.setDisable(false);
-                r_s_name.setSelected(false);
-                search_s_name.setText("");
-                search_s_name.setDisable(true);
-            } else {
-                search_s_day.setValue(null);
-                search_s_day.setDisable(true);
-            }
-        });
-        r_s_gender.setOnAction((event) -> {
-            if (r_s_gender.isSelected()) {
-                search_s_gender.setDisable(false);
-                r_s_name.setSelected(false);
-                search_s_name.setText("");
-                search_s_name.setDisable(true);
-            } else {
-                search_s_gender.setValue(null);
-                search_s_gender.setDisable(true);
-            }
-        });
+        initialize_search_swimmer();
+        ///////////////////////search swimmer//////
+        ///////////////////////search attend//////
+        initialize_search_att();
+        ///////////////////////search attend//////
 
     }
 
@@ -1042,6 +970,10 @@ System.out.println("MyTable has " + count + " row(s).");
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getName(), 0.1735);
                 Swimer.getChildren().add(la);
+            }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                Label la = make_lable("", 0.1735);
+                Swimer.getChildren().add(la);
 
             }
 
@@ -1077,7 +1009,7 @@ System.out.println("MyTable has " + count + " row(s).");
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1089,7 +1021,7 @@ System.out.println("MyTable has " + count + " row(s).");
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1158,6 +1090,14 @@ System.out.println("MyTable has " + count + " row(s).");
                 all_nots.getChildren().add(t);
 
             }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                TextField t = new TextField();
+                t.setPrefWidth(bounds.getWidth() * .19);
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+                t.setAlignment(Pos.CENTER);
+                all_nots.getChildren().add(t);
+
+            }
 
             row.getChildren().add(all_nots);
             row.getChildren().add(all_level);
@@ -1186,7 +1126,8 @@ System.out.println("MyTable has " + count + " row(s).");
 
         return l;
     }
-       private Label make_lable_g(String name, double d) throws SQLException {
+
+    private Label make_lable_g(String name, double d) throws SQLException {
 
         Label l = new Label(name);
         l.setPrefWidth(bounds.getWidth() * d);
@@ -1196,7 +1137,7 @@ System.out.println("MyTable has " + count + " row(s).");
         return l;
     }
 
-    private void initialize_home() throws SQLException {
+    private void initialize_home() {
         ///////////////////////initialize//////////////
         Time sqlTime = Time.valueOf("03:00:00");
         allDb = new DB();
@@ -1215,37 +1156,6 @@ System.out.println("MyTable has " + count + " row(s).");
         combobox_all_group_day.getItems().addAll("Saturday", "Sunday");
         combobox_all_group_day.setValue("Saturday");
         combobox_all_group.setValue(sqlTime);
-        day_swimmer.getItems().addAll("Saturday", "Sunday");
-        Connection connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
-
-        Statement statement = connection.createStatement();
-        ResultSet r = statement.executeQuery("SELECT DISTINCT g_time FROM `groups`");
-        ObservableList<String> time = FXCollections.observableArrayList();
-
-        while (r.next()) {
-            time.add(r.getString("g_time"));
-
-        }
-
-        time_swimmer.setItems(time);
-
-        ResultSet rsu = statement.executeQuery("SELECT DISTINCT name FROM `couch`");
-        ObservableList<String> coach = FXCollections.observableArrayList();
-
-        while (rsu.next()) {
-            coach.add(rsu.getString("name")
-            );
-        }
-        coach_swimmer.setItems(coach);
-
-        ResultSet rsg = statement.executeQuery("SELECT DISTINCT gender FROM `swimmer`");
-        ObservableList<String> gender = FXCollections.observableArrayList();
-
-        while (rsg.next()) {
-            gender.add(rsg.getString("gender")
-            );
-        }
-        add_s_gender.setItems(gender);
 
         ///////////////////////initialize//////////////
         //////////////size//////////
@@ -1311,6 +1221,210 @@ System.out.println("MyTable has " + count + " row(s).");
 //////////////////////////home/////////////
 
     ////////////////////////search//////////
+    private void initialize_search_group() {
+
+        search_group_list = new ArrayList<all_information_for_group>();
+        search_g_day.getItems().addAll("Saturday", "Sunday");
+        search_g_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
+                "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+        search_g_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+
+        try {
+            allDb.DB_connection();
+            search_g_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            TextFields.bindAutoCompletion(search_g_name, allDb.search_group_by_name());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+        r_g_name.setOnAction((event) -> {
+            if (r_g_name.isSelected()) {
+                search_g_name.setDisable(false);
+            } else {
+                search_g_name.setText("");
+                search_g_name.setDisable(true);
+            }
+
+        });
+        r_g_time.setOnAction((event) -> {
+            if (r_g_time.isSelected()) {
+                search_g_time.setDisable(false);
+            } else {
+                search_g_time.setValue(null);
+                search_g_time.setDisable(true);
+            }
+        });
+        r_g_day.setOnAction((event) -> {
+            if (r_g_day.isSelected()) {
+                search_g_day.setDisable(false);
+            } else {
+                search_g_day.setValue(null);
+                search_g_day.setDisable(true);
+            }
+        });
+        r_g_line.setOnAction((event) -> {
+            if (r_g_line.isSelected()) {
+                search_g_line.setDisable(false);
+            } else {
+                search_g_line.setValue(null);
+                search_g_line.setDisable(true);
+            }
+        });
+        r_g_level.setOnAction((event) -> {
+            if (r_g_level.isSelected()) {
+                search_g_level.setDisable(false);
+            } else {
+                search_g_level.setValue(null);
+                search_g_level.setDisable(true);
+            }
+        });
+
+        scroll_search.setPrefSize(bounds.getWidth() * 0.55, bounds.getHeight() * 0.51);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        select_pane_search.setPrefWidth(bounds.getWidth() * 0.55);
+        hbox_select_search.setPrefWidth(bounds.getWidth() * 0.55);
+
+        try {
+            allDb.DB_connection();
+            search_group_list = allDb.search_group_all();
+            allDb.DB_close();
+            BuildSearch(search_group_list);
+        } catch (SQLException ex) {
+        }
+
+    }
+
+    private void initialize_search_swimmer() {
+
+        search_swimmer_list = new ArrayList<all_information_for_swimmer>();
+        search_s_day.getItems().addAll("Saturday", "Sunday");
+        search_s_gender.getItems().addAll("male", "female");
+        try {
+            allDb.DB_connection();
+            search_swimmer_list = allDb.search_swimmer_all();
+            search_s_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            TextFields.bindAutoCompletion(search_s_name, allDb.get_all_name_swimmer());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+
+        r_s_name.setOnAction((event) -> {
+            if (r_s_name.isSelected()) {
+                search_s_name.setDisable(false);
+                r_s_day.setSelected(false);
+                r_s_gender.setSelected(false);
+                r_s_time.setSelected(false);
+                search_s_time.setValue(null);
+                search_s_time.setDisable(true);
+                search_s_gender.setValue(null);
+                search_s_gender.setDisable(true);
+                search_s_day.setValue(null);
+                search_s_day.setDisable(true);
+            } else {
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            }
+        });
+        r_s_time.setOnAction((event) -> {
+            if (r_s_time.isSelected()) {
+                search_s_time.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_time.setValue(null);
+                search_s_time.setDisable(true);
+            }
+        });
+        r_s_day.setOnAction((event) -> {
+            if (r_s_day.isSelected()) {
+                search_s_day.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_day.setValue(null);
+                search_s_day.setDisable(true);
+            }
+        });
+        r_s_gender.setOnAction((event) -> {
+            if (r_s_gender.isSelected()) {
+                search_s_gender.setDisable(false);
+                r_s_name.setSelected(false);
+                search_s_name.setText("");
+                search_s_name.setDisable(true);
+            } else {
+                search_s_gender.setValue(null);
+                search_s_gender.setDisable(true);
+            }
+        });
+    }
+
+    private void initialize_search_att() {
+        search_att_swimmer_list = new ArrayList<all_information_for_attend_swimmer>();
+        search_att_num.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+
+        try {
+            allDb.DB_connection();
+            allDb.search_attend_swimmer();
+            // search_swimmer_list = allDb.search_swimmer_all();
+            search_att_time.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            TextFields.bindAutoCompletion(search_att_name, allDb.get_all_name_swimmer());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+
+        r_att_s_name.setOnAction((event) -> {
+            if (r_att_s_name.isSelected()) {
+                search_att_name.setDisable(false);
+                r_att_day.setSelected(false);
+                r_att_num.setSelected(false);
+                r_att_time.setSelected(false);
+                search_att_time.setValue(null);
+                search_att_time.setDisable(true);
+                search_att_day.setValue(null);
+                search_att_day.setDisable(true);
+                search_att_num.setValue(null);
+                search_att_num.setDisable(true);
+            } else {
+                search_att_name.setText("");
+                search_att_name.setDisable(true);
+            }
+        });
+        r_att_time.setOnAction((event) -> {
+            if (r_att_time.isSelected()) {
+                search_att_time.setDisable(false);
+                r_att_s_name.setSelected(false);
+                search_att_name.setText("");
+                search_att_name.setDisable(true);
+            } else {
+                search_att_time.setValue(null);
+                search_att_time.setDisable(true);
+            }
+        });
+        r_att_day.setOnAction((event) -> {
+            if (r_att_day.isSelected()) {
+                search_att_day.setDisable(false);
+                r_att_s_name.setSelected(false);
+                search_att_name.setText("");
+                search_att_name.setDisable(true);
+            } else {
+                search_att_day.setValue(null);
+                search_att_day.setDisable(true);
+            }
+        });
+        r_att_num.setOnAction((event) -> {
+            if (r_att_num.isSelected()) {
+                search_att_num.setDisable(false);
+                r_att_s_name.setSelected(false);
+                search_att_name.setText("");
+                search_att_name.setDisable(true);
+            } else {
+                search_att_num.setValue(null);
+                search_att_num.setDisable(true);
+            }
+        });
+    }
+
     VBox table_search = new VBox();
 
     private void BuildSearch(List<all_information_for_group> id) throws SQLException {
@@ -1349,6 +1463,89 @@ System.out.println("MyTable has " + count + " row(s).");
             title1.setOnMouseExited(event -> {
                 title1.setStyle("-fx-background-color :#ffb3b3 ");
             });
+            title1.setOnMouseClicked((event) -> {
+                List<attend_swimmer> s = new ArrayList<attend_swimmer>();
+
+                vbox_group_inf.getChildren().clear();
+                try {
+                    Label num_inf = make_lable_search_head("num", .039, "b6bec2", 20);
+                    Label id_inf = make_lable_search_head("Id", 0.05, "b6bec2", 20);
+                    Label name_inf = make_lable_search_head("Name", 0.09, "b6bec2", 20);
+                    Label level_inf = make_lable_search_head("level", .09, "b6bec2", 20);
+                    Label track_inf = make_lable_search_head("Line", .09, "b6bec2", 20);
+                    Label time_inf = make_lable_search_head("Time", .09, "b6bec2", 20);
+                    Label day_inf = make_lable_search_head("Day", .09, "b6bec2", 20);
+
+                    HBox title_inf = new HBox();
+                    title_inf.setStyle("-fx-background-color:  #b6bec2;");
+                    title_inf.setPrefSize(bounds.getWidth() * .54, 0);
+                    title_inf.getChildren().addAll(day_inf, time_inf, track_inf, level_inf, name_inf, id_inf, num_inf);
+                    title_inf.setAlignment(Pos.CENTER_RIGHT);
+
+                    vbox_group_inf.getChildren().add(title_inf);
+
+                    Label num1_inf = make_lable_g(num1.getText(), .039);
+                    Label name1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getName(), 0.09);
+                    Label id1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getC_id() + "", 0.05);
+                    Label level1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getG_level(), .09);
+                    Label track1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getTrack(), .09);
+                    Label time1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getTime() + "", .09);
+                    Label day1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).isDay() ? "Sunday" : "Saturday", .09);
+
+                    HBox title1_inf = new HBox();
+                    title1_inf.setStyle("-fx-background-color: #ffb3b3;");
+                    title1_inf.setPrefSize(bounds.getWidth() * .54, 0);
+                    title1_inf.getChildren().addAll(day1_inf, time1_inf, track1_inf, level1_inf, name1_inf, id1_inf, num1_inf);
+                    title1_inf.setAlignment(Pos.CENTER_RIGHT);
+
+                    vbox_group_inf.getChildren().add(title1_inf);
+
+                    Label swimmer = make_lable_search_head("The Swimmer in Group", .539, "303436", 20);
+                    swimmer.setTextFill(rgb(255, 255, 255));
+
+                    vbox_group_inf.getChildren().add(swimmer);
+
+                    List<swimmer> t = new ArrayList<swimmer>();
+
+                    allDb.DB_connection();
+                    t = allDb.get_swimmer_by_group(id.get(Integer.parseInt(num1.getText()) - 1).getG_id());
+                    allDb.DB_close();
+
+                    Label num_s = make_lable_search_head("ID", .04, "b6bec2", 20);
+                    Label id_s = make_lable_search_head("ID", .139, "b6bec2", 20);
+                    Label name_s = make_lable_search_head("Name", 0.18, "b6bec2", 20);
+                    Label gender_s = make_lable_search_head("Gender", .18, "b6bec2", 20);
+
+                    HBox title_s = new HBox();
+                    title_s.setStyle("-fx-background-color:  #b6bec2;");
+                    title_s.setPrefSize(bounds.getWidth() * .54, 0);
+                    title_s.getChildren().addAll(gender_s, name_s, id_s,num_s);
+                    title_s.setAlignment(Pos.CENTER_RIGHT);
+
+                    vbox_group_inf.getChildren().add(title_s);
+
+                    for (int x = 0; x < t.size(); x++) {
+                        
+                        Label num_s1 = make_lable_g((x+1)+"", .04);
+                        Label id_s1 = make_lable_g(t.get(x).getS_id() + "", .139);
+                        Label name_s1 = make_lable_g(t.get(x).getName(), 0.18);
+                        Label gender_s1 = make_lable_g(t.get(x).getGender(), .18);
+
+                        HBox title_s1 = new HBox();
+                        title_s1.setStyle("-fx-background-color:  #ffb3b3;");
+                        title_s1.setPrefSize(bounds.getWidth() * .54, 0);
+                        title_s1.getChildren().addAll(gender_s1, name_s1, id_s1,num_s1);
+                        title_s1.setAlignment(Pos.CENTER_RIGHT);
+
+                        vbox_group_inf.getChildren().add(title_s1);
+
+                    }
+
+                } catch (SQLException ex) {
+                }
+
+                p_group_inf.toFront();
+            });
             table_search.getChildren().add(title1);
 
             if (i > 15) {
@@ -1378,7 +1575,7 @@ System.out.println("MyTable has " + count + " row(s).");
 
         Label num = make_lable_search_head("num", .04, "b6bec2", 17);
         Label name = make_lable_search_head("Name", 0.09, "b6bec2", 17);
-        Label address = make_lable_search_head("Address", 0.07, "b6bec2", 17);
+        Label address = make_lable_search_head("Coach", 0.07, "b6bec2", 17);
         Label age = make_lable_search_head("Age", 0.047, "b6bec2", 17);
         Label gender = make_lable_search_head("Gender", 0.065, "b6bec2", 17);
         Label phone = make_lable_search_head("Phone", 0.06, "b6bec2", 17);
@@ -1398,7 +1595,7 @@ System.out.println("MyTable has " + count + " row(s).");
         for (int i = 0; i < id.size(); i++) {
             Label num1 = make_lable_search_swimmer((i + 1) + "", .04);
             Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.09);
-            Label address1 = make_lable_search_swimmer(id.get(i).getAdress(), 0.07);
+            Label address1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getC_id()), 0.07);
             Label age1 = make_lable_search_swimmer(id.get(i).getAge() + "", .047);
             Label gender1 = make_lable_search_swimmer(id.get(i).getGender(), 0.065);
             Label phone1 = make_lable_search_swimmer(id.get(i).getPhone(), .06);
@@ -1427,7 +1624,6 @@ System.out.println("MyTable has " + count + " row(s).");
                 inf_s_age.setText(age1.getText());
                 try {
                     allDb.DB_connection();
-                    //
                     text_s_note.setText(allDb.get_note_id(id.get(Integer.parseInt(num1.getText()) - 1).getS_id()));
                     inf_s_coach.setText(allDb.coach_by_name(id.get(Integer.parseInt(num1.getText()) - 1).getC_id()));
                     s = allDb.get_att_swimmer(id.get(Integer.parseInt(num1.getText()) - 1).getS_id());
@@ -1482,5 +1678,62 @@ System.out.println("MyTable has " + count + " row(s).");
         l.setAlignment(Pos.CENTER);
 
         return l;
+    }
+
+    private void BuildSearch_att(List<all_information_for_attend_swimmer> id) throws SQLException {
+
+        table_search.getChildren().clear();
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+
+        Label num = make_lable_search_head("num", .04, "b6bec2", 18);
+        Label name = make_lable_search_head("Name", 0.1, "b6bec2", 18);
+        Label Id = make_lable_search_head("Id", 0.048, "b6bec2", 18);
+        Label Date = make_lable_search_head("Date", 0.07, "b6bec2", 18);
+        Label n_day = make_lable_search_head("N_Day", 0.05, "b6bec2", 18);
+        Label coach = make_lable_search_head("Coach", 0.06, "b6bec2", 18);
+        Label level = make_lable_search_head("level", .05, "b6bec2", 18);
+        Label time = make_lable_search_head("Time", .06, "b6bec2", 18);
+        Label day = make_lable_search_head("Day", .06, "b6bec2", 18);
+
+        HBox title = new HBox();
+        title.setStyle("-fx-background-color:  #b6bec2;");
+        title.setPrefSize(bounds.getWidth() * .54, 0);
+        title.getChildren().addAll(day, time, level, coach, n_day, Date, Id, name, num);
+        title.setAlignment(Pos.CENTER_RIGHT);
+        table_search.getChildren().add(title);
+
+        for (int i = 0; i < id.size(); i++) {
+            Label num1 = make_lable_search_swimmer((i + 1) + "", .04);
+            Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.1);
+            Label id1 = make_lable_search_swimmer(id.get(i).getS_id() + "", .048);
+            Label date1 = make_lable_search_swimmer(id.get(i).getDay() + "", 0.07);
+            Label n_day1 = make_lable_search_swimmer(id.get(i).getNum() + "", .05);
+            Label coach1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getC_id()), 0.06);
+            Label level1 = make_lable_search_swimmer(id.get(i).getLevel() + "", .05);
+            Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .06);
+            Label day1 = make_lable_search_swimmer(id.get(i).isG_day() ? "Sunday" : "Saturday", .06);
+
+            HBox title1 = new HBox();
+            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.setAlignment(Pos.CENTER_RIGHT);
+            title1.getChildren().addAll(day1, time1, level1, coach1, n_day1, date1, id1, name1, num1);
+            title1.setOnMouseEntered(event -> {
+                title1.setStyle("-fx-background-color :#b6bec2");
+            });
+            title1.setOnMouseExited(event -> {
+                title1.setStyle("-fx-background-color :#ffb3b3 ");
+            });
+            table_search.getChildren().add(title1);
+
+            if (i > 15) {
+
+                pane_search_table.setPrefHeight(pane_search_table.getPrefHeight() + bounds.getWidth() * .017);
+            }
+        }
+
+        pane_search_table.getChildren().clear();
+        pane_search_table.getChildren().add(table_search);
+
     }
 }

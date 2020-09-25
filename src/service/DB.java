@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.all_information_for_attend_swimmer;
 import model.all_information_for_group;
 import model.all_information_for_swimmer;
 import model.attend_couch;
@@ -41,7 +42,7 @@ public class DB {
 
         try {
             // connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/swimming", "root", "");
-            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "");
             System.out.println("connected");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -171,7 +172,7 @@ public class DB {
             while (r.next()) {
                 System.out.println(r.getString("s_id"));
                 t.add(new swimmer(r.getInt("s_id"), r.getString("name"),
-                       r.getInt("age"),
+                        r.getString("address"), r.getInt("age"),
                         r.getString("gender"), r.getString("phone"),
                         r.getInt("g_id"), r.getDate("start_date"), r.getDate("end_date")));
 
@@ -198,7 +199,7 @@ public class DB {
                 while (r.next()) {
                     System.out.println(r.getString("s_id"));
                     t1.add(new swimmer(r.getInt("s_id"), r.getString("name"),
-                          r.getInt("age"),
+                            r.getString("address"), r.getInt("age"),
                             r.getString("gender"), r.getString("phone"),
                             r.getInt("g_id"), r.getDate("start_date"), r.getDate("end_date")));
 
@@ -211,9 +212,33 @@ public class DB {
 
         return t;
     }
+    
+        public List<swimmer> get_swimmer_by_group(int g_id) throws SQLException {
+
+        List<swimmer>t = new ArrayList<swimmer>();
+
+        try {
+           
+                statement = connection.createStatement();
+                ResultSet r = statement
+                        .executeQuery("SELECT * FROM `swimmer` WHERE `g_id` = " + g_id + "");
+                while (r.next()) {
+                    System.out.println(r.getString("s_id"));
+                    t.add(new swimmer(r.getInt("s_id"), r.getString("name"),
+                            r.getString("address"), r.getInt("age"),
+                            r.getString("gender"), r.getString("phone"),
+                            r.getInt("g_id"), r.getDate("start_date"), r.getDate("end_date")));
+
+                }
+            
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "coach :" + ex);
+        }
+
+        return t;
+    }
 
     public int addswimmer(String name, String address, int age, String gender, String phone, int group) throws SQLException {
-      
         int Max_id = 0;
         try {
             Date now = new Date();
@@ -233,7 +258,7 @@ public class DB {
             }
             Max_id++;
             System.out.println(name);
-            statement.executeUpdate("INSERT INTO `swimmer` (`s_id`, `name`, `age`, `gender`, `phone`, `g_id`, `start_date`, `end_date`) VALUES (" + Max_id + ", n'" + name + "', n'" + "', '" + age + "', '" + gender + "', '" + phone + "', '" + group + "', '" + sdf.format(now) + "', '" + sdf.format(AfterMonth) + "');");
+            statement.executeUpdate("INSERT INTO `swimmer` (`s_id`, `name`, `address`, `age`, `gender`, `phone`, `g_id`, `start_date`, `end_date`) VALUES (" + Max_id + ", n'" + name + "', n'" + address + "', '" + age + "', '" + gender + "', '" + phone + "', '" + group + "', '" + sdf.format(now) + "', '" + sdf.format(AfterMonth) + "');");
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Add swimmer :" + ex);
@@ -317,17 +342,6 @@ public class DB {
             System.out.println(" all_information_for_group :" + ex);
         }
         return id;
-    }
-      public void Add_swimmer(String name, String phone,String age ,String coach,Time t, String day,String gender ) {
-int age_s=Integer.parseInt(age); 
-        try {
-            int b = day == "Saturday" ? 0 : 1;
-            statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO `swimmer` (`name`, `age`, `gender`, `phone`, ``, `g_day`) VALUES (NULL, '" + name + "', '" + age_s + "', '" + gender + "', '" + phone + "', '" + b + "');");
-        } catch (SQLException ex) {
-            System.out.println(" Add_attend_swimmer :" + ex);
-        }
-
     }
 
     public void Add_group(int c_id, String track, String level, String day, Time t) {
@@ -1461,6 +1475,187 @@ int age_s=Integer.parseInt(age);
 
     ////////////////////////////////////////////////search_attend/////////////
 
+       public List<all_information_for_attend_swimmer> search_attend_swimmer() {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                                                     //int attend_id, int s_id, int num, int age,               int g_id, int c_id, Date day,                      String name,                                                String phone, String level, String gender, String track, Date start, Date end, Time g_time, boolean g_day
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+      public List<all_information_for_attend_swimmer> search_attend_swimmer_by_name(String name) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.name= '"+name+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+      
+            //0 0 1
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_num(int n) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.num="+n);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+             //0 1 0
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_time(Time t) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.g_time ='"+t+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+             //0 1 1
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_time_and_num(Time t,int n) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.num="+n+" AND groups.g_time ='"+t+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+             //1 0 0
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_day(Date d) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.day='"+d+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+             //1 0 1
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_day_and_num(Date d,int n) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.day='"+d+"' AND attend_swimmer.num="+n);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+             //1 1 0
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_day_and_time(Date d,Time t) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.day='"+d+"' AND groups.g_time ='"+t+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+      
+      //1 1 1
+       public List<all_information_for_attend_swimmer> search_attend_swimmer_by_day_and_time_and_num(Date d,Time t,int n) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer  >();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE attend_swimmer.day='"+d+"' AND attend_swimmer.num="+n+" AND groups.g_time ='"+t+"'");
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"),r.getInt("s_id"),r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"),r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
     ////////////////////////////////////////////////search/////////////
     
     //SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id
