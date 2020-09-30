@@ -6,16 +6,21 @@
 package controller;
 
 import com.jfoenix.controls.*;
+import com.mysql.jdbc.Connection;
 import com.sun.javafx.print.PrintHelper;
 import com.sun.javafx.print.Units;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
+import java.awt.print.PrinterException;
 import javafx.geometry.Rectangle2D;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -55,16 +60,22 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import static javafx.scene.paint.Color.rgb;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javax.swing.JOptionPane;
 import model.all_information_for_attend_swimmer;
 import model.all_information_for_swimmer;
+import model.attend_couch;
 import model.attend_swimmer;
 import model.coach;
 import org.controlsfx.control.textfield.TextFields;
+import service.BillPrintable;
 
 /**
  * FXML Controller class
@@ -81,34 +92,34 @@ public class HomeController implements Initializable {
     @FXML
     private AnchorPane anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend, vbox_group_inf;
+    private VBox p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_search_att_s, vbox_search_att_c;
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer, p_group_inf;
+    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer, p_group_inf;
     @FXML
-    private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time, search_att_time;
+    private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time, search_att_time, time_swimmer;
     @FXML
     private JFXComboBox<String> combobox_all_group_day;
     @FXML
     private ScrollPane scrooll, scroll_search;
 
     @FXML
-    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level;
+    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level, update_group_day, update_coach, update_group_line, update_group_level;
 
     @FXML
-    private JFXTimePicker add_group_time;
+    private JFXTimePicker add_group_time, update_group_time;
     @FXML
-    private JFXButton search_group, search_coach, search_swimmer;
+    private JFXButton search_group, search_att_s, search_swimmer, search_coach, search_att_c;
 
     @FXML
     private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
 
     @FXML
-    private TextField search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
+    private TextField add_C_name, add_C_adress, add_C_phone, search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
 
     @FXML
-    private JFXComboBox<String> search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender;
+    private JFXComboBox<String> add_C_level, search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender, add_s_gender, day_swimmer, coach_swimmer;
 
     @FXML
     private JFXComboBox<Integer> search_att_num;
@@ -117,10 +128,207 @@ public class HomeController implements Initializable {
     private HBox hbox_select_search;
 
     @FXML
-    private JFXTextField text_s_note;
+    private JFXTextField text_s_note, add_s_name, add_s_phone, add_s_age;
 
     @FXML
     private JFXDatePicker search_att_day;
+    @FXML
+    private ButtonBar button_bar;
+
+    public void add_coach(ActionEvent actionEvent) throws SQLException {
+
+        if (add_C_name.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
+        } else if (add_C_adress.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال العنوان");
+        } else if (add_C_phone.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
+        } else if (add_C_level.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال المستوى");
+        } else {
+            allDb.DB_connection();
+
+            allDb.addcoach(add_C_name.getText(), add_C_phone.getText(), add_C_adress.getText(), add_C_level.getValue());
+
+            allDb.DB_close();
+
+            initialize_search_group();
+            initialize_add_group();
+            initialize_add_swimmer();
+
+            JOptionPane.showMessageDialog(null, "تم اضافه الكابتن");
+
+        }
+
+    }
+
+    public void add_group(ActionEvent actionEvent) throws SQLException {
+
+        if (add_group_coach.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الكابتن");
+        } else if (add_group_day.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+        } else if (add_group_level.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+        } else if (add_group_line.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+        } else {
+            System.out.println(add_group_coach.getValue());
+            Time time = Time.valueOf(add_group_time.getValue());
+            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            boolean bool = false;
+
+            allDb.DB_connection();
+            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)) {
+                JOptionPane.showMessageDialog(null, "الكابتن  " + add_group_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
+            } else {
+                allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
+                        add_group_level.getValue(), add_group_day.getValue(), time);
+                JOptionPane.showMessageDialog(null, "تم اضافة الجروب");
+
+                for (int i = 0; i < combobox_all_group.getItems().size(); i++) {
+                    if (combobox_all_group.getItems().get(i).equals(time)) {
+                        bool = true;
+                    }
+                }
+                if (!bool) {
+                    combobox_all_group.getItems().add(time);
+                    search_g_time.getItems().add(time);
+                    search_s_time.getItems().add(time);
+                    search_att_time.getItems().add(time);
+                    time_swimmer.getItems().add(time);
+                }
+                initialize_search_group();
+                initialize_add_swimmer();
+
+            }
+            allDb.DB_close();
+        }
+    }
+
+    public void update_group(ActionEvent actionEvent) throws SQLException {
+
+        if (update_coach.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الكابتن");
+        } else if (update_group_day.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+        } else if (update_group_level.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
+        } else if (update_group_line.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+        } else {
+            Time time = Time.valueOf(update_group_time.getValue());
+            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            boolean bool = false;
+
+            allDb.DB_connection();
+            if (allDb.is_group_exist(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_day.getValue(), time)) {
+                JOptionPane.showMessageDialog(null, "الكابتن  " + update_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
+            } else {
+//                allDb.Add_group(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_line.getValue(),
+//                        update_group_level.getValue(), update_group_day.getValue(), time);
+                allDb.update_group(id_update,coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(),update_group_line.getValue(),
+                        update_group_level.getValue(), update_group_day.getValue(), time);
+                
+                JOptionPane.showMessageDialog(null, "تم تعديل الجروب");
+
+                for (int i = 0; i < combobox_all_group.getItems().size(); i++) {
+                    if (combobox_all_group.getItems().get(i).equals(time)) {
+                        bool = true;
+                    }
+                }
+                if (!bool) {
+                    combobox_all_group.getItems().add(time);
+                    search_g_time.getItems().add(time);
+                    search_s_time.getItems().add(time);
+                    search_att_time.getItems().add(time);
+                    time_swimmer.getItems().add(time);
+                }
+                initialize_search_group();
+                initialize_add_swimmer();
+
+            }
+            allDb.DB_close();
+        }
+    }
+
+    public void add_swimmer(ActionEvent actionEvent) throws SQLException, PrinterException {
+        if (add_s_name.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
+        } else if (add_s_phone.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
+        } else if (add_s_age.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال العمر");
+        } else if (add_s_gender.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
+        } else if (day_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
+        } else if (time_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
+        } else if (coach_swimmer.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار المدرب");
+        } else {
+
+            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            allDb.DB_connection();
+
+            int g_id = allDb.get_id_check_group_exist(coach_swimmer.getValue(), time_swimmer.getValue(), b);
+
+            if (allDb.check_group_exist(coach_swimmer.getValue(), time_swimmer.getValue(), b)) {
+
+                int count = allDb.get_swimmer_by_group(g_id).size();
+                System.out.println(count);
+
+                if (count < 8) {
+                    allDb.addswimmer(add_s_name.getText(), Integer.parseInt(add_s_age.getText()), add_s_gender.getValue(), add_s_phone.getText(), g_id);
+
+                    List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+                    id = allDb.search_group_by_name_and_time_and_day(coach_swimmer.getValue(), time_swimmer.getValue(), b);
+
+                    System.out.println(id);
+
+                    java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
+                    pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), id.get(0).isDay() ? "Sunday" : "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                    pj.print();
+                    pj.cancel();
+
+                    JOptionPane.showMessageDialog(null, "تم اضافه السباح");
+
+                    initialize_search_swimmer();
+
+                    add_s_name.setText("");
+                    add_s_phone.setText("");
+                    add_s_age.setText("");
+
+                } else {
+
+                    JOptionPane.showMessageDialog(null, "هذا الجروب مكتمل");
+
+                    add_s_name.setText("");
+                    add_s_phone.setText("");
+                    add_s_age.setText("");
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "الكابتن  " + coach_swimmer.getValue() + " " + "مفيش مجموعة ف نفس المعاد");
+
+            }
+            allDb.DB_close();
+        }
+
+    }
+
+    Time time_to_tranfer_to_add_swimmer;
+    String coach_to_tranfer_to_add_swimmer, day_to_tranfer_to_add_swimmer;
+
+    public void tranfer_to_add_swimmer(ActionEvent actionEvent) throws SQLException {
+
+        coach_swimmer.setValue(coach_to_tranfer_to_add_swimmer);
+        time_swimmer.setValue(time_to_tranfer_to_add_swimmer);
+        day_swimmer.setValue(day_to_tranfer_to_add_swimmer);
+
+        p_s_add.toFront();
+    }
 
     public void swi(ActionEvent actionEvent) {
         if (actionEvent.getSource() == b_home) {
@@ -166,41 +374,66 @@ public class HomeController implements Initializable {
         }
     }
 
-    public void add_group(ActionEvent actionEvent) throws SQLException {
-
-        if (add_group_coach.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار الكابتن");
-        } else if (add_group_day.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
-        } else if (add_group_level.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
-        } else if (add_group_line.getSelectionModel().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
-        } else {
-            System.out.println(add_group_coach.getValue());
-            Time time = Time.valueOf(add_group_time.getValue());
-
-            allDb.DB_connection();
-            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)) {
-                JOptionPane.showMessageDialog(null, "الكابتن  " + add_group_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
-            } else {
-                allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
-                        add_group_level.getValue(), add_group_day.getValue(), time);
-                JOptionPane.showMessageDialog(null, "تم اضافة الجروب");
-
+    public void print_search(ActionEvent actionEvent) {
+        //  Node p_home = new Circle(100, 200, 200);
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            PageLayout pageLayout = job.getJobSettings().getPageLayout();
+            double scaleX = 1.0;
+            if (pageLayout.getPrintableWidth() < table_search.getBoundsInParent().getWidth()) {
+                scaleX = pageLayout.getPrintableWidth() / table_search.getBoundsInParent().getWidth();
             }
-            allDb.DB_close();
+            double scaleY = 1.0;
+            if (pageLayout.getPrintableHeight() < table_search.getBoundsInParent().getHeight()) {
+                scaleY = pageLayout.getPrintableHeight() / table_search.getBoundsInParent().getHeight();
+            }
+            double scaleXY = Double.min(scaleX, scaleY);
+            Scale scale = new Scale(scaleXY, scaleXY);
+            table_search.getTransforms().add(scale);
+            boolean success = job.printPage(table_search);
+            table_search.getTransforms().remove(scale);
+            if (success) {
+                job.endJob();
+            }
+        }
+    }
+
+    public void print_g_inf(ActionEvent actionEvent) {
+        //  Node p_home = new Circle(100, 200, 200);
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            PageLayout pageLayout = job.getJobSettings().getPageLayout();
+            double scaleX = 1.0;
+            if (pageLayout.getPrintableWidth() < vbox_group_inf.getBoundsInParent().getWidth()) {
+                scaleX = pageLayout.getPrintableWidth() / vbox_group_inf.getBoundsInParent().getWidth();
+            }
+            double scaleY = 1.0;
+            if (pageLayout.getPrintableHeight() < vbox_group_inf.getBoundsInParent().getHeight()) {
+                scaleY = pageLayout.getPrintableHeight() / vbox_group_inf.getBoundsInParent().getHeight();
+            }
+            double scaleXY = Double.min(scaleX, scaleY);
+            Scale scale = new Scale(scaleXY, scaleXY);
+            vbox_group_inf.getTransforms().add(scale);
+            boolean success = job.printPage(vbox_group_inf);
+            vbox_group_inf.getTransforms().remove(scale);
+            if (success) {
+                job.endJob();
+            }
         }
     }
 
     public void switch_search(ActionEvent actionEvent) throws SQLException {
         if (actionEvent.getSource() == search_group) {
             search_group.setStyle("-fx-background-color: #ffffff;");
-            search_coach.setStyle("-fx-background-color:   #181a1b;");
+            //  search_coach.setStyle("-fx-background-color:   #181a1b;");
             search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+            search_att_s.setStyle("-fx-background-color: #181a1b;");
+            // search_att_c.setStyle("-fx-background-color: #181a1b;");
 
+            // vbox_search_att_c.setDisable(true);
+            vbox_search_att_s.setDisable(true);
             vbox_search_group.setDisable(false);
-            vbox_search_coach.setDisable(true);
+            //  vbox_search_coach.setDisable(true);
             vbox_search_swimmer.setDisable(true);
 
             try {
@@ -213,13 +446,60 @@ public class HomeController implements Initializable {
 
         }
 
-        if (actionEvent.getSource() == search_coach) {
+//        if (actionEvent.getSource() == search_coach) {
+//            search_group.setStyle("-fx-background-color:   #181a1b;");
+//           // search_coach.setStyle("-fx-background-color:  #ffffff;");
+//            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+//            search_att_s.setStyle("-fx-background-color: #181a1b;");
+//           // search_att_c.setStyle("-fx-background-color: #181a1b;");
+//            
+//            //vbox_search_att_c.setDisable(true);   
+//            vbox_search_att_s.setDisable(true);
+//            vbox_search_group.setDisable(true);
+//           // vbox_search_coach.setDisable(false);
+//            vbox_search_swimmer.setDisable(true);
+//
+//            try {
+//                allDb.DB_connection();
+//                search_att_swimmer_list = allDb.search_attend_swimmer();
+//                BuildSearch_att(search_att_swimmer_list);
+//                allDb.DB_close();
+//            } catch (SQLException ex) {
+//            }
+//
+//        }
+        if (actionEvent.getSource() == search_swimmer) {
             search_group.setStyle("-fx-background-color:   #181a1b;");
-            search_coach.setStyle("-fx-background-color:  #ffffff;");
-            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+            // search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_swimmer.setStyle("-fx-background-color:  #ffffff;");
+            search_att_s.setStyle("-fx-background-color: #181a1b;");
+            // search_att_c.setStyle("-fx-background-color: #181a1b;");
 
+            //  vbox_search_att_c.setDisable(true);
+            vbox_search_att_s.setDisable(true);
             vbox_search_group.setDisable(true);
-            vbox_search_coach.setDisable(false);
+            //vbox_search_coach.setDisable(true);
+            vbox_search_swimmer.setDisable(false);
+
+            try {
+                allDb.DB_connection();
+                search_swimmer_list = allDb.search_swimmer_all();
+                BuildSearch_Swimmer(search_swimmer_list);
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+        if (actionEvent.getSource() == search_att_s) {
+            search_group.setStyle("-fx-background-color: #181a1b;");
+            // search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+            search_att_s.setStyle("-fx-background-color: #ffffff;");
+            // search_att_c.setStyle("-fx-background-color: #181a1b;");
+
+            //  vbox_search_att_c.setDisable(true);
+            vbox_search_att_s.setDisable(false);
+            vbox_search_group.setDisable(true);
+            // vbox_search_coach.setDisable(true);
             vbox_search_swimmer.setDisable(true);
 
             try {
@@ -231,23 +511,28 @@ public class HomeController implements Initializable {
             }
 
         }
-        if (actionEvent.getSource() == search_swimmer) {
-            search_group.setStyle("-fx-background-color:   #181a1b;");
-            search_coach.setStyle("-fx-background-color:   #181a1b;");
-            search_swimmer.setStyle("-fx-background-color:  #ffffff;");
-
-            vbox_search_group.setDisable(true);
-            vbox_search_coach.setDisable(true);
-            vbox_search_swimmer.setDisable(false);
-
-            try {
-                allDb.DB_connection();
-                search_swimmer_list = allDb.search_swimmer_all();
-                BuildSearch_Swimmer(search_swimmer_list);
-                allDb.DB_close();
-            } catch (SQLException ex) {
-            }
-        }
+//           if (actionEvent.getSource() == search_att_c) {
+//            search_group.setStyle("-fx-background-color: #181a1b;");
+//            search_coach.setStyle("-fx-background-color:   #181a1b;");
+//            search_swimmer.setStyle("-fx-background-color:   #181a1b;");
+//            search_att_s.setStyle("-fx-background-color: #181a1b;");
+//            search_att_c.setStyle("-fx-background-color: #ffffff;");
+//            
+//            vbox_search_att_c.setDisable(false);
+//            vbox_search_att_s.setDisable(true);
+//            vbox_search_group.setDisable(true);
+//            vbox_search_coach.setDisable(true);
+//            vbox_search_swimmer.setDisable(true);
+//
+//           try {
+//                allDb.DB_connection();
+//                search_att_swimmer_list = allDb.search_attend_swimmer();
+//                BuildSearch_att(search_att_swimmer_list);
+//                allDb.DB_close();
+//            } catch (SQLException ex) {
+//            }
+//
+//        }
     }
 
     public void group_search(ActionEvent actionEvent) throws SQLException {
@@ -891,23 +1176,17 @@ public class HomeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        try {
-            initialize_home();
-            coach = new ArrayList<coach>();
-            allDb.DB_connection();
-            coach = allDb.allcoach();
-            allDb.DB_close();
-            coach.forEach((co) -> {
-                add_group_coach.getItems().add(co.getName());
-            });
-            add_group_day.getItems().addAll("Saturday", "Sunday");
-            add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
-                    "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
-            add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
-            add_group_time.setValue(LocalTime.MIN);
-        } catch (SQLException ex) {
-        }
+        initialize_home();
 
+        initialize_add_group();
+
+        ///////////////////add coach///////////
+        add_C_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+        ///////////////////add coach///////////
+
+        ///////////////////add swimmer///////////
+        initialize_add_swimmer();
+        ///////////////////add swimmer///////////
         ///////////////////////search group//////
         initialize_search_group();
         ///////////////////////search group//////
@@ -923,8 +1202,14 @@ public class HomeController implements Initializable {
 
     ////////////////////////////////home/////////////
     VBox table = new VBox();
+    List<all_information_for_group> all_re_coach = new ArrayList<all_information_for_group>();
+    List<String> l_name = new ArrayList<String>();
+    List<Integer> l_re_id = new ArrayList<Integer>();
 
     private void BuildHome(List<all_information_for_group> id, List<List<swimmer>> all_S) throws SQLException {
+
+        table.setStyle("-fx-background-color:  #ffb3b3;");
+        table.setSpacing(5);
 
         Label num = make_lable("num", .039);
         Label name = make_lable("Name", 0.1735);
@@ -945,7 +1230,7 @@ public class HomeController implements Initializable {
         Label notes = make_lable("notes", .19);
 
         HBox title = new HBox();
-        title.setStyle("-fx-background-color: #ffffff;");
+        title.setStyle("-fx-background-color: #ffb3b3;");
         title.setPrefSize(1000, 0);
         title.setMaxSize(10000, 10000);
         title.getChildren().addAll(notes, level, l12, l11, l10, l9, l8, l7, l6, l5, l4, l3, l2, l1, coach, name, num);
@@ -954,11 +1239,11 @@ public class HomeController implements Initializable {
 
         for (int z = 0; z < id.size(); z++) {
             HBox row = new HBox();
-            row.setStyle("-fx-background-color:  #ffffff;");
+            row.setStyle("-fx-background-color:  #ffb3b3;");
             row.setAlignment(Pos.CENTER_RIGHT);
 
             VBox all_num = new VBox();
-            all_num.setStyle("-fx-background-color:  #ffffff;");
+            all_num.setStyle("-fx-background-color:  #ffb3b3;");
 
             for (int i = 0; i < 8; i++) {
                 Label l = make_lable("" + (i + 1), .039);
@@ -966,7 +1251,7 @@ public class HomeController implements Initializable {
             }
 
             VBox Swimer = new VBox();
-            Swimer.setStyle("-fx-background-color:  #ffffff;");
+            Swimer.setStyle("-fx-background-color:  #ffb3b3;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getName(), 0.1735);
                 Swimer.getChildren().add(la);
@@ -977,11 +1262,95 @@ public class HomeController implements Initializable {
 
             }
 
+            VBox coach_att = new VBox();
+            //coach_att.setStyle("-fx-background-color:  #ffb3b3;-fx-border-color:#000;");
+            coach_att.setAlignment(Pos.TOP_CENTER);
+            coach_att.setSpacing(30);
+
+            JFXCheckBox ch_coach = new JFXCheckBox();
+            ch_coach.setCheckedColor(rgb(42, 115, 255));
+            ch_coach.setTextFill(rgb(255, 255, 255));
+            ch_coach.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;");
+            ch_coach.setPrefSize(bounds.getWidth() * .023, 0);
+            ch_coach.setAlignment(Pos.CENTER_RIGHT);
+            ch_coach.setId(id.get(z).getC_id() + "|" + z);
+
+            JFXComboBox t1 = new JFXComboBox();
+            t1.setPrefWidth(bounds.getWidth() * 0.07);
+            t1.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+            t1.setDisable(true);
+
+            String[] comp = ch_coach.getId().split("\\|");
+
+            try {
+                allDb.DB_connection();
+
+                all_re_coach = allDb.search_group_by_notequletime_and_day(id.get(Integer.parseInt(comp[1])).getTime(), id.get(Integer.parseInt(comp[1])).isDay());
+
+                l_name.clear();
+                l_re_id.clear();
+                for (int list = 0; list < all_re_coach.size(); list++) {
+                    l_name.add(all_re_coach.get(list).getName());
+                    l_re_id.add(all_re_coach.get(list).getC_id());
+                }
+
+                t1.getItems().addAll(l_name);
+                t1.setOnAction((e) -> {
+                    try {
+                        allDb.DB_connection();
+                        if (t1.getSelectionModel().isEmpty()) {
+                            allDb.Add_couch_attend(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                        } else {
+
+                            int update = allDb.update_attend_coach(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                            if (update == 0) {
+                                allDb.Add_couch_attend(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                            }
+                        }
+                        allDb.DB_connection();
+
+                    } catch (SQLException ex) {
+                    }
+
+                });
+                allDb.DB_connection();
+            } catch (SQLException ex) {
+            }
+
+            if (allDb.get_att_coach_bool(id.get(z).getG_id())) {
+                List<attend_couch> s = new ArrayList<attend_couch>();
+                s = allDb.get_att_coach(id.get(z).getG_id());
+                for (int i = 0; i < s.size(); i++) {
+                    ch_coach.setSelected(true);
+                    l_re_id.indexOf(s.get(0).getRep_name());
+                    t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
+                    t1.setDisable(false);
+                }
+            }
+            ch_coach.setOnAction((event) -> {
+
+                if (ch_coach.isSelected()) {
+
+                    t1.setDisable(false);
+                } else {
+                    t1.setDisable(true);
+                    try {
+                        allDb.DB_connection();
+                        allDb.delet_attend_coach(id.get(Integer.parseInt(comp[1])).getG_id());
+                        allDb.DB_close();
+                    } catch (SQLException ex) {
+                    }
+                }
+
+            });
+
             Label la = new Label(id.get(z).getName() + " \n " + id.get(z).getTrack() + "");
             la.setPrefWidth(bounds.getWidth() * 0.07);
             la.setMaxHeight(1000);
-            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;");
             la.setAlignment(Pos.CENTER);
+
+            coach_att.getChildren().addAll(t1, ch_coach, la);
 
             HBox all_att = new HBox();
             for (int j = 12; j > 0; j--) {
@@ -1047,9 +1416,12 @@ public class HomeController implements Initializable {
                         } catch (Exception ex) {
                             System.out.println("check :" + ex);
                         }
-
                     });
                     att.getChildren().add(ch);
+                }
+                for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                    Label l = make_lable("", 0.023);
+                    att.getChildren().add(l);
                 }
                 all_att.getChildren().add(att);
             }
@@ -1102,7 +1474,7 @@ public class HomeController implements Initializable {
             row.getChildren().add(all_nots);
             row.getChildren().add(all_level);
             row.getChildren().add(all_att);
-            row.getChildren().add(la);
+            row.getChildren().add(coach_att);
             row.getChildren().add(Swimer);
             row.getChildren().add(all_num);
             table.getChildren().add(row);
@@ -1220,8 +1592,74 @@ public class HomeController implements Initializable {
     }
 //////////////////////////home/////////////
 
+    /////////////////////add////////////
+    private void initialize_add_group() {
+
+        add_group_coach.getItems().clear();
+        add_group_day.getItems().clear();
+        add_group_line.getItems().clear();
+        add_group_level.getItems().clear();
+
+        update_coach.getItems().clear();
+        update_group_day.getItems().clear();
+        update_group_line.getItems().clear();
+        update_group_level.getItems().clear();
+
+        try {
+            coach = new ArrayList<coach>();
+            allDb.DB_connection();
+            coach = allDb.allcoach();
+            allDb.DB_close();
+            coach.forEach((co) -> {
+                add_group_coach.getItems().add(co.getName());
+                update_coach.getItems().add(co.getName());
+            });
+            add_group_day.getItems().addAll("Saturday", "Sunday");
+            update_group_day.getItems().addAll("Saturday", "Sunday");
+
+            add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
+                    "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+            update_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
+                    "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+
+            add_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+            update_group_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+
+            add_group_time.setValue(LocalTime.MIN);
+            update_group_time.setValue(LocalTime.MIN);
+
+        } catch (SQLException ex) {
+        }
+
+    }
+
+    private void initialize_add_swimmer() {
+        day_swimmer.getItems().clear();
+        add_s_gender.getItems().clear();
+        time_swimmer.getItems().clear();
+        coach_swimmer.getItems().clear();
+
+        day_swimmer.getItems().addAll("Saturday", "Sunday");
+        add_s_gender.getItems().addAll("Male", "Female");
+
+        try {
+            allDb.DB_connection();
+            time_swimmer.getItems().addAll(allDb.All_time_of_group_without_repeat());
+            coach_swimmer.getItems().addAll(allDb.search_group_by_name());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+        }
+    }
+
+    /////////////////////add////////////
     ////////////////////////search//////////
     private void initialize_search_group() {
+
+        search_g_day.getItems().clear();
+        search_g_line.getItems().clear();
+        search_g_level.getItems().clear();
+        search_g_time.getItems().clear();
+        search_g_name.clear();
 
         search_group_list = new ArrayList<all_information_for_group>();
         search_g_day.getItems().addAll("Saturday", "Sunday");
@@ -1278,10 +1716,14 @@ public class HomeController implements Initializable {
             }
         });
 
-        scroll_search.setPrefSize(bounds.getWidth() * 0.55, bounds.getHeight() * 0.51);
-        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
-        select_pane_search.setPrefWidth(bounds.getWidth() * 0.55);
-        hbox_select_search.setPrefWidth(bounds.getWidth() * 0.55);
+        scroll_search.setPrefSize(bounds.getWidth() * 0.60, bounds.getHeight() * 0.51);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.59, bounds.getHeight() * 0.55);
+        select_pane_search.setPrefWidth(bounds.getWidth() * 0.60);
+        hbox_select_search.setPrefWidth(bounds.getWidth() * 0.59);
+        button_bar.setPrefWidth(bounds.getWidth() * 0.32);
+        vbox_search_group.setPrefWidth(bounds.getWidth() * 0.2);
+        vbox_search_att_s.setPrefWidth(bounds.getWidth() * 0.2);
+        vbox_search_swimmer.setPrefWidth(bounds.getWidth() * 0.2);
 
         try {
             allDb.DB_connection();
@@ -1294,6 +1736,11 @@ public class HomeController implements Initializable {
     }
 
     private void initialize_search_swimmer() {
+
+        search_s_day.getItems().clear();
+        search_s_gender.getItems().clear();
+        search_s_time.getItems().clear();
+        search_s_name.clear();
 
         search_swimmer_list = new ArrayList<all_information_for_swimmer>();
         search_s_day.getItems().addAll("Saturday", "Sunday");
@@ -1360,6 +1807,11 @@ public class HomeController implements Initializable {
     }
 
     private void initialize_search_att() {
+
+        search_att_num.getItems().clear();
+        search_att_time.getItems().clear();
+        search_att_name.clear();
+
         search_att_swimmer_list = new ArrayList<all_information_for_attend_swimmer>();
         search_att_num.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 
@@ -1429,7 +1881,7 @@ public class HomeController implements Initializable {
 
     private void BuildSearch(List<all_information_for_group> id) throws SQLException {
         table_search.getChildren().clear();
-        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.59, bounds.getHeight() * 0.55);
         Label num = make_lable_search_head("num", .039, "b6bec2", 20);
         Label name = make_lable_search_head("Name", 0.1, "b6bec2", 20);
         Label level = make_lable_search_head("level", .1, "b6bec2", 20);
@@ -1452,9 +1904,63 @@ public class HomeController implements Initializable {
             Label time1 = make_lable_g(id.get(i).getTime() + "", .1);
             Label day1 = make_lable_g(id.get(i).isDay() ? "Sunday" : "Saturday", .1);
 
+            Image image = new Image(getClass().getResourceAsStream("/images/delet.png"));
+            ImageView Iview = new ImageView(image);
+            Iview.setFitHeight(25);
+            Iview.setFitWidth(25);
+            Iview.setPickOnBounds(true);
+            Iview.setPreserveRatio(true);
+            Iview.setId(id.get(i).getG_id() + "");
+            Iview.setOnMousePressed((event) -> {
+                try {
+                    int reply = JOptionPane.showConfirmDialog(null, "هل حقك تريد مسح المجموعة", "تأكيد", JOptionPane.YES_NO_OPTION);
+                    if (reply == JOptionPane.YES_OPTION) {
+                        allDb.DB_connection();
+                        allDb.delet_group(Integer.parseInt(Iview.getId()));
+                        search_group_list = allDb.search_group_all();
+                        BuildSearch(search_group_list);
+                        allDb.DB_close();
+                        JOptionPane.showMessageDialog(null, "تم مسح المجموعة");
+                    } else {
+                    }
+
+                } catch (SQLException ex) {
+                }
+            });
+            Image image1 = new Image(getClass().getResourceAsStream("/images/edit.png"));
+            ImageView Iview1 = new ImageView(image1);
+            Iview1.setFitHeight(25);
+            Iview1.setFitWidth(25);
+            Iview1.setId(id.get(i).getG_id() + "|" + i);
+            Iview1.setPickOnBounds(true);
+            Iview1.setPreserveRatio(true);
+            Iview1.setOnMousePressed((event) -> {
+                String[] comp = Iview1.getId().split("\\|");
+                id_update = Integer.parseInt(comp[0]);
+                update_coach.setValue(name1.getText());
+                update_group_day.setValue(day1.getText());
+                update_group_line.setValue(track1.getText());
+                update_group_level.setValue(level1.getText());
+                update_group_time.setValue(id.get(Integer.parseInt(comp[1])).getTime().toLocalTime());
+                p_update_group.toFront();
+            });
+            HBox title2 = new HBox();
+            title2.setStyle("-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+            title2.setPrefSize(bounds.getWidth() * .04, 0);
+            title2.getChildren().addAll(Iview, Iview1);
+            title2.setAlignment(Pos.CENTER_RIGHT);
+            title2.setSpacing(15);
+
+//            JFXButton l = new JFXButton();
+//            l.setButtonType(JFXButton.ButtonType.RAISED);
+//            l.setContentDisplay(ContentDisplay.TOP);
+//            l.setPrefSize(5,5);
+//            l.setTextFill(rgb(54, 27, 20));
+//            l.setGraphic(Iview);
+//            l.setFont(javafx.scene.text.Font.font("System Bold", 22));
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3b3;");
-            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.setPrefSize(bounds.getWidth() * .54, 10);
             title1.getChildren().addAll(day1, time1, track1, level1, name1, num1);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.setOnMouseEntered(event -> {
@@ -1492,6 +1998,10 @@ public class HomeController implements Initializable {
                     Label time1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getTime() + "", .09);
                     Label day1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).isDay() ? "Sunday" : "Saturday", .09);
 
+                    coach_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getName();
+                    day_to_tranfer_to_add_swimmer = day1_inf.getText();
+                    time_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getTime();
+
                     HBox title1_inf = new HBox();
                     title1_inf.setStyle("-fx-background-color: #ffb3b3;");
                     title1_inf.setPrefSize(bounds.getWidth() * .54, 0);
@@ -1519,14 +2029,14 @@ public class HomeController implements Initializable {
                     HBox title_s = new HBox();
                     title_s.setStyle("-fx-background-color:  #b6bec2;");
                     title_s.setPrefSize(bounds.getWidth() * .54, 0);
-                    title_s.getChildren().addAll(gender_s, name_s, id_s,num_s);
+                    title_s.getChildren().addAll(gender_s, name_s, id_s, num_s);
                     title_s.setAlignment(Pos.CENTER_RIGHT);
 
                     vbox_group_inf.getChildren().add(title_s);
 
                     for (int x = 0; x < t.size(); x++) {
-                        
-                        Label num_s1 = make_lable_g((x+1)+"", .04);
+
+                        Label num_s1 = make_lable_g((x + 1) + "", .04);
                         Label id_s1 = make_lable_g(t.get(x).getS_id() + "", .139);
                         Label name_s1 = make_lable_g(t.get(x).getName(), 0.18);
                         Label gender_s1 = make_lable_g(t.get(x).getGender(), .18);
@@ -1534,7 +2044,7 @@ public class HomeController implements Initializable {
                         HBox title_s1 = new HBox();
                         title_s1.setStyle("-fx-background-color:  #ffb3b3;");
                         title_s1.setPrefSize(bounds.getWidth() * .54, 0);
-                        title_s1.getChildren().addAll(gender_s1, name_s1, id_s1,num_s1);
+                        title_s1.getChildren().addAll(gender_s1, name_s1, id_s1, num_s1);
                         title_s1.setAlignment(Pos.CENTER_RIGHT);
 
                         vbox_group_inf.getChildren().add(title_s1);
@@ -1546,7 +2056,10 @@ public class HomeController implements Initializable {
 
                 p_group_inf.toFront();
             });
-            table_search.getChildren().add(title1);
+            HBox title_all = new HBox();
+            title_all.getChildren().addAll(title2, title1);
+
+            table_search.getChildren().add(title_all);
 
             if (i > 15) {
 
@@ -1569,25 +2082,27 @@ public class HomeController implements Initializable {
         return l;
     }
 
+    int id_update;
+
     private void BuildSearch_Swimmer(List<all_information_for_swimmer> id) throws SQLException {
         table_search.getChildren().clear();
-        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.59, bounds.getHeight() * 0.55);
 
-        Label num = make_lable_search_head("num", .04, "b6bec2", 17);
-        Label name = make_lable_search_head("Name", 0.09, "b6bec2", 17);
-        Label address = make_lable_search_head("Coach", 0.07, "b6bec2", 17);
-        Label age = make_lable_search_head("Age", 0.047, "b6bec2", 17);
-        Label gender = make_lable_search_head("Gender", 0.065, "b6bec2", 17);
-        Label phone = make_lable_search_head("Phone", 0.06, "b6bec2", 17);
-        Label level = make_lable_search_head("level", .05, "b6bec2", 17);
-        Label s_day = make_lable_search_head("Start Day", .073, "b6bec2", 17);
-        Label e_day = make_lable_search_head("End Day", .065, "b6bec2", 17);
-        Label time = make_lable_search_head("Time", .05, "b6bec2", 17);
-        Label day = make_lable_search_head("Day", .05, "b6bec2", 17);
+        Label num = make_lable_search_head("num", .03, "b6bec2", 17);
+        Label name = make_lable_search_head("Name", 0.08, "b6bec2", 17);
+        Label address = make_lable_search_head("Coach", 0.0601, "b6bec2", 17);
+        Label age = make_lable_search_head("Age", 0.037, "b6bec2", 17);
+        Label gender = make_lable_search_head("Gender", 0.055, "b6bec2", 17);
+        Label phone = make_lable_search_head("Phone", 0.05, "b6bec2", 17);
+        Label level = make_lable_search_head("level", .04, "b6bec2", 17);
+        Label s_day = make_lable_search_head("Start Day", .063, "b6bec2", 17);
+        Label e_day = make_lable_search_head("End Day", .055, "b6bec2", 17);
+        Label time = make_lable_search_head("Time", .04, "b6bec2", 17);
+        Label day = make_lable_search_head("Day", .04, "b6bec2", 17);
 
         HBox title = new HBox();
         title.setStyle("-fx-background-color:  #b6bec2;");
-        title.setPrefSize(bounds.getWidth() * .54, 0);
+        title.setPrefSize(bounds.getWidth() * .55, 0);
         title.getChildren().addAll(day, time, e_day, s_day, level, phone, gender, age, address, name, num);
         title.setAlignment(Pos.CENTER_RIGHT);
         table_search.getChildren().add(title);
@@ -1605,9 +2120,49 @@ public class HomeController implements Initializable {
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .05);
             Label day1 = make_lable_search_swimmer(id.get(i).isDay() ? "Sunday" : "Saturday", .05);
 
+            Image image = new Image(getClass().getResourceAsStream("/images/delet.png"));
+            ImageView Iview = new ImageView(image);
+            Iview.setFitHeight(20);
+            Iview.setFitWidth(20);
+            Iview.setPickOnBounds(true);
+            Iview.setPreserveRatio(true);
+            Iview.setId(id.get(i).getS_id() + "");
+            Iview.setOnMousePressed((event) -> {
+                try {
+                    int reply = JOptionPane.showConfirmDialog(null, "هل حقك تريد مسح السباح", "تأكيد", JOptionPane.YES_NO_OPTION);
+                    if (reply == JOptionPane.YES_OPTION) {
+                        allDb.DB_connection();
+                        allDb.delet_swimmer(id.get(Integer.parseInt(num1.getText()) - 1).getS_id());
+                        search_swimmer_list = allDb.search_swimmer_all();
+                        BuildSearch_Swimmer(search_swimmer_list);
+                        allDb.DB_close();
+                        JOptionPane.showMessageDialog(null, "تم مسح السباح");
+                    } else {
+                    }
+
+                } catch (SQLException ex) {
+                }
+            });
+            Image image1 = new Image(getClass().getResourceAsStream("/images/edit.png"));
+            ImageView Iview1 = new ImageView(image1);
+            Iview1.setFitHeight(20);
+            Iview1.setFitWidth(20);
+            Iview1.setId(id.get(i).getG_id() + "");
+            Iview1.setPickOnBounds(true);
+            Iview1.setPreserveRatio(true);
+            Iview1.setOnMousePressed((event) -> {
+
+            });
+            HBox title2 = new HBox();
+            title2.setStyle("-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+            title2.setPrefSize(bounds.getWidth() * .04, 0);
+            title2.getChildren().addAll(Iview, Iview1);
+            title2.setAlignment(Pos.CENTER_RIGHT);
+            title2.setSpacing(15);
+
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3b3;");
-            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.setPrefSize(bounds.getWidth() * .55, 0);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.getChildren().addAll(day1, time1, e_day1, s_day1, level1, phone1, gender1, age1, address1, name1, num1);
             title1.setOnMouseEntered(event -> {
@@ -1658,7 +2213,10 @@ public class HomeController implements Initializable {
 
                 information_swimmer.toFront();
             });
-            table_search.getChildren().add(title1);
+            HBox title_all = new HBox();
+            title_all.getChildren().addAll(title2, title1);
+
+            table_search.getChildren().add(title_all);
 
             if (i > 15) {
 
@@ -1683,7 +2241,7 @@ public class HomeController implements Initializable {
     private void BuildSearch_att(List<all_information_for_attend_swimmer> id) throws SQLException {
 
         table_search.getChildren().clear();
-        pane_search_table.setPrefSize(bounds.getWidth() * 0.54, bounds.getHeight() * 0.55);
+        pane_search_table.setPrefSize(bounds.getWidth() * 0.59, bounds.getHeight() * 0.55);
 
         Label num = make_lable_search_head("num", .04, "b6bec2", 18);
         Label name = make_lable_search_head("Name", 0.1, "b6bec2", 18);
@@ -1697,7 +2255,7 @@ public class HomeController implements Initializable {
 
         HBox title = new HBox();
         title.setStyle("-fx-background-color:  #b6bec2;");
-        title.setPrefSize(bounds.getWidth() * .54, 0);
+        title.setPrefSize(bounds.getWidth() * .59, 0);
         title.getChildren().addAll(day, time, level, coach, n_day, Date, Id, name, num);
         title.setAlignment(Pos.CENTER_RIGHT);
         table_search.getChildren().add(title);
@@ -1713,9 +2271,10 @@ public class HomeController implements Initializable {
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .06);
             Label day1 = make_lable_search_swimmer(id.get(i).isG_day() ? "Sunday" : "Saturday", .06);
 
+
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3b3;");
-            title1.setPrefSize(bounds.getWidth() * .54, 0);
+            title1.setPrefSize(bounds.getWidth() * .59, 0);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.getChildren().addAll(day1, time1, level1, coach1, n_day1, date1, id1, name1, num1);
             title1.setOnMouseEntered(event -> {
@@ -1724,8 +2283,8 @@ public class HomeController implements Initializable {
             title1.setOnMouseExited(event -> {
                 title1.setStyle("-fx-background-color :#ffb3b3 ");
             });
-            table_search.getChildren().add(title1);
 
+            table_search.getChildren().add(title1);
             if (i > 15) {
 
                 pane_search_table.setPrefHeight(pane_search_table.getPrefHeight() + bounds.getWidth() * .017);
@@ -1736,4 +2295,35 @@ public class HomeController implements Initializable {
         pane_search_table.getChildren().add(table_search);
 
     }
+    ////////////////////////search//////////
+
+//////////////////////////////printer////////////
+    public PageFormat getPageFormat(java.awt.print.PrinterJob pj) {
+
+        PageFormat pf = pj.defaultPage();
+        Paper paper = pf.getPaper();
+        double bodyHeight;
+        bodyHeight = 0.0;
+
+        double headerHeight = 10.0;
+        double footerHeight = 5.0;
+        double width = cm_to_pp(8);
+        double height = cm_to_pp(headerHeight + bodyHeight + footerHeight);
+        paper.setSize(width, height);
+        paper.setImageableArea(0, 10, width, height - cm_to_pp(1));
+
+        pf.setOrientation(PageFormat.PORTRAIT);
+        pf.setPaper(paper);
+
+        return pf;
+    }
+
+    protected static double cm_to_pp(double cm) {
+        return toPPI(cm * 0.393600787);
+    }
+
+    protected static double toPPI(double inch) {
+        return inch * 72d;
+    }
+
 }

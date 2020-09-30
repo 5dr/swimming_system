@@ -8,40 +8,36 @@ package model;
 import java.sql.Date;
 import java.sql.Time;
 
-
 /**
  *
  * @author asd
  */
 public class attend_couch {
-    
-    int g_id;
-    Date day;
-    String rep_name;
-    Time time;
 
-    public attend_couch( Date day,int g_id, Time time, String rep_name) {
+    int g_id, attend_id, rep_name;
+    Date day;
+
+    public attend_couch(int g_id, int attend_id, Date day, int rep_name) {
         this.g_id = g_id;
+        this.attend_id = attend_id;
         this.day = day;
         this.rep_name = rep_name;
-        this.time = time;
     }
 
     public int getG_id() {
         return g_id;
     }
 
+    public int getAttend_id() {
+        return attend_id;
+    }
+
     public Date getDay() {
         return day;
     }
 
-    public String getRep_name() {
+    public int getRep_name() {
         return rep_name;
     }
 
-    public Time getTime() {
-        return time;
-    }
-    
-    
 }

@@ -30,18 +30,22 @@ import javax.swing.ImageIcon;
  */
 public class BillPrintable implements Printable {
 
-    String name,address,gender,phone,age;
-    int group;
+    String name,phone,age,level,day,time,track;
+    int group,id;
 
-    public BillPrintable(String name, String address, String age ,String gender, String phone, int group) {
+    public BillPrintable(String name, String phone, String age, String level, String day, String time, String track, int id) {
         this.name = name;
-        this.address = address;
-        this.gender = gender;
         this.phone = phone;
         this.age = age;
-        this.group = group;
-       
+        this.level = level;
+        this.day = day;
+        this.time = time;
+        this.track = track;
+        this.id = id;
+ 
     }
+
+
  
             Date now = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -87,13 +91,13 @@ public class BillPrintable implements Printable {
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
-                g2d.drawString(" User Name :           ", 10, y);
+                g2d.drawString(" User Name :    كابتن احمد فوزي       ", 10, y);
                 y += yShift;
                 g2d.drawString(" Print Date :  "+sdf.format(now)+"   ", 10, y);
                 y += yShift;
                 y += headerRectHeight;
                 
-                g2d.drawString(" ID :          ", 10, y);
+                g2d.drawString(" ID :          "+id, 10, y);
                 y += yShift;
                 g2d.drawString(" Name :        "+name+"   ", 10, y);
                 y += yShift;
@@ -103,15 +107,15 @@ public class BillPrintable implements Printable {
                 y += yShift;
                 g2d.drawString(" Year :        "+year.format(now)+" ", 10, y);
                 y += yShift;
-                g2d.drawString(" Level :           ", 10, y);
+                g2d.drawString(" Level :           "+level, 10, y);
                 y += yShift;
-                g2d.drawString(" lane :           ", 10, y);
+                g2d.drawString(" lane :           "+track, 10, y);
                 y += yShift;
-                g2d.drawString(" System :           ", 10, y);
+                g2d.drawString(" Day :           "+day, 10, y);
+                y += yShift;
+                g2d.drawString(" Time :           "+time, 10, y);
                 y += yShift;
 
-                g2d.drawString("-------------------------------------", 10, y);
-                y += headerRectHeight;
                 g2d.drawString("-------------------------------------", 10, y);
                 y += headerRectHeight;
                
