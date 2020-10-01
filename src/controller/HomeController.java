@@ -88,7 +88,7 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search;
+    private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search,b_Settings;
     @FXML
     private AnchorPane anchorpane, pane_table, pane_search_table;
     @FXML
@@ -96,7 +96,7 @@ public class HomeController implements Initializable {
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search, select_pane_search, information_swimmer, p_group_inf;
+    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search,p_Settings, select_pane_search, information_swimmer, p_group_inf;
     @FXML
     private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time, search_att_time, time_swimmer;
     @FXML
@@ -116,7 +116,7 @@ public class HomeController implements Initializable {
     private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
 
     @FXML
-    private TextField add_C_name, add_C_adress, add_C_phone, search_g_name, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
+    private TextField add_C_name, add_C_adress, add_C_phone, search_g_name, punish_field,search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
 
     @FXML
     private JFXComboBox<String> add_C_level, search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender, add_s_gender, day_swimmer, coach_swimmer;
@@ -348,6 +348,9 @@ public class HomeController implements Initializable {
         if (actionEvent.getSource() == b_search) {
             p_search.toFront();
         }
+         if (actionEvent.getSource() == b_Settings) {
+            p_Settings.toFront();
+        }
     }
 
     public void print(ActionEvent actionEvent) {
@@ -445,7 +448,7 @@ public class HomeController implements Initializable {
             }
 
         }
-
+ 
 //        if (actionEvent.getSource() == search_coach) {
 //            search_group.setStyle("-fx-background-color:   #181a1b;");
 //           // search_coach.setStyle("-fx-background-color:  #ffffff;");
@@ -534,7 +537,7 @@ public class HomeController implements Initializable {
 //
 //        }
     }
-
+  
     public void group_search(ActionEvent actionEvent) throws SQLException {
 // 1 1 1 1 1
         if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
@@ -1208,7 +1211,7 @@ public class HomeController implements Initializable {
 
     private void BuildHome(List<all_information_for_group> id, List<List<swimmer>> all_S) throws SQLException {
 
-        table.setStyle("-fx-background-color:  #ffb3b3;");
+        table.setStyle("-fx-background-color:  #ffffff;");
         table.setSpacing(5);
 
         Label num = make_lable("num", .039);
@@ -1230,7 +1233,7 @@ public class HomeController implements Initializable {
         Label notes = make_lable("notes", .19);
 
         HBox title = new HBox();
-        title.setStyle("-fx-background-color: #ffb3b3;");
+        title.setStyle("-fx-background-color: #ffffff;");
         title.setPrefSize(1000, 0);
         title.setMaxSize(10000, 10000);
         title.getChildren().addAll(notes, level, l12, l11, l10, l9, l8, l7, l6, l5, l4, l3, l2, l1, coach, name, num);
@@ -1239,11 +1242,11 @@ public class HomeController implements Initializable {
 
         for (int z = 0; z < id.size(); z++) {
             HBox row = new HBox();
-            row.setStyle("-fx-background-color:  #ffb3b3;");
+            row.setStyle("-fx-background-color:  #ffb3d9;");
             row.setAlignment(Pos.CENTER_RIGHT);
 
             VBox all_num = new VBox();
-            all_num.setStyle("-fx-background-color:  #ffb3b3;");
+            all_num.setStyle("-fx-background-color:  #ffffff;");
 
             for (int i = 0; i < 8; i++) {
                 Label l = make_lable("" + (i + 1), .039);
@@ -1251,14 +1254,18 @@ public class HomeController implements Initializable {
             }
 
             VBox Swimer = new VBox();
-            Swimer.setStyle("-fx-background-color:  #ffb3b3;");
+            Swimer.setStyle("-fx-background-color: #ffe6f9;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getName(), 0.1735);
                 Swimer.getChildren().add(la);
+         //
+                la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
             }
             for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
                 Label la = make_lable("", 0.1735);
                 Swimer.getChildren().add(la);
+          //
+                la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
 
             }
 
@@ -1270,14 +1277,14 @@ public class HomeController implements Initializable {
             JFXCheckBox ch_coach = new JFXCheckBox();
             ch_coach.setCheckedColor(rgb(42, 115, 255));
             ch_coach.setTextFill(rgb(255, 255, 255));
-            ch_coach.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;");
+            ch_coach.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3d9;");
             ch_coach.setPrefSize(bounds.getWidth() * .023, 0);
             ch_coach.setAlignment(Pos.CENTER_RIGHT);
             ch_coach.setId(id.get(z).getC_id() + "|" + z);
 
             JFXComboBox t1 = new JFXComboBox();
             t1.setPrefWidth(bounds.getWidth() * 0.07);
-            t1.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+            t1.setStyle("-fx-font-size: 12px;-fx-background-color: #ffb3d9;-fx-border-color:#000;");
             t1.setDisable(true);
 
             String[] comp = ch_coach.getId().split("\\|");
@@ -1347,7 +1354,7 @@ public class HomeController implements Initializable {
             Label la = new Label(id.get(z).getName() + " \n " + id.get(z).getTrack() + "");
             la.setPrefWidth(bounds.getWidth() * 0.07);
             la.setMaxHeight(1000);
-            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;");
+            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3d9;");
             la.setAlignment(Pos.CENTER);
 
             coach_att.getChildren().addAll(t1, ch_coach, la);
@@ -1360,7 +1367,7 @@ public class HomeController implements Initializable {
                     JFXCheckBox ch = new JFXCheckBox();
                     ch.setCheckedColor(rgb(42, 115, 255));
                     ch.setTextFill(rgb(255, 255, 255));
-                    ch.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+                    ch.setStyle("-fx-font-size: 16px;-fx-background-color: #e6f2ff;-fx-border-color:#000;");
                     ch.setPrefSize(bounds.getWidth() * .023, 0);
                     ch.setAlignment(Pos.CENTER_RIGHT);
                     ch.setId(all_S.get(z).get(i).getS_id() + "|" + j + "|" + i);
@@ -1427,20 +1434,20 @@ public class HomeController implements Initializable {
             }
 
             VBox all_level = new VBox();
-            all_level.setStyle("-fx-background-color:     #ffffff;");
+            all_level.setStyle("-fx-background-color:  #ffe6e6;");
             for (int i = 0; i < 8; i++) {
                 Label l = make_lable(id.get(z).getG_level(), .05);
                 all_level.getChildren().add(l);
-
+l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
             }
 
             VBox all_nots = new VBox();
-            all_nots.setStyle("-fx-background-color:    #ffffff;");
+            all_nots.setStyle("-fx-background-color:   #ffffb3;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
 
                 TextField t = new TextField();
                 t.setPrefWidth(bounds.getWidth() * .19);
-                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffffb3;-fx-border-color:#000;");
                 t.setAlignment(Pos.CENTER);
                 t.setId(all_S.get(z).get(i).getS_id() + "");
                 t.setText(allDb.get_note_id(Integer.parseInt(t.getId())));
@@ -1465,7 +1472,7 @@ public class HomeController implements Initializable {
             for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
                 TextField t = new TextField();
                 t.setPrefWidth(bounds.getWidth() * .19);
-                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffb3b3;-fx-border-color:#000;");
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	#ffffb3;-fx-border-color:#000;");
                 t.setAlignment(Pos.CENTER);
                 all_nots.getChildren().add(t);
 
@@ -1493,7 +1500,7 @@ public class HomeController implements Initializable {
 
         Label l = new Label(name);
         l.setPrefWidth(bounds.getWidth() * d);
-        l.setStyle("-fx-font-size: 16px;-fx-background-color:#ffb3b3;-fx-border-color:#000;");
+        l.setStyle("-fx-font-size: 16px;-fx-background-color:#e6f2ff;-fx-border-color:#000;");
         l.setAlignment(Pos.CENTER);
 
         return l;
@@ -1945,7 +1952,7 @@ public class HomeController implements Initializable {
                 p_update_group.toFront();
             });
             HBox title2 = new HBox();
-            title2.setStyle("-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+            title2.setStyle("-fx-background-color: #ffb3e6;-fx-border-color:#000;");
             title2.setPrefSize(bounds.getWidth() * .04, 0);
             title2.getChildren().addAll(Iview, Iview1);
             title2.setAlignment(Pos.CENTER_RIGHT);
@@ -1959,7 +1966,7 @@ public class HomeController implements Initializable {
 //            l.setGraphic(Iview);
 //            l.setFont(javafx.scene.text.Font.font("System Bold", 22));
             HBox title1 = new HBox();
-            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setStyle("-fx-background-color: #ffb3e6;");
             title1.setPrefSize(bounds.getWidth() * .54, 10);
             title1.getChildren().addAll(day1, time1, track1, level1, name1, num1);
             title1.setAlignment(Pos.CENTER_RIGHT);
@@ -1967,7 +1974,7 @@ public class HomeController implements Initializable {
                 title1.setStyle("-fx-background-color :#b6bec2");
             });
             title1.setOnMouseExited(event -> {
-                title1.setStyle("-fx-background-color :#ffb3b3 ");
+                title1.setStyle("-fx-background-color :#ffb3e6 ");
             });
             title1.setOnMouseClicked((event) -> {
                 List<attend_swimmer> s = new ArrayList<attend_swimmer>();
@@ -2003,7 +2010,7 @@ public class HomeController implements Initializable {
                     time_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getTime();
 
                     HBox title1_inf = new HBox();
-                    title1_inf.setStyle("-fx-background-color: #ffb3b3;");
+                    title1_inf.setStyle("-fx-background-color: #ffb3e6;");
                     title1_inf.setPrefSize(bounds.getWidth() * .54, 0);
                     title1_inf.getChildren().addAll(day1_inf, time1_inf, track1_inf, level1_inf, name1_inf, id1_inf, num1_inf);
                     title1_inf.setAlignment(Pos.CENTER_RIGHT);
@@ -2042,7 +2049,7 @@ public class HomeController implements Initializable {
                         Label gender_s1 = make_lable_g(t.get(x).getGender(), .18);
 
                         HBox title_s1 = new HBox();
-                        title_s1.setStyle("-fx-background-color:  #ffb3b3;");
+                        title_s1.setStyle("-fx-background-color:  #ffb3e6;");
                         title_s1.setPrefSize(bounds.getWidth() * .54, 0);
                         title_s1.getChildren().addAll(gender_s1, name_s1, id_s1, num_s1);
                         title_s1.setAlignment(Pos.CENTER_RIGHT);
@@ -2154,14 +2161,14 @@ public class HomeController implements Initializable {
 
             });
             HBox title2 = new HBox();
-            title2.setStyle("-fx-background-color: #ffb3b3;-fx-border-color:#000;");
+            title2.setStyle("-fx-background-color: #ffb3e6;-fx-border-color:#000;");
             title2.setPrefSize(bounds.getWidth() * .04, 0);
             title2.getChildren().addAll(Iview, Iview1);
             title2.setAlignment(Pos.CENTER_RIGHT);
             title2.setSpacing(15);
 
             HBox title1 = new HBox();
-            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setStyle("-fx-background-color: #ffb3e6;");
             title1.setPrefSize(bounds.getWidth() * .55, 0);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.getChildren().addAll(day1, time1, e_day1, s_day1, level1, phone1, gender1, age1, address1, name1, num1);
@@ -2169,7 +2176,7 @@ public class HomeController implements Initializable {
                 title1.setStyle("-fx-background-color :#b6bec2");
             });
             title1.setOnMouseExited(event -> {
-                title1.setStyle("-fx-background-color :#ffb3b3 ");
+                title1.setStyle("-fx-background-color :#ffb3e6 ");
             });
             title1.setOnMouseClicked((event) -> {
                 List<attend_swimmer> s = new ArrayList<attend_swimmer>();
@@ -2273,7 +2280,7 @@ public class HomeController implements Initializable {
 
 
             HBox title1 = new HBox();
-            title1.setStyle("-fx-background-color: #ffb3b3;");
+            title1.setStyle("-fx-background-color: #ffb3e6;");
             title1.setPrefSize(bounds.getWidth() * .59, 0);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.getChildren().addAll(day1, time1, level1, coach1, n_day1, date1, id1, name1, num1);
@@ -2281,7 +2288,7 @@ public class HomeController implements Initializable {
                 title1.setStyle("-fx-background-color :#b6bec2");
             });
             title1.setOnMouseExited(event -> {
-                title1.setStyle("-fx-background-color :#ffb3b3 ");
+                title1.setStyle("-fx-background-color :#ffb3e6 ");
             });
 
             table_search.getChildren().add(title1);
