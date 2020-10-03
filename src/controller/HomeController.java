@@ -1233,7 +1233,7 @@ public class HomeController implements Initializable {
 
         Label num = make_lable("num", .039);
         Label name = make_lable("Name", 0.1735);
-        Label coach = make_lable("Coach", 0.04);
+        Label coach = make_lable("Coach", 0.05);
         Label l1 = make_lable("1", .023);
         Label l2 = make_lable("2", .023);
         Label l3 = make_lable("3", .023);
@@ -1282,7 +1282,7 @@ public class HomeController implements Initializable {
                 Label la = make_lable("", 0.1735);
                 Swimer.getChildren().add(la);
                 //
-                la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
+                la.setStyle("-fx-font-size: 12px;-fx-background-color: #ffe6f9;");
 
             }
 
@@ -1290,12 +1290,12 @@ public class HomeController implements Initializable {
             //coach_att.setStyle("-fx-background-color:  #ffb3b3;-fx-border-color:#000;");
             coach_att.setAlignment(Pos.TOP_CENTER);
             coach_att.setSpacing(30);
-            coach_att.setPrefSize(bounds.getWidth() * .04, 0);
+            coach_att.setPrefSize(bounds.getWidth() * .05, 0);
             JFXCheckBox ch_coach = new JFXCheckBox();
             ch_coach.setCheckedColor(rgb(42, 115, 255));
             ch_coach.setTextFill(rgb(255, 255, 255));
-            ch_coach.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3d9;");
-            ch_coach.setPrefSize(bounds.getWidth() * .009, 0);
+            ch_coach.setStyle("-fx-font-size: 12px;-fx-background-color: #ffb3d9;");
+            ch_coach.setPrefSize(bounds.getWidth() * .007, 0);
             ch_coach.setAlignment(Pos.CENTER_RIGHT);
             ch_coach.setId(id.get(z).getC_id() + "|" + z);
 
