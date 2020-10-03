@@ -88,7 +88,7 @@ public class HomeController implements Initializable {
      * Initializes the controller class.
      */
     @FXML
-    private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search,b_Settings;
+    private Button b_home, b_add_group, b_add_swimmer, b_add_coach, b_search, b_Settings;
     @FXML
     private AnchorPane anchorpane, pane_table, pane_search_table;
     @FXML
@@ -96,7 +96,7 @@ public class HomeController implements Initializable {
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search,p_Settings, select_pane_search, information_swimmer, p_group_inf;
+    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search, p_Settings, select_pane_search, information_swimmer, p_group_inf;
     @FXML
     private JFXComboBox<Time> combobox_all_group, search_g_time, search_s_time, search_att_time, time_swimmer;
     @FXML
@@ -116,7 +116,7 @@ public class HomeController implements Initializable {
     private JFXRadioButton r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
 
     @FXML
-    private TextField add_C_name, add_C_adress, add_C_phone, search_g_name, punish_field,search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
+    private TextField add_C_name, add_C_adress, add_C_phone, search_g_name, punish_field, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
 
     @FXML
     private JFXComboBox<String> add_C_level, search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender, add_s_gender, day_swimmer, coach_swimmer;
@@ -227,9 +227,9 @@ public class HomeController implements Initializable {
             } else {
 //                allDb.Add_group(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_line.getValue(),
 //                        update_group_level.getValue(), update_group_day.getValue(), time);
-                allDb.update_group(id_update,coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(),update_group_line.getValue(),
+                allDb.update_group(id_update, coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_line.getValue(),
                         update_group_level.getValue(), update_group_day.getValue(), time);
-                
+
                 JOptionPane.showMessageDialog(null, "تم تعديل الجروب");
 
                 for (int i = 0; i < combobox_all_group.getItems().size(); i++) {
@@ -348,7 +348,7 @@ public class HomeController implements Initializable {
         if (actionEvent.getSource() == b_search) {
             p_search.toFront();
         }
-         if (actionEvent.getSource() == b_Settings) {
+        if (actionEvent.getSource() == b_Settings) {
             p_Settings.toFront();
         }
     }
@@ -448,7 +448,7 @@ public class HomeController implements Initializable {
             }
 
         }
- 
+
 //        if (actionEvent.getSource() == search_coach) {
 //            search_group.setStyle("-fx-background-color:   #181a1b;");
 //           // search_coach.setStyle("-fx-background-color:  #ffffff;");
@@ -537,7 +537,24 @@ public class HomeController implements Initializable {
 //
 //        }
     }
-  
+
+    public void punish(ActionEvent actionEvent) {
+        //    TextFields.bindAutoCompletion(search_g_name, allDb.search_group_by_name());
+        if (punish_field.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+        }
+
+        punish_field.clear();
+
+        try {
+            allDb.DB_connection();
+            TextFields.bindAutoCompletion(punish_field, allDb.get_all_name_coach());
+            allDb.DB_close();
+        } catch (SQLException ex) {
+            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void group_search(ActionEvent actionEvent) throws SQLException {
 // 1 1 1 1 1
         if (r_g_name.isSelected() && r_g_time.isSelected() && r_g_day.isSelected() && r_g_line.isSelected() && r_g_level.isSelected()) {
@@ -1184,7 +1201,7 @@ public class HomeController implements Initializable {
         initialize_add_group();
 
         ///////////////////add coach///////////
-        add_C_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
+        add_C_level.getItems().addAll("B", "l1", "l2", "l3", "l4", "l5", " l6", "l7", "l8");
         ///////////////////add coach///////////
 
         ///////////////////add swimmer///////////
@@ -1216,7 +1233,7 @@ public class HomeController implements Initializable {
 
         Label num = make_lable("num", .039);
         Label name = make_lable("Name", 0.1735);
-        Label coach = make_lable("Coach", 0.07);
+        Label coach = make_lable("Coach", 0.04);
         Label l1 = make_lable("1", .023);
         Label l2 = make_lable("2", .023);
         Label l3 = make_lable("3", .023);
@@ -1229,14 +1246,14 @@ public class HomeController implements Initializable {
         Label l10 = make_lable("10", .023);
         Label l11 = make_lable("11", .023);
         Label l12 = make_lable("12", .023);
-        Label level = make_lable("level", .05);
+        Label level = make_lable("level", .03);
         Label notes = make_lable("notes", .19);
-
+ Label start = make_lable("start", .05);
         HBox title = new HBox();
         title.setStyle("-fx-background-color: #ffffff;");
         title.setPrefSize(1000, 0);
         title.setMaxSize(10000, 10000);
-        title.getChildren().addAll(notes, level, l12, l11, l10, l9, l8, l7, l6, l5, l4, l3, l2, l1, coach, name, num);
+        title.getChildren().addAll(notes, level, l12, l11, l10, l9, l8, l7, l6, l5, l4, l3, l2, l1, coach,start, name, num);
         title.setAlignment(Pos.CENTER_RIGHT);
         table.getChildren().add(title);
 
@@ -1258,13 +1275,13 @@ public class HomeController implements Initializable {
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getName(), 0.1735);
                 Swimer.getChildren().add(la);
-         //
+                //
                 la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
             }
             for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
                 Label la = make_lable("", 0.1735);
                 Swimer.getChildren().add(la);
-          //
+                //
                 la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
 
             }
@@ -1273,17 +1290,17 @@ public class HomeController implements Initializable {
             //coach_att.setStyle("-fx-background-color:  #ffb3b3;-fx-border-color:#000;");
             coach_att.setAlignment(Pos.TOP_CENTER);
             coach_att.setSpacing(30);
-
+            coach_att.setPrefSize(bounds.getWidth() * .04, 0);
             JFXCheckBox ch_coach = new JFXCheckBox();
             ch_coach.setCheckedColor(rgb(42, 115, 255));
             ch_coach.setTextFill(rgb(255, 255, 255));
             ch_coach.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3d9;");
-            ch_coach.setPrefSize(bounds.getWidth() * .023, 0);
+            ch_coach.setPrefSize(bounds.getWidth() * .009, 0);
             ch_coach.setAlignment(Pos.CENTER_RIGHT);
             ch_coach.setId(id.get(z).getC_id() + "|" + z);
 
             JFXComboBox t1 = new JFXComboBox();
-            t1.setPrefWidth(bounds.getWidth() * 0.07);
+            t1.setPrefWidth(bounds.getWidth() * 0.05);
             t1.setStyle("-fx-font-size: 12px;-fx-background-color: #ffb3d9;-fx-border-color:#000;");
             t1.setDisable(true);
 
@@ -1299,6 +1316,7 @@ public class HomeController implements Initializable {
                 for (int list = 0; list < all_re_coach.size(); list++) {
                     l_name.add(all_re_coach.get(list).getName());
                     l_re_id.add(all_re_coach.get(list).getC_id());
+
                 }
 
                 t1.getItems().addAll(l_name);
@@ -1354,9 +1372,9 @@ public class HomeController implements Initializable {
             Label la = new Label(id.get(z).getName() + " \n " + id.get(z).getTrack() + "");
             la.setPrefWidth(bounds.getWidth() * 0.07);
             la.setMaxHeight(1000);
-            la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffb3d9;");
+            la.setStyle("-fx-font-size: 9px; -fx-background-color: #ffb3d9;");
             la.setAlignment(Pos.CENTER);
-
+            la.setRotate(270.0);
             coach_att.getChildren().addAll(t1, ch_coach, la);
 
             HBox all_att = new HBox();
@@ -1385,7 +1403,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1397,7 +1415,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1436,10 +1454,19 @@ public class HomeController implements Initializable {
             VBox all_level = new VBox();
             all_level.setStyle("-fx-background-color:  #ffe6e6;");
             for (int i = 0; i < 8; i++) {
-                Label l = make_lable(id.get(z).getG_level(), .05);
+                Label l = make_lable(id.get(z).getG_level(), .03);
                 all_level.getChildren().add(l);
-l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
+                l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
             }
+              VBox vstart = new VBox();
+            vstart.setStyle("-fx-background-color:  #ffffb3;");
+            for (int i = 0; i < 8; i++) {
+                
+                Label l = make_lable(id.get(z).getG_level(), .05);
+                vstart.getChildren().add(l);
+                l.setStyle("-fx-background-color: #ffffb3;-fx-font-size: 18px;");
+            }
+
 
             VBox all_nots = new VBox();
             all_nots.setStyle("-fx-background-color:   #ffffb3;");
@@ -1482,6 +1509,7 @@ l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
             row.getChildren().add(all_level);
             row.getChildren().add(all_att);
             row.getChildren().add(coach_att);
+            row.getChildren().add(vstart);
             row.getChildren().add(Swimer);
             row.getChildren().add(all_num);
             table.getChildren().add(row);
@@ -2277,7 +2305,6 @@ l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
             Label level1 = make_lable_search_swimmer(id.get(i).getLevel() + "", .05);
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .06);
             Label day1 = make_lable_search_swimmer(id.get(i).isG_day() ? "Sunday" : "Saturday", .06);
-
 
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3e6;");
