@@ -106,7 +106,8 @@
                                 <Insets left="50.0" />
                             </padding>
                         </Button>
-                        <Button alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="62.0" prefWidth="259.0" text="Settings">
+                        
+                        <Button fx:id="b_Settings" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="62.0" prefWidth="259.0" text="Settings">
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -298,7 +299,7 @@
                         <JFXComboBox fx:id="add_C_level" layoutX="158.0" layoutY="365.0" prefHeight="28.0" prefWidth="494.0" />
                      </children>
                   </Pane>
-                  <Pane fx:id="p_group_inf" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #303436;">
+                  <Pane fx:id="p_group_inf" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color:#ffccf3;">
                      <children>
                         <Label layoutX="271.0" layoutY="25.0" prefHeight="66.0" prefWidth="407.0" text="Group Information" textFill="WHITE">
                            <font>
@@ -393,27 +394,8 @@
                         </Label>
                      </children>
                   </Pane>
-                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ff9999;">
-                    
-                            <children>
-                          
-                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
-                                <Button alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="481.0" layoutY="12.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
-                  
-                                    <padding>
-                                        <Insets right="50.0" />
-                                    </padding>
-                                </Button>                      
-                                <Line endX="600.0" layoutX="306.0" layoutY="125.0" startX="-251.0" />
-                                <ScrollPane fx:id="scrooll" layoutY="151.0" prefHeight="567.0" prefWidth="611.0">
-                                    <content>
-                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
-                                    </content>
-                                </ScrollPane>
-                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
-                            </children>
-                        </Pane>
-                  <Pane fx:id="p_search" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #303436;">
+                
+                  <Pane fx:id="p_search" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffccf3;">
                      <children>
                         <Label layoutX="35.0" layoutY="25.0" prefHeight="66.0" prefWidth="152.0" text="Search" textFill="WHITE" underline="true">
                            <font>
@@ -649,6 +631,28 @@
                         </JFXButton>
                      </children>
                   </Pane>
+                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ffffff;">
+                    
+                            <children>
+                          
+                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
+                                <Button fx:id="b_print_home" alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="582.0" layoutY="13.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
+                  
+                                    <padding>
+                                        <Insets right="50.0" />
+                                    </padding>
+                                </Button>                      
+                                <Line endX="600.0" layoutX="300.0" layoutY="67.0" startX="-251.0" />
+                                <ScrollPane fx:id="scrooll" layoutY="76.0" prefHeight="567.0" prefWidth="611.0">
+                                    <content>
+                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
+                                    </content>
+                                </ScrollPane>
+                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
+                        <JFXTextField fx:id="date_print_home" alignment="CENTER_RIGHT" disable="true" labelFloat="true" layoutX="340.0" layoutY="18.0" prefHeight="28.0" prefWidth="200.0" promptText="تاريخ الطباعه" visible="false" />
+                            </children>
+             
+                        </Pane>
                     </children>
                 </StackPane>
             </children>
