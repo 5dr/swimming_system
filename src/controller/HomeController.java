@@ -6,21 +6,13 @@
 package controller;
 
 import com.jfoenix.controls.*;
-import com.mysql.jdbc.Connection;
-import com.sun.javafx.print.PrintHelper;
-import com.sun.javafx.print.Units;
-import com.sun.javafx.scene.control.skin.TextFieldSkin;
-import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import javafx.geometry.Rectangle2D;
 import java.net.URL;
 import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -29,27 +21,19 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.stream.IntStream;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.print.PageLayout;
-import javafx.print.PageOrientation;
-import javafx.print.Printer;
 import javafx.print.PrinterJob;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
-import static javafx.scene.paint.Color.rgb;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import model.all_information_for_group;
@@ -62,12 +46,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import static javafx.scene.paint.Color.rgb;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javax.swing.JOptionPane;
 import model.all_information_for_attend_swimmer;
@@ -1203,7 +1185,7 @@ public class HomeController implements Initializable {
     List<Integer> all_g_id;
     List<List<swimmer>> t;
     List<coach> coach;
-    boolean bool;
+    int bool;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -1446,7 +1428,7 @@ public class HomeController implements Initializable {
                     Month currentMonth = currentdate.getMonth();
 ////////////SATURDAY
                     System.out.println("SATURDAY");
-                    if (bool == false) {
+                    if (bool == 0) {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
@@ -1458,7 +1440,7 @@ public class HomeController implements Initializable {
                         if (ldate.get(j - 1).isBefore(currentdate)) {
                             ch.setDisable(true);
                         }
-                    } else {
+                    } if (bool == 1) {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
@@ -1471,6 +1453,19 @@ public class HomeController implements Initializable {
                             ch.setDisable(true);
                         }
 
+                    }
+                     else if (bool == 2) {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
+                                || date.getDayOfWeek() == DayOfWeek.FRIDAY )
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 13) {
+                            ldate.remove(12);
+                        }
+                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                            ch.setDisable(true);
+                        }
                     }
                     ch.setOnAction((event) -> {
                         try {
@@ -1598,7 +1593,7 @@ public class HomeController implements Initializable {
         id = new ArrayList<all_information_for_group>();
         all_g_id = new ArrayList<Integer>();
         t = new ArrayList<List<swimmer>>();
-        combobox_all_group_day.getItems().addAll("Saturday", "Sunday");
+        combobox_all_group_day.getItems().addAll("Saturday", "Sunday","friday");
         combobox_all_group_day.setValue("Saturday");
         combobox_all_group.setValue(sqlTime);
 
@@ -1615,7 +1610,8 @@ public class HomeController implements Initializable {
             //////////////Show//////////
             allDb.DB_connection();
             combobox_all_group.getItems().addAll(allDb.All_time_of_group_without_repeat());
-            id = allDb.get_all_group_with_time(combobox_all_group.getValue(), false);
+          
+           id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
             all_g_id.clear();
             for (int i = 0; i < id.size(); i++) {
                 all_g_id.add(id.get(i).getG_id());
@@ -1633,9 +1629,11 @@ public class HomeController implements Initializable {
                 try {
 
                     if (combobox_all_group_day.getValue().equals("Saturday")) {
-                        bool = false;
-                    } else {
-                        bool = true;
+                        bool = 0;
+                    } else if (combobox_all_group_day.getValue().equals("sunday")){
+                        bool = 1;
+                    } else if (combobox_all_group_day.getValue().equals("fridey")){
+                        bool = 2;
                     }
                     allDb.DB_connection();
                     id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
@@ -1687,8 +1685,8 @@ public class HomeController implements Initializable {
                 add_group_coach.getItems().add(co.getName());
                 update_coach.getItems().add(co.getName());
             });
-            add_group_day.getItems().addAll("Saturday", "Sunday");
-            update_group_day.getItems().addAll("Saturday", "Sunday");
+            add_group_day.getItems().addAll("Saturday", "Sunday","friday");
+            update_group_day.getItems().addAll("Saturday", "Sunday","friday");
 
             add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
@@ -1712,7 +1710,7 @@ public class HomeController implements Initializable {
         time_swimmer.getItems().clear();
         coach_swimmer.getItems().clear();
 
-        day_swimmer.getItems().addAll("Saturday", "Sunday");
+        day_swimmer.getItems().addAll("Saturday", "Sunday","friday");
         add_s_gender.getItems().addAll("Male", "Female");
 
         try {
@@ -1735,7 +1733,7 @@ public class HomeController implements Initializable {
         search_g_name.clear();
 
         search_group_list = new ArrayList<all_information_for_group>();
-        search_g_day.getItems().addAll("Saturday", "Sunday");
+        search_g_day.getItems().addAll("Saturday", "Sunday","friday");
         search_g_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
                 "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
         search_g_level.getItems().addAll("Beginner", "level 1", "level 2", "level 3", "level 4", "level 5", "level 6", "level 7", "level 8");
@@ -1816,7 +1814,7 @@ public class HomeController implements Initializable {
         search_s_name.clear();
 
         search_swimmer_list = new ArrayList<all_information_for_swimmer>();
-        search_s_day.getItems().addAll("Saturday", "Sunday");
+        search_s_day.getItems().addAll("Saturday", "Sunday","friday");
         search_s_gender.getItems().addAll("male", "female");
         try {
             allDb.DB_connection();
