@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.all_information_for_attend_coach;
 import model.all_information_for_attend_swimmer;
 import model.all_information_for_group;
 import model.all_information_for_swimmer;
@@ -779,6 +780,26 @@ public class DB {
 
     }
 
+    public List<all_information_for_group> search_group_by_id(int id_g) {
+
+        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.c_id =" + id_g);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_group_by_name_and_time_and_day : " + ex);
+        }
+        return id;
+
+    }
+
     // 0 0 0 0 1
     public List<all_information_for_group> search_group_by_level(String level) {
 
@@ -1448,6 +1469,27 @@ public class DB {
 
     }
 
+    public List<all_information_for_swimmer> search_swimmer_id(int s_id) {
+
+        List<all_information_for_swimmer> id = new ArrayList<all_information_for_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.s_id=" + s_id);
+            while (r.next()) {
+                System.out.println("nnnnnnnnnnnnnnnnnn : " + r.getString("name"));
+//int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track, Date start, Date end, Time g_time, boolean day
+                id.add(new all_information_for_swimmer(r.getInt("s_id"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_swimmer_all : " + ex);
+        }
+        return id;
+
+    }
+
     // 0 0 0
     public List<all_information_for_swimmer> search_swimmer_all() {
 
@@ -1663,6 +1705,26 @@ public class DB {
 
     }
 
+    public List<all_information_for_attend_swimmer> search_attend_swimmer_by_id(int s_id) {
+
+        List<all_information_for_attend_swimmer> id = new ArrayList<all_information_for_attend_swimmer>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.name= " + s_id);
+            while (r.next()) {
+                System.out.println(r.getString("name"));
+                id.add(new all_information_for_attend_swimmer(r.getInt("attend_id"), r.getInt("s_id"), r.getInt("num"), r.getInt("age"), r.getInt("g_id"), r.getInt("c_id"), r.getDate("day"), r.getString("name"), r.getString("phone"), r.getString("level"), r.getString("gender"), r.getString("track"), r.getDate("start_date"), r.getDate("end_date"), r.getTime("g_time"), r.getBoolean("g_day")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_swimmer : " + ex);
+        }
+        return id;
+
+    }
+
     //0 0 1
     public List<all_information_for_attend_swimmer> search_attend_swimmer_by_num(int n) {
 
@@ -1809,8 +1871,32 @@ public class DB {
         return id;
 
     }
-    ////////////////////////////////////////////////search/////////////
 
+    ////////////////////////////////////////////////search_attend/////////////
+    ////////////////////////////////////////////////search_attend_coach/////////////
+    public List<all_information_for_attend_coach> search_attend_coach() {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id");
+            while (r.next()) {
+                System.out.println("attend coach : "+r.getString("name"));
+                                                                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+
+    ////////////////////////////////////////////////search_attend_coach/////////////
+    ////////////////////////////////////////////////search/////////////
     ////////////////////////////////////////////////re_coach/////////////
     public List<all_information_for_group> search_group_by_notequletime_and_day(Time t, boolean b) {
 
@@ -1841,9 +1927,10 @@ public class DB {
         return id;
 
     }
+
+    //SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id
 //SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time!='03:00' AND groups.g_day =0 AND couch.name NOT IN (SELECT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='03:00' AND groups.g_day =0)    
 //SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time!='03:00' AND groups.g_day =0
-
 //SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id
 //SELECT * FROM `attend_swimmer` INNER JOIN swimmer ON attend_swimmer.s_id=swimmer.s_id INNER JOIN groups ON swimmer.g_id=groups.g_id
 //SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id
