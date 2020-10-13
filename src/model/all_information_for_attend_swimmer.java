@@ -19,9 +19,9 @@ public class all_information_for_attend_swimmer {
     String name, phone, level, gender, track;
     Date start, end;
     Time g_time;
-    boolean g_day;
+    int g_day;
 
-    public all_information_for_attend_swimmer(int attend_id, int s_id, int num, int age, int g_id, int c_id, Date day, String name, String phone, String level, String gender, String track, Date start, Date end, Time g_time, boolean g_day) {
+    public all_information_for_attend_swimmer(int attend_id, int s_id, int num, int age, int g_id, int c_id, Date day, String name, String phone, String level, String gender, String track, Date start, Date end, Time g_time, int g_day) {
         this.attend_id = attend_id;
         this.s_id = s_id;
         this.num = num;
@@ -100,9 +100,9 @@ public class all_information_for_attend_swimmer {
         return g_time;
     }
 
-    public boolean isG_day() {
+    public int getG_day() {
         return g_day;
     }
-    
-    
+
+     
 }
