@@ -16,9 +16,9 @@ public class all_information_for_group {
     int g_id,c_id;
     String track,g_level,name,phone,address,c_level;
     Time time;
-    boolean day;
+    int day;
 
-    public all_information_for_group(int g_id, int c_id, String track, String g_level, String name, String phone, String address, String c_level, Time time, boolean day) {
+    public all_information_for_group(int g_id, int c_id, String track, String g_level, String name, String phone, String address, String c_level, Time time, int day) {
         this.g_id = g_id;
         this.c_id = c_id;
         this.track = track;
@@ -67,9 +67,10 @@ public class all_information_for_group {
         return time;
     }
 
-    public boolean isDay() {
+    public int getDay() {
         return day;
     }
-    
+
+   
     
 }
