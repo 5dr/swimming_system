@@ -48,6 +48,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import static javafx.scene.paint.Color.rgb;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -159,7 +160,13 @@ public class HomeController implements Initializable {
         } else {
             System.out.println(add_group_coach.getValue());
             Time time = Time.valueOf(add_group_time.getValue());
-            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            if (day_swimmer.getValue() == "Saturday") {
+                int b = 0;
+            } else if (day_swimmer.getValue() == "Sunday") {
+                int b = 1;
+            } else if (day_swimmer.getValue() == "friday") {
+                int b = 2;
+            }
             boolean bool = false;
 
             allDb.DB_connection();
@@ -202,7 +209,14 @@ public class HomeController implements Initializable {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
         } else {
             Time time = Time.valueOf(update_group_time.getValue());
-            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            int b = 0;
+            if (day_swimmer.getValue() == "Saturday") {
+                b = 0;
+            } else if (day_swimmer.getValue() == "Sunday") {
+                b = 1;
+            } else if (day_swimmer.getValue() == "friday") {
+                b = 2;
+            }
             boolean bool = false;
 
             allDb.DB_connection();
@@ -252,8 +266,14 @@ public class HomeController implements Initializable {
         } else if (coach_swimmer.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار المدرب");
         } else {
-
-            boolean b = day_swimmer.getValue() == "Saturday" ? false : true;
+            int b = 0;
+            if (day_swimmer.getValue() == "Saturday") {
+                b = 0;
+            } else if (day_swimmer.getValue() == "Sunday") {
+                b = 1;
+            } else if (day_swimmer.getValue() == "friday") {
+                b = 2;
+            }
             allDb.DB_connection();
 
             int g_id = allDb.get_id_check_group_exist(coach_swimmer.getValue(), time_swimmer.getValue(), b);
@@ -272,7 +292,16 @@ public class HomeController implements Initializable {
                     System.out.println(id);
 
                     java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
-                    pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), id.get(0).isDay() ? "Sunday" : "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                    if (id.get(0).getDay() == 0) {
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+
+                    } else if (id.get(0).getDay() == 1) {
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+
+                    } else if (id.get(0).getDay() == 2) {
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+
+                    }
                     pj.print();
                     pj.cancel();
 
@@ -423,12 +452,12 @@ public class HomeController implements Initializable {
     public void switch_search(ActionEvent actionEvent) throws SQLException {
         if (actionEvent.getSource() == search_group) {
             search_group.setStyle("-fx-background-color: #ffffff;");
-              search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_coach.setStyle("-fx-background-color:   #181a1b;");
             search_swimmer.setStyle("-fx-background-color:   #181a1b;");
             search_att_s.setStyle("-fx-background-color: #181a1b;");
             // search_att_c.setStyle("-fx-background-color: #181a1b;");
 
-           // vbox_search_att_c.setDisable(true);
+            // vbox_search_att_c.setDisable(true);
             vbox_search_att_s.setDisable(true);
             vbox_search_group.setDisable(false);
             vbox_search_coach.setDisable(true);
@@ -450,7 +479,7 @@ public class HomeController implements Initializable {
             search_swimmer.setStyle("-fx-background-color:   #181a1b;");
             search_att_s.setStyle("-fx-background-color: #181a1b;");
            // search_att_c.setStyle("-fx-background-color: #181a1b;");
-            
+
             //vbox_search_att_c.setDisable(true);   
             vbox_search_att_s.setDisable(true);
             vbox_search_group.setDisable(true);
@@ -458,9 +487,9 @@ public class HomeController implements Initializable {
             vbox_search_swimmer.setDisable(true);
 
             try {
-                
+
                 allDb.DB_connection();
-                search_att_coach_list =allDb.search_attend_coach();
+                search_att_coach_list = allDb.search_attend_coach();
                 BuildCoach_att(search_att_coach_list);
                 allDb.DB_close();
             } catch (SQLException ex) {
@@ -469,7 +498,7 @@ public class HomeController implements Initializable {
         }
         if (actionEvent.getSource() == search_swimmer) {
             search_group.setStyle("-fx-background-color:   #181a1b;");
-             search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_coach.setStyle("-fx-background-color:   #181a1b;");
             search_swimmer.setStyle("-fx-background-color:  #ffffff;");
             search_att_s.setStyle("-fx-background-color: #181a1b;");
             // search_att_c.setStyle("-fx-background-color: #181a1b;");
@@ -490,7 +519,7 @@ public class HomeController implements Initializable {
         }
         if (actionEvent.getSource() == search_att_s) {
             search_group.setStyle("-fx-background-color: #181a1b;");
-             search_coach.setStyle("-fx-background-color:   #181a1b;");
+            search_coach.setStyle("-fx-background-color:   #181a1b;");
             search_swimmer.setStyle("-fx-background-color:   #181a1b;");
             search_att_s.setStyle("-fx-background-color: #ffffff;");
             // search_att_c.setStyle("-fx-background-color: #181a1b;");
@@ -498,7 +527,7 @@ public class HomeController implements Initializable {
             //  vbox_search_att_c.setDisable(true);
             vbox_search_att_s.setDisable(false);
             vbox_search_group.setDisable(true);
-             vbox_search_coach.setDisable(true);
+            vbox_search_coach.setDisable(true);
             vbox_search_swimmer.setDisable(true);
 
             try {
@@ -565,7 +594,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_time_and_day_and_line_and_level(search_g_name.getText(), search_g_time.getValue(), b, search_g_line.getValue(), search_g_level.getValue());
                 allDb.DB_close();
@@ -582,7 +618,14 @@ public class HomeController implements Initializable {
             } else if (search_g_line.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_time_and_day_and_line(search_g_name.getText(), search_g_time.getValue(), b, search_g_line.getValue());
                 allDb.DB_close();
@@ -616,7 +659,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_time_and_day_and_level(search_g_name.getText(), search_g_time.getValue(), b, search_g_level.getValue());
                 allDb.DB_close();
@@ -633,7 +683,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_day_and_line_and_level(search_g_name.getText(), b, search_g_line.getValue(), search_g_level.getValue());
                 allDb.DB_close();
@@ -650,7 +707,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_time_and_day_and_line_and_level(search_g_time.getValue(), b, search_g_line.getValue(), search_g_level.getValue());
                 allDb.DB_close();
@@ -665,7 +729,14 @@ public class HomeController implements Initializable {
             } else if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_time_and_day(search_g_name.getText(), search_g_time.getValue(), b);
                 allDb.DB_close();
@@ -710,7 +781,18 @@ public class HomeController implements Initializable {
             } else if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+
+                    b = 2;
+                }
+
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_day_and_line_and_level(b, search_g_line.getValue(), search_g_level.getValue());
                 allDb.DB_close();
@@ -740,7 +822,15 @@ public class HomeController implements Initializable {
             } else if (search_g_time.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
+
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_time_and_day_and_level(search_g_time.getValue(), b, search_g_level.getValue());
                 allDb.DB_close();
@@ -755,7 +845,14 @@ public class HomeController implements Initializable {
             } else if (search_g_time.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_time_and_day_and_line(search_g_time.getValue(), b, search_g_line.getValue());
                 allDb.DB_close();
@@ -770,7 +867,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_day_and_level(search_g_name.getText(), b, search_g_level.getValue());
                 allDb.DB_close();
@@ -800,7 +904,14 @@ public class HomeController implements Initializable {
             } else if (search_g_line.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الحاره");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_day_and_line(search_g_name.getText(), b, search_g_line.getValue());
                 allDb.DB_close();
@@ -825,7 +936,14 @@ public class HomeController implements Initializable {
             } else if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_name_and_day(search_g_name.getText(), b);
                 allDb.DB_close();
@@ -877,7 +995,14 @@ public class HomeController implements Initializable {
             } else if (search_g_level.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_day_and_level(b, search_g_level.getValue());
                 allDb.DB_close();
@@ -890,7 +1015,14 @@ public class HomeController implements Initializable {
             } else if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_day_and_line(b, search_g_line.getValue());
                 allDb.DB_close();
@@ -929,7 +1061,14 @@ public class HomeController implements Initializable {
             } else if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_time_and_day(search_g_time.getValue(), b);
                 allDb.DB_close();
@@ -960,7 +1099,14 @@ public class HomeController implements Initializable {
             if (search_g_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_g_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_g_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_g_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_g_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_group_list = allDb.search_group_by_day(b);
                 allDb.DB_close();
@@ -1013,7 +1159,14 @@ public class HomeController implements Initializable {
             } else if (search_s_time.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
             } else {
-                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_s_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_s_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_s_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_swimmer_list = allDb.search_swimmer_by_time_and_day_and_gender(search_s_time.getValue(), b, search_s_gender.getValue());
                 BuildSearch_Swimmer(search_swimmer_list);
@@ -1025,7 +1178,14 @@ public class HomeController implements Initializable {
             } else if (search_s_time.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
             } else {
-                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_s_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_s_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_s_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_swimmer_list = allDb.search_swimmer_by_time_and_gender(search_s_time.getValue(), search_s_gender.getValue());
                 BuildSearch_Swimmer(search_swimmer_list);
@@ -1037,7 +1197,14 @@ public class HomeController implements Initializable {
             } else if (search_s_gender.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
             } else {
-                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_s_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_s_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_s_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_swimmer_list = allDb.search_swimmer_by_day_and_gender(b, search_s_gender.getValue());
                 BuildSearch_Swimmer(search_swimmer_list);
@@ -1049,7 +1216,14 @@ public class HomeController implements Initializable {
             } else if (search_s_time.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
             } else {
-                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_s_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_s_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_s_day.getValue() == "friday") {
+                    b = 2;
+                }
                 allDb.DB_connection();
                 search_swimmer_list = allDb.search_swimmer_by_time_and_day(search_s_time.getValue(), b);
                 BuildSearch_Swimmer(search_swimmer_list);
@@ -1059,7 +1233,15 @@ public class HomeController implements Initializable {
             if (search_s_day.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
             } else {
-                boolean b = search_s_day.getValue() == "Saturday" ? false : true;
+                int b = 0;
+                if (search_s_day.getValue() == "Saturday") {
+                    b = 0;
+                } else if (search_s_day.getValue() == "Sunday") {
+                    b = 1;
+                } else if (search_s_day.getValue() == "friday") {
+                    b = 2;
+                }
+
                 allDb.DB_connection();
                 search_swimmer_list = allDb.search_swimmer_by_day(b);
                 BuildSearch_Swimmer(search_swimmer_list);
@@ -1244,9 +1426,8 @@ public class HomeController implements Initializable {
 
         ///////////////////add swimmer///////////
         initialize_add_swimmer();
-        
+
             ///////////////////add swimmer///////////
-       
         ///////////////////////search group//////
         initialize_search_group();
         ///////////////////////search group//////
@@ -1384,7 +1565,7 @@ public class HomeController implements Initializable {
             try {
                 allDb.DB_connection();
 
-                all_re_coach = allDb.search_group_by_notequletime_and_day(id.get(Integer.parseInt(comp[1])).getTime(), id.get(Integer.parseInt(comp[1])).isDay());
+                all_re_coach = allDb.search_group_by_notequletime_and_day(id.get(Integer.parseInt(comp[1])).getTime(), id.get(Integer.parseInt(comp[1])).getDay());
 
                 l_name.clear();
                 l_re_id.clear();
@@ -1478,7 +1659,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1491,7 +1672,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1504,7 +1685,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.FRIDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.FRIDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -1656,8 +1837,8 @@ public class HomeController implements Initializable {
             //////////////Show//////////
             allDb.DB_connection();
             combobox_all_group.getItems().addAll(allDb.All_time_of_group_without_repeat());
-          
-           id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
+
+            id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
             all_g_id.clear();
             for (int i = 0; i < id.size(); i++) {
                 all_g_id.add(id.get(i).getG_id());
@@ -1676,9 +1857,9 @@ public class HomeController implements Initializable {
 
                     if (combobox_all_group_day.getValue().equals("Saturday")) {
                         bool = 0;
-                    } else if (combobox_all_group_day.getValue().equals("sunday")){
+                    } else if (combobox_all_group_day.getValue().equals("sunday")) {
                         bool = 1;
-                    } else if (combobox_all_group_day.getValue().equals("fridey")){
+                    } else if (combobox_all_group_day.getValue().equals("fridey")) {
                         bool = 2;
                     }
                     allDb.DB_connection();
@@ -1887,7 +2068,6 @@ public class HomeController implements Initializable {
         vbox_search_swimmer.setPrefWidth(bounds.getWidth() * 0.17);
         vbox_search_coach.setPrefWidth(bounds.getWidth() * 0.17);
 
-        
         try {
             allDb.DB_connection();
             search_group_list = allDb.search_group_all();
@@ -2132,8 +2312,15 @@ public class HomeController implements Initializable {
             Label level1 = make_lable_g(id.get(i).getG_level(), .08);
             Label track1 = make_lable_g(id.get(i).getTrack(), .08);
             Label time1 = make_lable_g(id.get(i).getTime() + "", .08);
-            Label day1 = make_lable_g(id.get(i).isDay() ? "Sunday" : "Saturday", .08);
-
+            Label d1 = make_lable_g("Saturday", .08);
+            if ((id.get(i).getDay() == 0)) {
+                d1 = make_lable_g("Saturday", .08);
+            } else if ((id.get(i).getDay() == 1)) {
+                d1 = make_lable_g("Sunday", .08);
+            } else if ((id.get(i).getDay() == 2)) {
+                d1 = make_lable_g("friday", .08);
+            }
+            Label day1 = d1;
             Image image = new Image(getClass().getResourceAsStream("/images/delet.png"));
             ImageView Iview = new ImageView(image);
             Iview.setFitHeight(25);
@@ -2226,8 +2413,14 @@ public class HomeController implements Initializable {
                     Label level1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getG_level(), .09);
                     Label track1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getTrack(), .09);
                     Label time1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).getTime() + "", .09);
-                    Label day1_inf = make_lable_g(id.get(Integer.parseInt(num1.getText()) - 1).isDay() ? "Sunday" : "Saturday", .09);
-
+                    Label day1_inf = make_lable_g("Saturday", .08);
+                    if (id.get(Integer.parseInt(num1.getText()) - 1).getDay() == 0) {
+                        day1_inf = make_lable_g("Saturday", .09);
+                    } else if (id.get(Integer.parseInt(num1.getText()) - 1).getDay() == 1) {
+                        day1_inf = make_lable_g("Sunday", .09);
+                    } else if (id.get(Integer.parseInt(num1.getText()) - 1).getDay() == 2) {
+                        day1_inf = make_lable_g("friday", .09);
+                    }
                     coach_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getName();
                     day_to_tranfer_to_add_swimmer = day1_inf.getText();
                     time_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getTime();
@@ -2349,7 +2542,15 @@ public class HomeController implements Initializable {
             Label s_day1 = make_lable_search_swimmer(id.get(i).getStart() + "", .073);
             Label e_day1 = make_lable_search_swimmer(id.get(i).getEnd() + "", .065);
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .05);
-            Label day1 = make_lable_search_swimmer(id.get(i).isDay() ? "Sunday" : "Saturday", .05);
+            Label da = make_lable_g("Saturday", .09);
+            if (id.get(i).getDay() == 0) {
+                da = make_lable_search_swimmer("Saturday", .09);
+            } else if (id.get(i).getDay() == 1) {
+                da = make_lable_search_swimmer("Sunday", .09);
+            } else if (id.get(i).getDay() == 2) {
+                da = make_lable_search_swimmer("friday", .09);
+            }
+            Label day1 = da;
 
             Image image = new Image(getClass().getResourceAsStream("/images/delet.png"));
             ImageView Iview = new ImageView(image);
@@ -2402,7 +2603,7 @@ public class HomeController implements Initializable {
             title1.setOnMouseExited(event -> {
                 title1.setStyle("-fx-background-color :#ffb3e6 ");
             });
-            title1.setOnMouseClicked((event) -> {
+            title1.setOnMouseClicked((MouseEvent event) -> {
                 List<attend_swimmer> s = new ArrayList<attend_swimmer>();
 
                 inf_s_name.setText(name1.getText());
@@ -2500,7 +2701,14 @@ public class HomeController implements Initializable {
             Label coach1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getC_id()), 0.06);
             Label level1 = make_lable_search_swimmer(id.get(i).getLevel() + "", .05);
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .06);
-            Label day1 = make_lable_search_swimmer(id.get(i).isG_day() ? "Sunday" : "Saturday", .06);
+            Label day1 = make_lable_g("Saturday", .06);
+            if (id.get(i).getG_day() == 0) {
+                day1 = make_lable_search_swimmer("Saturday", .06);
+            } else if (id.get(i).getG_day() == 1) {
+                day1 = make_lable_search_swimmer("Sunday", .06);
+            } else if (id.get(i).getG_day() == 2) {
+                day1 = make_lable_search_swimmer("friday", .06);
+            }
 
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3e6;");
@@ -2525,7 +2733,7 @@ public class HomeController implements Initializable {
         pane_search_table.getChildren().add(table_search);
 
     }
-    
+
     private void BuildCoach_att(List<all_information_for_attend_coach> id) throws SQLException {
 
         table_search.getChildren().clear();
@@ -2544,26 +2752,26 @@ public class HomeController implements Initializable {
         HBox title = new HBox();
         title.setStyle("-fx-background-color:  #b6bec2;");
         title.setPrefSize(bounds.getWidth() * .59, 0);
-        title.getChildren().addAll(coach,day, time, level, Date, name,Id, num);
+        title.getChildren().addAll(coach, day, time, level, Date, name, Id, num);
         title.setAlignment(Pos.CENTER_RIGHT);
         table_search.getChildren().add(title);
 
         for (int i = 0; i < id.size(); i++) {
             Label num1 = make_lable_search_swimmer((i + 1) + "", .04);
             Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.1);
-            Label id1 = make_lable_search_swimmer(id.get(i).getC_id()+ "", .048);
-            Label date1 = make_lable_search_swimmer(id.get(i).getDate_absent()+ "", 0.07);
+            Label id1 = make_lable_search_swimmer(id.get(i).getC_id() + "", .048);
+            Label date1 = make_lable_search_swimmer(id.get(i).getDate_absent() + "", 0.07);
             //Label n_day1 = make_lable_search_swimmer(id.get(i).getNum() + "", .05);
             Label coach1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getR_id()), 0.08);
             Label level1 = make_lable_search_swimmer(id.get(i).getLevel() + "", .05);
-            Label time1 = make_lable_search_swimmer(id.get(i).getTime()+ "", .06);
-            Label day1 = make_lable_search_swimmer(id.get(i).getDay()+"", .06);
+            Label time1 = make_lable_search_swimmer(id.get(i).getTime() + "", .06);
+            Label day1 = make_lable_search_swimmer(id.get(i).getDay() + "", .06);
 
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffb3e6;");
             title1.setPrefSize(bounds.getWidth() * .59, 0);
             title1.setAlignment(Pos.CENTER_RIGHT);
-            title1.getChildren().addAll( coach1,day1, time1, level1, date1,  name1,id1, num1);
+            title1.getChildren().addAll(coach1, day1, time1, level1, date1, name1, id1, num1);
             title1.setOnMouseEntered(event -> {
                 title1.setStyle("-fx-background-color :#b6bec2");
             });
