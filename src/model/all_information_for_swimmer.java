@@ -18,9 +18,9 @@ public class all_information_for_swimmer {
     String name,phone,adress,level,gender,track;
     Date start ,end;
     Time g_time;
-    boolean day;
+    int day;
 
-    public all_information_for_swimmer(int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, Time g_time, boolean day) {
+    public all_information_for_swimmer(int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, Time g_time, int day) {
         this.s_id = s_id;
         this.age = age;
         this.g_id = g_id;
@@ -89,9 +89,10 @@ public class all_information_for_swimmer {
         return g_time;
     }
 
-    public boolean isDay() {
+    public int getDay() {
         return day;
     }
-    
+
+  
     
 }
