@@ -43,7 +43,7 @@ public class DB {
 
         try {
             // connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/swimming", "root", "");
-            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "");
             System.out.println("connected");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -386,7 +386,7 @@ public class DB {
             ResultSet r = statement
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "");
             while (r.next()) {
-                System.out.println(r.getInt("g_id"));
+                System.out.println(r.getInt("g_day"));
                 id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), t, r.getInt("g_day")));
             }
         } catch (SQLException ex) {
@@ -1892,6 +1892,110 @@ public class DB {
 
             ResultSet r = statement
                     .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id");
+            while (r.next()) {
+                System.out.println("attend coach : " + r.getString("name"));
+                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+
+    public List<all_information_for_attend_coach> search_attend_coach_by_id(int c_id) {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.c_id=" + c_id);
+            while (r.next()) {
+                System.out.println("attend coach : " + r.getString("name"));
+                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+
+    public List<all_information_for_attend_coach> search_attend_coach_by_name(String c_name) {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + c_name + "'");
+            while (r.next()) {
+                System.out.println("attend coach : " + r.getString("name"));
+                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+
+    public List<all_information_for_attend_coach> search_attend_coach_by_time(Time t) {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'");
+            while (r.next()) {
+                System.out.println("attend coach : " + r.getString("name"));
+                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+
+    public List<all_information_for_attend_coach> search_attend_coach_by_day(Date d) {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id WHERE attend_couch.absent_day='" + d + "'");
+            while (r.next()) {
+                System.out.println("attend coach : " + r.getString("name"));
+                //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time
+                id.add(new all_information_for_attend_coach(r.getInt("attend_id"), r.getInt("g_id"), r.getInt("c_id"), r.getInt("replace_c_id"), r.getDate("absent_day"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("c_level"), r.getString("phone"), r.getTime("g_time")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" search_attend_coach : " + ex);
+        }
+        return id;
+
+    }
+    public List<all_information_for_attend_coach> search_attend_coach_by_day_time(Date d,Time t) {
+
+        List<all_information_for_attend_coach> id = new ArrayList<all_information_for_attend_coach>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id WHERE attend_couch.absent_day='" + d + "' && groups.g_time='" + t + "'");
             while (r.next()) {
                 System.out.println("attend coach : " + r.getString("name"));
                 //int att_c_id, int g_id, int c_id, int r_id, Date date_absent                            , String track, String level, String name,                                  String c_L, String phone, Time time

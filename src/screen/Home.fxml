@@ -665,39 +665,33 @@
                                        </children>
                                     </VBox>
                                     <Line endX="-101.62132263183594" endY="179.2928924560547" layoutX="507.0" layoutY="25.0" startX="-100.0" />
-                                    <VBox fx:id="vbox_search_coach" disable="true" prefHeight="193.0" prefWidth="253.0" spacing="12.0">
+                                    <VBox fx:id="vbox_search_coach" disable="true" prefHeight="193.0" prefWidth="253.0" spacing="20.0">
                                        <children>
                                           <HBox layoutX="10.0" layoutY="10.0" prefHeight="25.0" prefWidth="242.0" spacing="30.0">
                                              <children>
-                                                <JFXRadioButton fx:id="r_s_id1" text="Swimmer id" />
-                                                <TextField fx:id="search_s_id1" disable="true" prefHeight="25.0" prefWidth="170.0" />
+                                                <JFXRadioButton fx:id="r_att_c_id" text="Coach id" />
+                                                <TextField fx:id="search_att_c_id" disable="true" prefHeight="25.0" prefWidth="170.0" />
                                              </children>
                                           </HBox>
                                           <HBox prefHeight="25.0" prefWidth="119.0" spacing="10.0">
                                              <children>
-                                                <JFXRadioButton fx:id="r_s_name1" text="Swimmer Name" />
-                                                <TextField fx:id="search_s_name1" disable="true" prefHeight="25.0" prefWidth="171.0" />
+                                                <JFXRadioButton fx:id="r_att_c_name" text="Coach Name" />
+                                                <TextField fx:id="search_att_c_name" disable="true" prefHeight="25.0" prefWidth="171.0" />
                                              </children>
                                           </HBox>
                                           <HBox prefHeight="25.0" prefWidth="119.0" spacing="50.0">
                                              <children>
-                                                <JFXRadioButton fx:id="r_s_time1" text="Time" />
-                                                <JFXComboBox fx:id="search_s_time1" disable="true" prefHeight="28.0" prefWidth="152.0" />
+                                                <JFXRadioButton fx:id="r_att_c_time" text="Time" />
+                                                <JFXComboBox fx:id="search_att_c_time" disable="true" prefHeight="28.0" prefWidth="152.0" />
                                              </children>
                                           </HBox>
                                           <HBox layoutX="10.0" layoutY="37.0" prefHeight="25.0" prefWidth="119.0" spacing="52.0">
                                              <children>
-                                                <JFXRadioButton fx:id="r_s_day1" text="Day" />
-                                                <JFXComboBox fx:id="search_s_day1" disable="true" prefHeight="28.0" prefWidth="152.0" />
+                                                <JFXRadioButton fx:id="r_att_c_day" text="Day" />
+                                                <JFXDatePicker fx:id="search_att_c_day" disable="true" prefHeight="28.0" prefWidth="140.0" />
                                              </children>
                                           </HBox>
-                                          <HBox layoutX="10.0" layoutY="37.0" prefHeight="25.0" prefWidth="119.0" spacing="50.0">
-                                             <children>
-                                                <JFXRadioButton fx:id="r_s_gender1" text="Gender" />
-                                                <JFXComboBox fx:id="search_s_gender1" disable="true" prefHeight="28.0" prefWidth="152.0" />
-                                             </children>
-                                          </HBox>
-                                          <JFXButton buttonType="RAISED" onAction="#swimmer_search" prefHeight="25.0" prefWidth="257.0" style="-fx-background-color: #181a1b; -fx-background-radius: 25;" text="Search" textFill="WHITE" />
+                                          <JFXButton buttonType="RAISED" onAction="#att_search_coach" prefHeight="25.0" prefWidth="257.0" style="-fx-background-color: #181a1b; -fx-background-radius: 25;" text="Search" textFill="WHITE" />
                                        </children>
                                     </VBox>
                                  </children>
