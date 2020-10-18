@@ -30,14 +30,16 @@ import javax.swing.ImageIcon;
  */
 public class BillPrintable implements Printable {
 
-    String name,phone,age,level,day,time,track;
+    String name,phone,level,day,time,track ,s_level;
+    Date age;
     int group,id;
 
-    public BillPrintable(String name, String phone, String age, String level, String day, String time, String track, int id) {
+    public BillPrintable(String name, String phone, Date age, String level,String s_level, String day, String time, String track, int id) {
         this.name = name;
         this.phone = phone;
         this.age = age;
         this.level = level;
+           this.s_level = s_level;
         this.day = day;
         this.time = time;
         this.track = track;
@@ -114,6 +116,8 @@ public class BillPrintable implements Printable {
                 g2d.drawString(" Day :           "+day, 10, y);
                 y += yShift;
                 g2d.drawString(" Time :           "+time, 10, y);
+                y += yShift;
+                 g2d.drawString(" level_swimmer :           "+s_level, 10, y);
                 y += yShift;
 
                 g2d.drawString("-------------------------------------", 10, y);
