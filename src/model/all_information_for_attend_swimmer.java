@@ -14,14 +14,14 @@ import java.sql.Time;
  */
 public class all_information_for_attend_swimmer {
 
-    int attend_id, s_id, num, age, g_id,c_id;
-    Date day;
-    String name, phone, level, gender, track;
+    int attend_id, s_id, num, g_id,c_id;
+    Date day ,age;
+    String name, phone, level, gender, track,s_level;
     Date start, end;
     Time g_time;
     int g_day;
 
-    public all_information_for_attend_swimmer(int attend_id, int s_id, int num, int age, int g_id, int c_id, Date day, String name, String phone, String level, String gender, String track, Date start, Date end, Time g_time, int g_day) {
+    public all_information_for_attend_swimmer(int attend_id, String s_level,int s_id, int num, Date age, int g_id, int c_id, Date day, String name, String phone, String level, String gender, String track, Date start, Date end, Time g_time, int g_day) {
         this.attend_id = attend_id;
         this.s_id = s_id;
         this.num = num;
@@ -38,6 +38,7 @@ public class all_information_for_attend_swimmer {
         this.end = end;
         this.g_time = g_time;
         this.g_day = g_day;
+    this.s_level = s_level;
     }
 
     public int getAttend_id() {
@@ -52,7 +53,7 @@ public class all_information_for_attend_swimmer {
         return num;
     }
 
-    public int getAge() {
+    public Date getAge() {
         return age;
     }
 
@@ -86,6 +87,10 @@ public class all_information_for_attend_swimmer {
 
     public String getTrack() {
         return track;
+    }
+
+    public String getS_level() {
+        return s_level;
     }
 
     public Date getStart() {
