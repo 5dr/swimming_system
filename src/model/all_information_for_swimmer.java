@@ -14,13 +14,13 @@ import java.sql.Time;
  */
 public class all_information_for_swimmer {
  
-     int s_id,age,g_id,c_id;
-    String name,phone,adress,level,gender,track;
-    Date start ,end;
+     int s_id,g_id,c_id;
+    String name,phone,adress,level,gender,track,s_level;
+    Date start ,end,age;
     Time g_time;
     int day;
 
-    public all_information_for_swimmer(int s_id, int age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, Time g_time, int day) {
+    public all_information_for_swimmer(int s_id, String s_level ,Date age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, Time g_time, int day) {
         this.s_id = s_id;
         this.age = age;
         this.g_id = g_id;
@@ -34,6 +34,7 @@ public class all_information_for_swimmer {
         this.end = end;
         this.g_time = g_time;
         this.day = day;
+         this.s_level = s_level;
         this.level = level;
     }
 
@@ -41,7 +42,7 @@ public class all_information_for_swimmer {
         return s_id;
     }
 
-    public int getAge() {
+    public Date getAge() {
         return age;
     }
 
@@ -83,6 +84,10 @@ public class all_information_for_swimmer {
 
     public Date getEnd() {
         return end;
+    }
+
+    public String getS_level() {
+        return s_level;
     }
 
     public Time getG_time() {
