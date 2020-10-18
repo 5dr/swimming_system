@@ -14,12 +14,17 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -46,6 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.DatePicker;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -91,7 +97,8 @@ public class HomeController implements Initializable {
 
     @FXML
     private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level, update_group_day, update_coach, update_group_line, update_group_level;
-
+@FXML
+    private DatePicker add_s_age;
     @FXML
     private JFXTimePicker add_group_time, update_group_time;
     @FXML
@@ -113,7 +120,7 @@ public class HomeController implements Initializable {
     private HBox hbox_select_search;
 
     @FXML
-    private JFXTextField date_print_home, text_s_note, add_s_name, add_s_phone, add_s_age;
+    private JFXTextField date_print_home, text_s_note, add_s_name, add_s_phone,add_s_level;
 
     @FXML
     private JFXDatePicker search_att_day, search_att_c_day;
@@ -243,14 +250,12 @@ public class HomeController implements Initializable {
         }
     }
 
-    public void add_swimmer(ActionEvent actionEvent) throws SQLException, PrinterException {
+    public void add_swimmer(ActionEvent actionEvent) throws SQLException, PrinterException, ParseException {
         if (add_s_name.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
         } else if (add_s_phone.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
-        } else if (add_s_age.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لم يتم ادخال العمر");
-        } else if (add_s_gender.getSelectionModel().isEmpty()) {
+        }  else if (add_s_gender.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
         } else if (day_swimmer.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
@@ -275,9 +280,11 @@ public class HomeController implements Initializable {
 
                 int count = allDb.get_swimmer_by_group(g_id).size();
                 System.out.println(count);
-
+                  Date sqlDate = java.sql.Date.valueOf(add_s_age.getValue());
+ // Date date1=   (Date) new SimpleDateFormat("dd/MM/yyyy").parse(add_s_age.getText());  
+     
                 if (count < 8) {
-                    allDb.addswimmer(add_s_name.getText(), Integer.parseInt(add_s_age.getText()), add_s_gender.getValue(), add_s_phone.getText(), g_id);
+                    allDb.addswimmer(add_s_name.getText(),sqlDate,add_s_level.getText(), add_s_gender.getValue(), add_s_phone.getText(), g_id);
 
                     List<all_information_for_group> id = new ArrayList<all_information_for_group>();
                     id = allDb.search_group_by_name_and_time_and_day(coach_swimmer.getValue(), time_swimmer.getValue(), b);
@@ -286,13 +293,13 @@ public class HomeController implements Initializable {
 
                     java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
                     if (id.get(0).getDay() == 0) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(),  add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
 
                     } else if (id.get(0).getDay() == 1) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(),add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
 
                     } else if (id.get(0).getDay() == 2) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), add_s_age.getText(), id.get(0).getG_level(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
 
                     }
                     pj.print();
@@ -304,7 +311,7 @@ public class HomeController implements Initializable {
 
                     add_s_name.setText("");
                     add_s_phone.setText("");
-                    add_s_age.setText("");
+                    add_s_level.setText("");
 
                 } else {
 
@@ -312,7 +319,7 @@ public class HomeController implements Initializable {
 
                     add_s_name.setText("");
                     add_s_phone.setText("");
-                    add_s_age.setText("");
+                    
                 }
 
             } else {
