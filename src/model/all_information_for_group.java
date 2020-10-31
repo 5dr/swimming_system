@@ -14,11 +14,11 @@ import java.sql.Time;
 public class all_information_for_group {
     
     int g_id,c_id;
-    String track,g_level,name,phone,address,c_level;
+    String track,g_level,name,phone,address,c_level,g_type;
     Time time;
     int day;
 
-    public all_information_for_group(int g_id, int c_id, String track, String g_level, String name, String phone, String address, String c_level, Time time, int day) {
+    public all_information_for_group(int g_id, int c_id, String track, String g_level, String name, String phone, String address, String c_level, Time time, int day,String g_type) {
         this.g_id = g_id;
         this.c_id = c_id;
         this.track = track;
@@ -29,6 +29,7 @@ public class all_information_for_group {
         this.c_level = c_level;
         this.time = time;
         this.day = day;
+     this.g_type = g_type;
     }
 
     public int getG_id() {
@@ -41,6 +42,10 @@ public class all_information_for_group {
 
     public String getTrack() {
         return track;
+    }
+
+    public String getG_type() {
+        return g_type;
     }
 
     public String getG_level() {
