@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.DatePicker?>
+
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXDatePicker?>
@@ -9,6 +9,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -322,86 +323,6 @@
                         </Button>
                      </children>
                   </Pane>
-                  <Pane fx:id="p_s_add" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
-                     <children>
-                        <Label layoutX="73.0" layoutY="171.0" prefHeight="25.0" prefWidth="70.0" text="Name" textFill="#258bbf">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <JFXTextField fx:id="add_s_name" focusColor="BLACK" layoutX="156.0" layoutY="165.0" prefHeight="30.0" prefWidth="494.0" style="-fx-background-color: #ffffff;">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </JFXTextField>
-                          <Label layoutX="73.0" layoutY="230.0" prefHeight="25.0" prefWidth="70.0" text="level" textFill="#258bbf">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                         <JFXTextField fx:id="add_s_level" focusColor="BLACK" layoutX="156.0" layoutY="220.0" prefHeight="30.0" prefWidth="494.0" style="-fx-background-color: #ffffff;">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </JFXTextField>
-                   
-                        <JFXTextField fx:id="add_s_phone" focusColor="BLACK" layoutX="156.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </JFXTextField>
-                        <DatePicker fx:id="add_s_age"  layoutX="500.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
-                         
-                        </DatePicker>
-                        <JFXComboBox fx:id="add_s_gender" layoutX="500.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
-                        <JFXComboBox fx:id="day_swimmer" layoutX="156.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
-                          <JFXComboBox fx:id="time_swimmer" layoutX="156.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
-                         <JFXComboBox fx:id="coach_swimmer" layoutX="500.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
-                        <Label layoutX="75.0" layoutY="280.0" prefHeight="25.0" prefWidth="57.0" text="Phone" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="76.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="day" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="76.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="time" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                         <Label layoutX="425.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="coach" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                       
-                        <ImageView fitHeight="170.0" fitWidth="200.0" layoutX="900.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
-
-                        <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="467.0" onAction="#add_swimmer" prefHeight="32.0" prefWidth="494.0" style="-fx-background-color: #258bbf;" text="Add" textFill="WHITE">
-                           <font>
-                              <Font size="42.0" />
-                           </font>
-                        </JFXButton>
-                        <Label layoutX="265.0" layoutY="68.0" prefHeight="58.0" prefWidth="263.0" text="Add Swimmer" textFill="#258bbf">
-                           <font>
-                              <Font name="System Bold Italic" size="40.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="435.0" layoutY="280.0" prefHeight="25.0" prefWidth="31.0" text="Age" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="422.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="Gender" textFill="DODGERBLUE">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </Pane>
                   <Pane fx:id="p_add_group" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
                      <children>
                         <Label layoutX="75.0" layoutY="303.0" prefHeight="25.0" prefWidth="57.0" text="Level" textFill="DODGERBLUE">
@@ -490,28 +411,6 @@
                         </JFXButton>
                      </children>
                   </Pane>
-                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ffffff;">
-                    
-                            <children>
-                          
-                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
-                                <Button fx:id="b_print_home" alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="582.0" layoutY="13.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
-                  
-                                    <padding>
-                                        <Insets right="50.0" />
-                                    </padding>
-                                </Button>                      
-                                <Line endX="600.0" layoutX="300.0" layoutY="67.0" startX="-251.0" />
-                                <ScrollPane fx:id="scrooll" layoutY="76.0" prefHeight="567.0" prefWidth="611.0">
-                                    <content>
-                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
-                                    </content>
-                                </ScrollPane>
-                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
-                        <JFXTextField fx:id="date_print_home" alignment="CENTER_RIGHT" disable="true" labelFloat="true" layoutX="340.0" layoutY="18.0" prefHeight="28.0" prefWidth="200.0" promptText="تاريخ الطباعه" visible="false" />
-                            </children>
-             
-                        </Pane>
                 
                   <Pane fx:id="p_search" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffccf3;">
                      <children>
@@ -718,6 +617,320 @@
                         </Button>
                      </children>
                   </Pane>
+                  <Pane fx:id="p_s_add" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
+                     <children>
+                        <Label layoutX="73.0" layoutY="171.0" prefHeight="25.0" prefWidth="70.0" text="Name" textFill="#258bbf">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <JFXTextField fx:id="add_s_name" focusColor="BLACK" layoutX="156.0" layoutY="165.0" prefHeight="30.0" prefWidth="494.0" style="-fx-background-color: #ffffff;">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </JFXTextField>
+                          <Label layoutX="73.0" layoutY="230.0" prefHeight="25.0" prefWidth="70.0" text="level" textFill="#258bbf">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                   
+                        <JFXTextField fx:id="add_s_phone" focusColor="BLACK" layoutX="156.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </JFXTextField>
+                        <DatePicker fx:id="add_s_age" layoutX="500.0" layoutY="270.0" prefHeight="30.0" prefWidth="152.0" style="-fx-background-color: #ffffff;">
+                         
+                        </DatePicker>
+                        <JFXComboBox fx:id="add_s_gender" layoutX="500.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
+                        <JFXComboBox fx:id="day_swimmer" layoutX="156.0" layoutY="366.0" prefHeight="28.0" prefWidth="152.0" />
+                          <JFXComboBox fx:id="time_swimmer" layoutX="156.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
+                         <JFXComboBox fx:id="coach_swimmer" layoutX="500.0" layoutY="420.0" prefHeight="28.0" prefWidth="152.0" />
+                        <Label layoutX="75.0" layoutY="280.0" prefHeight="25.0" prefWidth="57.0" text="Phone" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="76.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="day" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="76.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="time" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                         <Label layoutX="425.0" layoutY="420.0" prefHeight="25.0" prefWidth="57.0" text="coach" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                       
+                        <ImageView fitHeight="170.0" fitWidth="200.0" layoutX="900.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+
+                        <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="467.0" onAction="#add_swimmer" prefHeight="32.0" prefWidth="494.0" style="-fx-background-color: #258bbf;" text="Add" textFill="WHITE">
+                           <font>
+                              <Font size="42.0" />
+                           </font>
+                        </JFXButton>
+                        <Label layoutX="265.0" layoutY="68.0" prefHeight="58.0" prefWidth="263.0" text="Add Swimmer" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="40.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="435.0" layoutY="280.0" prefHeight="25.0" prefWidth="31.0" text="Age" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="422.0" layoutY="366.0" prefHeight="25.0" prefWidth="57.0" text="Gender" textFill="DODGERBLUE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <JFXComboBox fx:id="add_s_range" layoutX="499.0" layoutY="229.0" prefHeight="28.0" prefWidth="152.0" />
+                        <JFXComboBox fx:id="add_s_level" layoutX="155.0" layoutY="229.0" prefHeight="28.0" prefWidth="152.0" />
+                        <Label layoutX="431.0" layoutY="231.0" prefHeight="25.0" prefWidth="70.0" text="range" textFill="#258bbf">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="p_c_punish" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dddddd;">
+                     <children>
+                        <Label layoutX="204.0" layoutY="58.0" prefHeight="58.0" prefWidth="677.0" text="Coach Punishment and Information" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="40.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="74.0" layoutY="187.0" prefHeight="30.0" prefWidth="60.0" text="Id :" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="66.0" layoutY="227.0" prefHeight="30.0" prefWidth="75.0" text="Name :" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="66.0" layoutY="265.0" prefHeight="30.0" prefWidth="75.0" text="Level :" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="58.0" layoutY="304.0" prefHeight="30.0" prefWidth="91.0" text="Phone :" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="inf_c_id" alignment="CENTER" disable="true" layoutX="155.0" layoutY="183.0" prefHeight="37.0" prefWidth="213.0" />
+                        <TextField fx:id="inf_c_name" alignment="CENTER" disable="true" layoutX="156.0" layoutY="223.0" prefHeight="37.0" prefWidth="213.0" />
+                        <TextField fx:id="inf_c_level" alignment="CENTER" disable="true" layoutX="156.0" layoutY="261.0" prefHeight="37.0" prefWidth="213.0" />
+                        <TextField fx:id="inf_c_phone" alignment="CENTER" disable="true" layoutX="155.0" layoutY="306.0" prefHeight="37.0" prefWidth="213.0" />
+                        <VBox layoutX="543.0" layoutY="159.0" prefHeight="200.0" prefWidth="213.0" spacing="4.0">
+                           <children>
+                              <JFXButton fx:id="b_punish_late_1" buttonType="RAISED" onAction="#punish" prefHeight="37.0" prefWidth="215.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="تأخير 1 دقيقة" textFill="#788287">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="b_punish_late_5" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#punish" prefHeight="37.0" prefWidth="217.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="تأخير 5 دقايق" textFill="#788287">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="b_punish_glass" buttonType="RAISED" layoutX="10.0" layoutY="47.0" onAction="#punish" prefHeight="37.0" prefWidth="217.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="النضاره + البونيه" textFill="#788287">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="b_punish_behavior" buttonType="RAISED" layoutX="10.0" layoutY="84.0" onAction="#punish" prefHeight="37.0" prefWidth="217.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="السلوك" textFill="#788287">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="b_punish_talk" buttonType="RAISED" layoutX="10.0" layoutY="121.0" onAction="#punish" prefHeight="37.0" prefWidth="217.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="التحدث مع ولي الامر" textFill="#788287">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </VBox>
+                        <HBox layoutX="66.0" layoutY="450.0" prefHeight="67.0" prefWidth="745.0" spacing="3.0">
+                           <children>
+                              <VBox prefHeight="76.0" prefWidth="100.0" spacing="2.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="الغياب" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_absent" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="76.0" prefWidth="100.0" spacing="3.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="تأخير 1 دقيقة" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_late_1" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="112.0" layoutY="10.0" prefHeight="76.0" prefWidth="100.0" spacing="3.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="تأخير 5 دفايق" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_late_5" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="146.0" layoutY="10.0" prefHeight="76.0" prefWidth="100.0" spacing="3.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="النضاره + البونيه" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_glass" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="319.0" layoutY="10.0" prefHeight="76.0" prefWidth="100.0" spacing="2.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="السلوك" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_behavior" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="14.0" prefWidth="100.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="422.0" layoutY="10.0" prefHeight="67.0" prefWidth="128.0" spacing="4.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="135.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="التحدث مع ولي الامر" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_talk" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="32.0" prefWidth="139.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="525.0" layoutY="10.0" prefHeight="76.0" prefWidth="100.0" spacing="2.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="الاحتياطى" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_re" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="102.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="66.0" layoutY="552.0" prefHeight="67.0" prefWidth="745.0" spacing="3.0">
+                           <children>
+                              <VBox layoutX="146.0" layoutY="10.0" prefHeight="67.0" prefWidth="379.0" spacing="3.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="30.0" prefWidth="383.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="الخصومات" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="22.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_bouns" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="32.0" prefWidth="387.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="22.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="319.0" layoutY="10.0" prefHeight="67.0" prefWidth="363.0" spacing="2.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="382.0" style="-fx-border-color: #000; -fx-background-color: #fff;" text="الضافات" textFill="#258bbf">
+                                       <font>
+                                          <Font name="System Bold Italic" size="22.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="l_punish_minus" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="32.0" prefWidth="395.0" style="-fx-border-color: #000; -fx-background-color: #258bbf;" text="0" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold Italic" size="22.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="66.0" layoutY="644.0" prefHeight="67.0" prefWidth="745.0" spacing="3.0">
+                           <children>
+                              <TextField fx:id="t_mount" alignment="CENTER" prefHeight="25.0" prefWidth="385.0" promptText="ادخل قيمة الشهر للمدرب">
+                                 <font>
+                                    <Font size="32.0" />
+                                 </font>
+                              </TextField>
+                              <JFXButton onAction="#print_salary_coach" prefHeight="71.0" prefWidth="358.0" style="-fx-background-color: #258bbf;" text="طباعة" textFill="#dddddd">
+                                 <font>
+                                    <Font size="32.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </HBox>
+                     </children>
+                  </Pane>
+                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ffffff;">
+                    
+                            <children>
+                          
+                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
+                                <Button fx:id="b_print_home" alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="582.0" layoutY="13.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
+                  
+                                    <padding>
+                                        <Insets right="50.0" />
+                                    </padding>
+                                </Button>                      
+                                <Line endX="600.0" layoutX="300.0" layoutY="67.0" startX="-251.0" />
+                                <ScrollPane fx:id="scrooll" layoutY="76.0" prefHeight="567.0" prefWidth="611.0">
+                                    <content>
+                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
+                                    </content>
+                                </ScrollPane>
+                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
+                        <JFXTextField fx:id="date_print_home" alignment="CENTER_RIGHT" disable="true" labelFloat="true" layoutX="340.0" layoutY="18.0" prefHeight="28.0" prefWidth="200.0" promptText="تاريخ الطباعه" visible="false" />
+                            </children>
+             
+                        </Pane>
                     </children>
                 </StackPane>
             </children>

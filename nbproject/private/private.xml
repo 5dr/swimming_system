@@ -5,9 +5,11 @@
         <group>
             <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/swimm_system/Swimm_system.java</file>
             <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/controller/HomeController.java</file>
+            <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/service/BillPrintable.java</file>
             <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/model/attend_couch.java</file>
-            <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/model/all_information_for_attend_coach.java</file>
+            <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/screen/Home.fxml</file>
             <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/service/DB.java</file>
+            <file>file:/E:/My%20Fuclty/Java%20App/swimm_system/src/service/BillPrint_coach.java</file>
         </group>
     </open-files>
 </project-private>

@@ -66,6 +66,7 @@ import model.attend_couch;
 import model.attend_swimmer;
 import model.coach;
 import org.controlsfx.control.textfield.TextFields;
+import service.BillPrint_coach;
 import service.BillPrintable;
 
 /**
@@ -87,7 +88,7 @@ public class HomeController implements Initializable {
     @FXML
     private StackPane big_Stack;
     @FXML
-    private Pane p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search, p_Settings, select_pane_search, information_swimmer, p_group_inf;
+    private Pane p_c_punish, p_update_group, p_home, p_add_group, p_s_add, p_C_add, p_search, p_Settings, select_pane_search, information_swimmer, p_group_inf;
     @FXML
     private JFXComboBox<Time> search_att_c_time, combobox_all_group, search_g_time, search_s_time, search_att_time, time_swimmer;
     @FXML
@@ -96,36 +97,61 @@ public class HomeController implements Initializable {
     private ScrollPane scrooll, scroll_search;
 
     @FXML
-    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level, update_group_day, update_coach, update_group_line, update_group_level;
-@FXML
+    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level, update_group_day, update_coach, update_group_line, update_group_level, add_s_level;
+    @FXML
     private DatePicker add_s_age;
     @FXML
     private JFXTimePicker add_group_time, update_group_time;
     @FXML
-    private JFXButton search_group, search_att_s, search_swimmer, search_coach, search_att_c;
+    private JFXButton b_punish_late_1, b_punish_late_5, b_punish_glass, b_punish_behavior, b_punish_talk, search_group, search_att_s, search_swimmer, search_coach, search_att_c;
 
     @FXML
     private JFXRadioButton r_att_c_day, r_att_c_time, r_att_c_name, r_att_c_id, r_att_s_id, r_s_id, r_g_id, r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
 
     @FXML
-    private TextField search_att_c_name, search_att_c_id, search_att_id, search_s_id, search_g_id, add_C_name, add_C_adress, add_C_phone, search_g_name, punish_field, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
+    private TextField t_mount, inf_c_phone, inf_c_level, inf_c_id, inf_c_name, search_att_c_name, search_att_c_id, search_att_id, search_s_id, search_g_id, add_C_name, add_C_adress, add_C_phone, search_g_name, punish_field, search_s_name, inf_s_name, inf_s_level, inf_s_coach, inf_s_time, inf_s_day, inf_s_address, inf_s_phone, inf_s_age, inf_s_gender, inf_s_group, inf_s_start_day, inf_s_end_day, search_att_name;
 
     @FXML
     private JFXComboBox<String> add_C_level, search_g_day, search_g_line, search_g_level, search_s_day, search_s_gender, add_s_gender, day_swimmer, coach_swimmer;
 
     @FXML
-    private JFXComboBox<Integer> search_att_num;
+    private JFXComboBox<Integer> add_s_range, search_att_num;
 
     @FXML
     private HBox hbox_select_search;
 
     @FXML
-    private JFXTextField date_print_home, text_s_note, add_s_name, add_s_phone,add_s_level;
+    private JFXTextField date_print_home, text_s_note, add_s_name, add_s_phone;
 
     @FXML
     private JFXDatePicker search_att_day, search_att_c_day;
     @FXML
     private ButtonBar button_bar;
+    @FXML
+    private Label l_punish_minus, l_punish_bouns, l_absent, l_punish_late_1, l_punish_late_5, l_punish_glass, l_punish_behavior, l_punish_re, l_punish_talk;
+
+    public void print_salary_coach(ActionEvent actionEvent) throws SQLException, PrinterException {
+
+        if (t_mount.getText().equals("")) {
+
+            JOptionPane.showMessageDialog(null, "لم يتم ادخال قيمة الشهر");
+
+        } else {
+            allDb.DB_connection();
+            java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
+            pj.setPrintable(new BillPrint_coach(l_punish_late_1.getText(), l_punish_late_5.getText(),
+                    l_absent.getText(), l_punish_glass.getText(), l_punish_behavior.getText(),
+                    l_punish_talk.getText(), l_punish_re.getText(), inf_c_name.getText(),
+                    allDb.get_cost_for_late1(), allDb.get_cost_for_late5(), allDb.get_cost_for_absent(),
+                    allDb.get_cost_for_glass(), allDb.get_cost_for_Behavior(), allDb.get_cost_for_talk(),
+                    allDb.get_cost_for_re(), Integer.parseInt(inf_c_id.getText()),
+                    Double.parseDouble(t_mount.getText()) + minus() - bouns()), getPageFormat(pj));
+            allDb.DB_close();
+            pj.print();
+            pj.cancel();
+
+        }
+    }
 
     public void add_coach(ActionEvent actionEvent) throws SQLException {
 
@@ -255,7 +281,7 @@ public class HomeController implements Initializable {
             JOptionPane.showMessageDialog(null, "لم يتم ادخال الاسم");
         } else if (add_s_phone.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم ادخال الفون");
-        }  else if (add_s_gender.getSelectionModel().isEmpty()) {
+        } else if (add_s_gender.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
         } else if (day_swimmer.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار اليوم");
@@ -263,6 +289,10 @@ public class HomeController implements Initializable {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار الوقت");
         } else if (coach_swimmer.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار المدرب");
+        } else if (add_s_range.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار مده الاشتراك");
+        } else if (add_s_level.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار  المستوى");
         } else {
             int b = 0;
             if (day_swimmer.getValue() == "Saturday") {
@@ -279,47 +309,50 @@ public class HomeController implements Initializable {
             if (allDb.check_group_exist(coach_swimmer.getValue(), time_swimmer.getValue(), b)) {
 
                 int count = allDb.get_swimmer_by_group(g_id).size();
+                String n_coach=allDb.get_coach_name_by_g_id(g_id);
                 System.out.println(count);
-                  Date sqlDate = java.sql.Date.valueOf(add_s_age.getValue());
- // Date date1=   (Date) new SimpleDateFormat("dd/MM/yyyy").parse(add_s_age.getText());  
-     
+                Date sqlDate = java.sql.Date.valueOf(add_s_age.getValue());
+                // Date date1=   (Date) new SimpleDateFormat("dd/MM/yyyy").parse(add_s_age.getText());  
+
                 if (count < 8) {
-                    allDb.addswimmer(add_s_name.getText(),sqlDate,add_s_level.getText(), add_s_gender.getValue(), add_s_phone.getText(), g_id);
+                    int curr_swimmer_id = allDb.addswimmer(add_s_name.getText(), sqlDate, add_s_gender.getValue(), add_s_level.getValue(), add_s_phone.getText(), g_id, add_s_range.getValue(), b);
 
-                    List<all_information_for_group> id = new ArrayList<all_information_for_group>();
-                    id = allDb.search_group_by_name_and_time_and_day(coach_swimmer.getValue(), time_swimmer.getValue(), b);
+                    if (curr_swimmer_id != 0) {
+                        List<all_information_for_group> id = new ArrayList<all_information_for_group>();
+                        id = allDb.search_group_by_name_and_time_and_day(coach_swimmer.getValue(), time_swimmer.getValue(), b);
 
-                    System.out.println(id);
+                        System.out.println(id);
 
-                    java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
-                    if (id.get(0).getDay() == 0) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(),  add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
+                        if (id.get(0).getDay() == 0) {
+                            pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(),n_coach, curr_swimmer_id, allDb.get_cost_for_one_day() * add_s_range.getValue(), add_s_range.getValue()), getPageFormat(pj));
 
-                    } else if (id.get(0).getDay() == 1) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(),add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        } else if (id.get(0).getDay() == 1) {
+                            pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(),n_coach, curr_swimmer_id, allDb.get_cost_for_one_day() * add_s_range.getValue(), add_s_range.getValue()), getPageFormat(pj));
 
-                    } else if (id.get(0).getDay() == 2) {
-                        pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(),add_s_level.getText(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), 1), getPageFormat(pj));
+                        } else if (id.get(0).getDay() == 2) {
+                            pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(),n_coach, curr_swimmer_id, allDb.get_cost_for_one_day() * add_s_range.getValue(), add_s_range.getValue()), getPageFormat(pj));
+
+                        }
+                        pj.print();
+                        pj.cancel();
+
+                        JOptionPane.showMessageDialog(null, "تم اضافه السباح");
+
+                        initialize_search_swimmer();
+
+                        add_s_name.setText("");
+                        add_s_phone.setText("");
+                        add_s_level.getItems().clear();
 
                     }
-                    pj.print();
-                    pj.cancel();
-
-                    JOptionPane.showMessageDialog(null, "تم اضافه السباح");
-
-                    initialize_search_swimmer();
-
-                    add_s_name.setText("");
-                    add_s_phone.setText("");
-                    add_s_level.setText("");
-
                 } else {
 
                     JOptionPane.showMessageDialog(null, "هذا الجروب مكتمل");
 
                     add_s_name.setText("");
                     add_s_phone.setText("");
-                    
+
                 }
 
             } else {
@@ -565,20 +598,57 @@ public class HomeController implements Initializable {
     }
 
     public void punish(ActionEvent actionEvent) {
-        //    TextFields.bindAutoCompletion(search_g_name, allDb.search_group_by_name());
-        if (punish_field.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "لم يتم اختيار الاسم");
+        if (actionEvent.getSource() == b_punish_late_1) {
+            try {
+                allDb.DB_connection();
+                allDb.Add_punish(coach_id_punish, 1);
+                l_punish_late_1.setText((Integer.parseInt(l_punish_late_1.getText()) + 1) + "");
+                l_punish_bouns.setText((Double.parseDouble(l_punish_bouns.getText()) + allDb.get_cost_for_late1()) + "");
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+        if (actionEvent.getSource() == b_punish_late_5) {
+            try {
+                allDb.DB_connection();
+                allDb.Add_punish(coach_id_punish, 2);
+                l_punish_late_5.setText((Integer.parseInt(l_punish_late_5.getText()) + 1) + "");
+                l_punish_bouns.setText((Double.parseDouble(l_punish_bouns.getText()) + allDb.get_cost_for_late5()) + "");
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+        if (actionEvent.getSource() == b_punish_glass) {
+            try {
+                allDb.DB_connection();
+                allDb.Add_punish(coach_id_punish, 3);
+                l_punish_glass.setText((Integer.parseInt(l_punish_glass.getText()) + 1) + "");
+                l_punish_bouns.setText((Double.parseDouble(l_punish_bouns.getText()) + allDb.get_cost_for_glass()) + "");
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+        if (actionEvent.getSource() == b_punish_behavior) {
+            try {
+                allDb.DB_connection();
+                allDb.Add_punish(coach_id_punish, 4);
+                l_punish_behavior.setText((Integer.parseInt(l_punish_behavior.getText()) + 1) + "");
+                l_punish_bouns.setText((Double.parseDouble(l_punish_bouns.getText()) + allDb.get_cost_for_Behavior()) + "");
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
+        }
+        if (actionEvent.getSource() == b_punish_talk) {
+            try {
+                allDb.DB_connection();
+                allDb.Add_punish(coach_id_punish, 5);
+                l_punish_talk.setText((Integer.parseInt(l_punish_talk.getText()) + 1) + "");
+                l_punish_bouns.setText((Double.parseDouble(l_punish_bouns.getText()) + allDb.get_cost_for_talk()) + "");
+                allDb.DB_close();
+            } catch (SQLException ex) {
+            }
         }
 
-        punish_field.clear();
-
-        try {
-            allDb.DB_connection();
-//            TextFields.bindAutoCompletion(punish_field, allDb.get_all_name_coach());
-            allDb.DB_close();
-        } catch (SQLException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void group_search(ActionEvent actionEvent) throws SQLException {
@@ -1472,6 +1542,7 @@ public class HomeController implements Initializable {
     List<List<swimmer>> t;
     List<coach> coach;
     int bool;
+    int coach_id_punish;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -1514,6 +1585,7 @@ public class HomeController implements Initializable {
 
         table.setStyle("-fx-background-color:  #ffb3b3;");
         table.setSpacing(5);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 
         Label num = make_lable("ID", .039);
         Label name = make_lable("Name", 0.1735);
@@ -1557,16 +1629,12 @@ public class HomeController implements Initializable {
             for (int i = 0; i < all_S.get(z).size(); i++) {
                 Label la = make_lable(all_S.get(z).get(i).getS_id() + "", 0.039);
                 all_num.getChildren().add(la);
-                //
-                //la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
                 la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
 
             }
             for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
                 Label la = make_lable("", 0.039);
                 all_num.getChildren().add(la);
-                //
-                //  la.setStyle("-fx-font-size: 12px;-fx-background-color: #ffe6f9;");
                 la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
 
             }
@@ -1574,7 +1642,8 @@ public class HomeController implements Initializable {
             VBox Swimer = new VBox();
             Swimer.setStyle("-fx-background-color: #ffe6f9;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
-                Label la = make_lable(all_S.get(z).get(i).getName() + "\t \t \t" + all_S.get(z).get(i).getAge(), 0.1735);
+                Label la = make_lable(all_S.get(z).get(i).getName() + "\t \t" + sdf.format(all_S.get(z).get(i).getAge()), 0.1735);
+                la.setStyle("-fx-font-size: 14px;-fx-background-color:#e6f2ff;-fx-border-color:#fff;");
                 Swimer.getChildren().add(la);
                 //
                 la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
@@ -1591,7 +1660,7 @@ public class HomeController implements Initializable {
             vstart.setStyle("-fx-background-color:  #ffffb3;");
             for (int i = 0; i < all_S.get(z).size(); i++) {
 
-                Label l = make_lable(all_S.get(z).get(i).getStart().toLocalDate().getMonth() + "", .05);
+                Label l = make_lable(all_S.get(z).get(i).getStart().toLocalDate().getMonth().getValue() + "", .05);
                 l.setStyle("-fx-font-size: 16px;-fx-background-color:#ffffb3;-fx-border-color:#fff;");
                 vstart.getChildren().add(l);
             }
@@ -1608,6 +1677,7 @@ public class HomeController implements Initializable {
             coach_att.setAlignment(Pos.TOP_CENTER);
             coach_att.setSpacing(30);
             coach_att.setPrefSize(bounds.getWidth() * .05, 0);
+
             JFXCheckBox ch_coach = new JFXCheckBox();
             ch_coach.setCheckedColor(rgb(42, 115, 255));
             ch_coach.setTextFill(rgb(255, 255, 255));
@@ -1622,6 +1692,30 @@ public class HomeController implements Initializable {
             t1.setDisable(true);
 
             String[] comp = ch_coach.getId().split("\\|");
+            coach_att.setOnMouseClicked((event) -> {
+                coach_id_punish = Integer.parseInt(comp[0]);
+                inf_c_id.setText(coach_id_punish + "");
+                inf_c_name.setText(id.get(Integer.parseInt(comp[1])).getName());
+                inf_c_level.setText(id.get(Integer.parseInt(comp[1])).getC_level());
+                inf_c_phone.setText(id.get(Integer.parseInt(comp[1])).getPhone());
+
+                try {
+                    allDb.DB_connection();
+                    l_punish_late_1.setText(allDb.get_count_of_punish(coach_id_punish, 1) + "");
+                    l_punish_late_5.setText(allDb.get_count_of_punish(coach_id_punish, 2) + "");
+                    l_punish_glass.setText(allDb.get_count_of_punish(coach_id_punish, 3) + "");
+                    l_punish_behavior.setText(allDb.get_count_of_punish(coach_id_punish, 4) + "");
+                    l_punish_talk.setText(allDb.get_count_of_punish(coach_id_punish, 5) + "");
+                    l_absent.setText(allDb.get_count_of_punish_of_attend(coach_id_punish) + "");
+                    l_punish_re.setText(allDb.get_count_of_punish_of_attend_re(coach_id_punish) + "");
+                    l_punish_bouns.setText(bouns() + "");
+                    l_punish_minus.setText(minus() + "");
+                } catch (SQLException ex) {
+                    System.out.println(" get_count_of_punish :" + ex);
+                }
+
+                p_c_punish.toFront();
+            });
 
             try {
                 allDb.DB_connection();
@@ -1725,7 +1819,7 @@ public class HomeController implements Initializable {
                         if (ldate.size() == 13) {
                             ldate.remove(12);
                         }
-                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                        if (!ldate.get(j - 1).isEqual(currentdate)) {
                             ch.setDisable(true);
                         }
                     }
@@ -1738,7 +1832,7 @@ public class HomeController implements Initializable {
                         if (ldate.size() == 13) {
                             ldate.remove(12);
                         }
-                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                        if (!ldate.get(j - 1).isEqual(currentdate)) {
                             ch.setDisable(true);
                         }
 
@@ -1752,6 +1846,359 @@ public class HomeController implements Initializable {
                             ldate.remove(12);
                         }
                         if (ldate.get(j - 1).isBefore(currentdate)) {
+                            ch.setDisable(true);
+                        }
+                    }
+                    ch.setOnAction((event) -> {
+                        try {
+                            String[] companies = ch.getId().split("\\|");
+
+                            allDb.DB_connection();
+                            if (!ch.isSelected()) {
+                                allDb.delet_attend_swimmer(Integer.parseInt(companies[0]));
+
+                            } else {
+                                System.out.println(Integer.parseInt(companies[0]) + "  " + Integer.parseInt(companies[1]));
+                                allDb.Add_attend_swimmer(Integer.parseInt(companies[0]), Integer.parseInt(companies[1]));
+                            }
+                            allDb.DB_close();
+                        } catch (Exception ex) {
+                            System.out.println("check :" + ex);
+                        }
+                    });
+                    att.getChildren().add(ch);
+                }
+                for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                    Label l = make_lable("", 0.023);
+                    att.getChildren().add(l);
+                }
+                all_att.getChildren().add(att);
+            }
+
+            VBox all_level = new VBox();
+            all_level.setStyle("-fx-background-color:  #ffe6e6;");
+            for (int i = 0; i < 8; i++) {
+                Label l = make_lable(id.get(z).getG_level(), .03);
+                all_level.getChildren().add(l);
+                l.setStyle("-fx-background-color: #ffe6e6;-fx-font-size: 18px;");
+            }
+
+            VBox all_nots = new VBox();
+            all_nots.setStyle("-fx-background-color:   #ffffb3;");
+            for (int i = 0; i < all_S.get(z).size(); i++) {
+
+                TextField t = new TextField();
+                t.setPrefWidth(bounds.getWidth() * .19);
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	 #ffffb3;-fx-border-color:#000;");
+                t.setAlignment(Pos.CENTER);
+                t.setId(all_S.get(z).get(i).getS_id() + "");
+                t.setText(allDb.get_note_id(Integer.parseInt(t.getId())));
+                t.setOnKeyPressed((event) -> {
+                    if (event.getCode().equals(KeyCode.ENTER)) {
+
+                        try {
+                            allDb.DB_connection();
+                            if (allDb.is_note_exist(Integer.parseInt(t.getId()))) {
+                                allDb.update_note(Integer.parseInt(t.getId()), t.getText());
+                            } else {
+                                allDb.Add_note_swimmer(Integer.parseInt(t.getId()), t.getText());
+                            }
+                            allDb.DB_close();
+                        } catch (Exception ex) {
+                        }
+                    }
+                });
+                all_nots.getChildren().add(t);
+
+            }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                TextField t = new TextField();
+                t.setPrefWidth(bounds.getWidth() * .19);
+                t.setStyle("-fx-font-size: 12px;-fx-background-color:	#ffffb3;-fx-border-color:#000;");
+                t.setAlignment(Pos.CENTER);
+                all_nots.getChildren().add(t);
+
+            }
+
+            row.getChildren().add(all_nots);
+            row.getChildren().add(all_level);
+            row.getChildren().add(all_att);
+            row.getChildren().add(coach_att);
+            row.getChildren().add(vstart);
+            row.getChildren().add(Swimer);
+            row.getChildren().add(all_num);
+            table.getChildren().add(row);
+            if (z > 2) {
+
+                pane_table.setPrefHeight(pane_table.getPrefHeight() + bounds.getWidth() * .14);
+            }
+        }
+        pane_table.getChildren().clear();
+        pane_table.getChildren().add(table);
+        //p_home.getChildren().add(table);
+
+    }
+
+    private void BuildHomefriday(List<all_information_for_group> id, List<List<swimmer>> all_S) throws SQLException {
+
+        table.setStyle("-fx-background-color:  #ffb3b3;");
+        table.setSpacing(5);
+
+        Label num = make_lable("ID", .039);
+        Label name = make_lable("Name", 0.1735);
+        Label coach = make_lable("Coach", 0.05);
+        Label l1 = make_lable("1", .023);
+        Label l2 = make_lable("2", .023);
+        Label l3 = make_lable("3", .023);
+        Label l4 = make_lable("4", .023);
+        Label l5 = make_lable("5", .023);
+        Label l6 = make_lable("6", .023);
+        Label l7 = make_lable("7", .023);
+        Label l8 = make_lable("8", .023);
+        Label level = make_lable("level", .03);
+        Label notes = make_lable("notes", .19);
+        Label start = make_lable("start", .05);
+        HBox title = new HBox();
+        title.setStyle("-fx-background-color: #ffffff;");
+        title.setPrefSize(1000, 0);
+        title.setMaxSize(10000, 10000);
+        title.getChildren().addAll(notes, level, l8, l7, l6, l5, l4, l3, l2, l1, coach, start, name, num);
+        title.setAlignment(Pos.CENTER_RIGHT);
+        table.getChildren().add(title);
+
+        for (int z = 0; z < id.size(); z++) {
+            HBox row = new HBox();
+            row.setStyle("-fx-background-color:  #ffb3d9;");
+            row.setAlignment(Pos.CENTER_RIGHT);
+
+            VBox all_num = new VBox();
+            all_num.setStyle("-fx-background-color:  #ffffff;");
+            all_num.setAlignment(Pos.CENTER_RIGHT);
+
+            for (int i = 0; i < 8; i++) {
+                Label l = make_lable("" + (i + 1), .039);
+                //  all_num.getChildren().add(l);
+            }
+            for (int i = 0; i < all_S.get(z).size(); i++) {
+                Label la = make_lable(all_S.get(z).get(i).getS_id() + "", 0.039);
+                all_num.getChildren().add(la);
+                //
+                //la.setStyle("-fx-font-size: 16px;-fx-background-color: #ffe6f9;");
+                la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
+
+            }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                Label la = make_lable("", 0.039);
+                all_num.getChildren().add(la);
+                //
+                //  la.setStyle("-fx-font-size: 12px;-fx-background-color: #ffe6f9;");
+                la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
+
+            }
+
+            VBox Swimer = new VBox();
+            Swimer.setStyle("-fx-background-color: #ffe6f9;");
+            for (int i = 0; i < all_S.get(z).size(); i++) {
+                Label la = make_lable(all_S.get(z).get(i).getName() + "\t \t" + all_S.get(z).get(i).getAge(), 0.1735);
+                Swimer.getChildren().add(la);
+                //
+                la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
+            }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                Label la = make_lable("", 0.1735);
+                Swimer.getChildren().add(la);
+                //
+                la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffe6f9;-fx-border-color:#fff;");
+
+            }
+
+            VBox vstart = new VBox();
+            vstart.setStyle("-fx-background-color:  #ffffb3;");
+            for (int i = 0; i < all_S.get(z).size(); i++) {
+
+                Label l = make_lable(all_S.get(z).get(i).getStart().toLocalDate().getMonth().getValue() + "", .05);
+                l.setStyle("-fx-font-size: 16px;-fx-background-color:#ffffb3;-fx-border-color:#fff;");
+                vstart.getChildren().add(l);
+            }
+            for (int i = 0; i < 8 - all_S.get(z).size(); i++) {
+                Label la = make_lable("", 0.05);
+                la.setStyle("-fx-font-size: 16px;-fx-background-color:#ffffb3;-fx-border-color:#fff;");
+                vstart.getChildren().add(la);
+                //
+
+            }
+
+            VBox coach_att = new VBox();
+            coach_att.setStyle("-fx-background-color:  #ffb3b3;-fx-border-color:#000;");
+            coach_att.setAlignment(Pos.TOP_CENTER);
+            coach_att.setSpacing(30);
+            coach_att.setPrefSize(bounds.getWidth() * .05, 0);
+            JFXCheckBox ch_coach = new JFXCheckBox();
+            ch_coach.setCheckedColor(rgb(42, 115, 255));
+            ch_coach.setTextFill(rgb(255, 255, 255));
+            ch_coach.setStyle("-fx-font-size: 12px;-fx-background-color: #ffb3d9;");
+            ch_coach.setPrefSize(bounds.getWidth() * .007, 0);
+            ch_coach.setAlignment(Pos.CENTER_RIGHT);
+            ch_coach.setId(id.get(z).getC_id() + "|" + z);
+
+            JFXComboBox t1 = new JFXComboBox();
+            t1.setPrefWidth(bounds.getWidth() * 0.05);
+            t1.setStyle("-fx-font-size: 12px;-fx-background-color: #ffb3d9;-fx-border-color:#000;");
+            t1.setDisable(true);
+
+            String[] comp = ch_coach.getId().split("\\|");
+            coach_att.setOnMouseClicked((event) -> {
+                coach_id_punish = Integer.parseInt(comp[0]);
+                inf_c_id.setText(coach_id_punish + "");
+                inf_c_name.setText(id.get(Integer.parseInt(comp[1])).getName());
+                inf_c_level.setText(id.get(Integer.parseInt(comp[1])).getC_level());
+                inf_c_phone.setText(id.get(Integer.parseInt(comp[1])).getPhone());
+
+                try {
+                    allDb.DB_connection();
+                    l_punish_late_1.setText(allDb.get_count_of_punish(coach_id_punish, 1) + "");
+                    l_punish_late_5.setText(allDb.get_count_of_punish(coach_id_punish, 2) + "");
+                    l_punish_glass.setText(allDb.get_count_of_punish(coach_id_punish, 3) + "");
+                    l_punish_behavior.setText(allDb.get_count_of_punish(coach_id_punish, 4) + "");
+                    l_punish_talk.setText(allDb.get_count_of_punish(coach_id_punish, 5) + "");
+                    l_absent.setText(allDb.get_count_of_punish_of_attend(coach_id_punish) + "");
+                    l_punish_re.setText(allDb.get_count_of_punish_of_attend_re(coach_id_punish) + "");
+                    l_punish_bouns.setText(bouns() + "");
+                    l_punish_minus.setText(minus() + "");
+                } catch (SQLException ex) {
+                    System.out.println(" get_count_of_punish :" + ex);
+                }
+                p_c_punish.toFront();
+            });
+
+            try {
+                allDb.DB_connection();
+
+                all_re_coach = allDb.search_group_by_notequletime_and_day(id.get(Integer.parseInt(comp[1])).getTime(), id.get(Integer.parseInt(comp[1])).getDay());
+
+                l_name.clear();
+                l_re_id.clear();
+                for (int list = 0; list < all_re_coach.size(); list++) {
+                    l_name.add(all_re_coach.get(list).getName());
+                    l_re_id.add(all_re_coach.get(list).getC_id());
+
+                }
+
+                t1.getItems().addAll(l_name);
+                t1.setOnAction((e) -> {
+                    try {
+                        allDb.DB_connection();
+                        if (t1.getSelectionModel().isEmpty()) {
+                            allDb.Add_couch_attend(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                        } else {
+
+                            int update = allDb.update_attend_coach(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                            if (update == 0) {
+                                allDb.Add_couch_attend(id.get(Integer.parseInt(comp[1])).getG_id(), all_re_coach.get(t1.getSelectionModel().getSelectedIndex()).getC_id());
+                            }
+                        }
+                        allDb.DB_connection();
+
+                    } catch (SQLException ex) {
+                    }
+
+                });
+                allDb.DB_connection();
+            } catch (SQLException ex) {
+            }
+
+            if (allDb.get_att_coach_bool(id.get(z).getG_id())) {
+                List<attend_couch> s = new ArrayList<attend_couch>();
+                s = allDb.get_att_coach(id.get(z).getG_id());
+                for (int i = 0; i < s.size(); i++) {
+                    ch_coach.setSelected(true);
+                    l_re_id.indexOf(s.get(0).getRep_name());
+                    t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
+                    t1.setDisable(false);
+                }
+            }
+            ch_coach.setOnAction((event) -> {
+
+                if (ch_coach.isSelected()) {
+
+                    t1.setDisable(false);
+                } else {
+                    t1.setDisable(true);
+                    try {
+                        allDb.DB_connection();
+                        allDb.delet_attend_coach(id.get(Integer.parseInt(comp[1])).getG_id());
+                        allDb.DB_close();
+                    } catch (SQLException ex) {
+                    }
+                }
+
+            });
+
+            Label la = new Label(id.get(z).getName() + " \n " + id.get(z).getTrack() + "");
+            la.setPrefWidth(bounds.getWidth() * 0.07);
+            la.setMaxHeight(1000);
+            la.setStyle("-fx-font-size: 9px; -fx-background-color: #ffb3d9;");
+            la.setAlignment(Pos.CENTER);
+            la.setRotate(270.0);
+            coach_att.getChildren().addAll(t1, ch_coach, la);
+
+            HBox all_att = new HBox();
+            for (int j = 8; j > 0; j--) {
+                VBox att = new VBox();
+                att.setStyle("-fx-background-color:   #ffffff;");
+                for (int i = 0; i < all_S.get(z).size(); i++) {
+                    JFXCheckBox ch = new JFXCheckBox();
+                    ch.setCheckedColor(rgb(42, 115, 255));
+                    ch.setTextFill(rgb(255, 255, 255));
+                    ch.setStyle("-fx-font-size: 16px;-fx-background-color: #e6f2ff;-fx-border-color:#000;");
+                    ch.setPrefSize(bounds.getWidth() * .023, 0);
+                    ch.setAlignment(Pos.CENTER_RIGHT);
+                    ch.setId(all_S.get(z).get(i).getS_id() + "|" + j + "|" + i);
+
+                    if (allDb.get_att(all_S.get(z).get(i).getS_id(), j)) {
+                        ch.setSelected(true);
+                    }
+
+                    LocalDate currentdate = LocalDate.now();
+                    int currentYear = currentdate.getYear();
+                    Month currentMonth = currentdate.getMonth();
+////////////SATURDAY
+                    if (bool == 0) {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
+                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 13) {
+                            ldate.remove(12);
+                        }
+                        if (ldate.get(j - 1).isBefore(currentdate)) {
+                            ch.setDisable(true);
+                        }
+                    }
+                    if (bool == 1) {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
+                                || date.getDayOfWeek() == DayOfWeek.SUNDAY)
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 13) {
+                            ldate.remove(12);
+                        }
+                        if (!ldate.get(j - 1).isEqual(currentdate)) {
+                            ch.setDisable(true);
+                        }
+
+                    } else if (bool == 2) {
+                        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                                .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
+                                || date.getDayOfWeek() == DayOfWeek.SUNDAY)
+                                .collect(Collectors.toList());
+                        if (ldate.size() == 9) {
+                            ldate.remove(8);
+                        }
+                        if (!ldate.get(j - 1).isEqual(currentdate)) {
                             ch.setDisable(true);
                         }
                     }
@@ -1935,7 +2382,11 @@ public class HomeController implements Initializable {
                     pane_table.getChildren().clear();
                     table.getChildren().clear();
                     pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-                    BuildHome(id, t);
+                    if (bool == 2) {
+                        BuildHomefriday(id, t);
+                    } else {
+                        BuildHome(id, t);
+                    }
                     allDb.DB_close();
 
                 } catch (SQLException ex) {
@@ -2053,6 +2504,8 @@ public class HomeController implements Initializable {
 
         day_swimmer.getItems().addAll("Saturday", "Sunday", "friday");
         add_s_gender.getItems().addAll("Male", "Female");
+        add_s_level.getItems().addAll("B", "l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8");
+        add_s_range.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 
         try {
             allDb.DB_connection();
@@ -2703,11 +3156,12 @@ public class HomeController implements Initializable {
     private void BuildSearch_Swimmer(List<all_information_for_swimmer> id) throws SQLException {
         table_search.getChildren().clear();
         pane_search_table.setPrefSize(bounds.getWidth() * 0.59, bounds.getHeight() * 0.55);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 
         Label num = make_lable_search_head("s_id", .03, "b6bec2", 17);
         Label name = make_lable_search_head("Name", 0.08, "b6bec2", 17);
         Label address = make_lable_search_head("Coach", 0.0601, "b6bec2", 17);
-        Label age = make_lable_search_head("Age", 0.037, "b6bec2", 17);
+        Label age = make_lable_search_head("DOB", 0.037, "b6bec2", 17);
         Label gender = make_lable_search_head("Gender", 0.055, "b6bec2", 17);
         Label phone = make_lable_search_head("Phone", 0.05, "b6bec2", 17);
         Label level = make_lable_search_head("level", .04, "b6bec2", 17);
@@ -2725,23 +3179,23 @@ public class HomeController implements Initializable {
 
         for (int i = 0; i < id.size(); i++) {
             Label num1 = make_lable_search_swimmer((i + 1) + "", .04);
-            Label id1 = make_lable_search_swimmer(id.get(i).getS_id() + "", .04);
-            Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.09);
-            Label address1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getC_id()), 0.07);
-            Label age1 = make_lable_search_swimmer(id.get(i).getAge() + "", .047);
-            Label gender1 = make_lable_search_swimmer(id.get(i).getGender(), 0.065);
-            Label phone1 = make_lable_search_swimmer(id.get(i).getPhone(), .06);
-            Label level1 = make_lable_search_swimmer(id.get(i).getLevel(), .05);
-            Label s_day1 = make_lable_search_swimmer(id.get(i).getStart() + "", .073);
-            Label e_day1 = make_lable_search_swimmer(id.get(i).getEnd() + "", .065);
-            Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .05);
-            Label da = make_lable_g("Saturday", .09);
+            Label id1 = make_lable_search_swimmer(id.get(i).getS_id() + "", .03);
+            Label name1 = make_lable_search_swimmer(id.get(i).getName(), 0.08);
+            Label address1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getC_id()), 0.0601);
+            Label age1 = make_lable_search_swimmer(sdf.format(id.get(i).getAge()) + "", .037);
+            Label gender1 = make_lable_search_swimmer(id.get(i).getGender(), 0.055);
+            Label phone1 = make_lable_search_swimmer(id.get(i).getPhone(), .05);
+            Label level1 = make_lable_search_swimmer(id.get(i).getLevel(), .04);
+            Label s_day1 = make_lable_search_swimmer(id.get(i).getStart() + "", .063);
+            Label e_day1 = make_lable_search_swimmer(id.get(i).getEnd() + "", .055);
+            Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .04);
+            Label da = make_lable_g("Saturday", .04);
             if (id.get(i).getDay() == 0) {
-                da = make_lable_search_swimmer("Saturday", .09);
+                da = make_lable_search_swimmer("Saturday", .04);
             } else if (id.get(i).getDay() == 1) {
-                da = make_lable_search_swimmer("Sunday", .09);
+                da = make_lable_search_swimmer("Sunday", .04);
             } else if (id.get(i).getDay() == 2) {
-                da = make_lable_search_swimmer("friday", .09);
+                da = make_lable_search_swimmer("friday", .04);
             }
             Label day1 = da;
 
@@ -2959,7 +3413,16 @@ public class HomeController implements Initializable {
             Label coach1 = make_lable_search_swimmer(allDb.coach_by_name(id.get(i).getR_id()), 0.08);
             Label level1 = make_lable_search_swimmer(id.get(i).getLevel() + "", .05);
             Label time1 = make_lable_search_swimmer(id.get(i).getTime() + "", .06);
-            Label day1 = make_lable_search_swimmer(id.get(i).getDay() + "", .06);
+            String d = "";
+            if (id.get(i).getDay() == 0) {
+                d = "Saturday";
+            } else if (id.get(i).getDay() == 1) {
+                d = "Sunday";
+            } else if (id.get(i).getDay() == 2) {
+                d = "friday";
+            }
+
+            Label day1 = make_lable_search_swimmer(d, .06);
             Label re_id1 = make_lable_search_swimmer(id.get(i).getR_id() + "", 0.048);
 
             HBox title1 = new HBox();
@@ -2993,11 +3456,11 @@ public class HomeController implements Initializable {
         PageFormat pf = pj.defaultPage();
         Paper paper = pf.getPaper();
         double bodyHeight;
-        bodyHeight = 0.0;
+        bodyHeight = 10.0;
 
         double headerHeight = 10.0;
         double footerHeight = 5.0;
-        double width = cm_to_pp(8);
+        double width = cm_to_pp(10);
         double height = cm_to_pp(headerHeight + bodyHeight + footerHeight);
         paper.setSize(width, height);
         paper.setImageableArea(0, 10, width, height - cm_to_pp(1));
@@ -3015,5 +3478,33 @@ public class HomeController implements Initializable {
     protected static double toPPI(double inch) {
         return inch * 72d;
     }
+//////////////////////////////printer////////////
 
+    private double bouns() throws SQLException {
+        double bouns = 0;
+
+        allDb.DB_connection();
+
+        double late1 = allDb.get_cost_for_late1() * allDb.get_count_of_punish(coach_id_punish, 1);
+        double late5 = allDb.get_cost_for_late5() * allDb.get_count_of_punish(coach_id_punish, 2);
+        double late_glass = allDb.get_cost_for_glass() * allDb.get_count_of_punish(coach_id_punish, 3);
+        double late_beh = allDb.get_cost_for_Behavior() * allDb.get_count_of_punish(coach_id_punish, 4);
+        double late_talk = allDb.get_cost_for_talk() * allDb.get_count_of_punish(coach_id_punish, 5);
+        double late_absent = allDb.get_cost_for_absent() * allDb.get_count_of_punish_of_attend(coach_id_punish);
+
+        allDb.DB_close();
+        bouns = late1 + late5 + late_glass + late_beh + late_talk + late_absent;
+        return bouns;
+    }
+
+    private double minus() throws SQLException {
+        double minus = 0;
+
+        allDb.DB_connection();
+
+        minus = allDb.get_cost_for_re() * allDb.get_count_of_punish_of_attend_re(coach_id_punish);
+
+        allDb.DB_close();
+        return minus;
+    }
 }

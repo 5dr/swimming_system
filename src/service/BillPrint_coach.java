@@ -28,27 +28,33 @@ import javax.swing.ImageIcon;
  *
  * @author asd
  */
-public class BillPrintable implements Printable {
+public class BillPrint_coach implements Printable {
 
-    String name, phone, level, day, time, track, s_level, c_name;
-    Date age;
-    int group, id, cost, range;
-
-    public BillPrintable(String name, String phone, Date age, String level, String s_level, String day, String time, String track, String c_name, int id, int cost, int range) {
+    String  m_late1, m_late5, m_absent, m_glass, m_behavior, m_talk, m_re;
+    String name;
+    int late1, late5, absent, glass, behavior, talk, re, id;
+    double  salary;
+    public BillPrint_coach(String m_late1, String m_late5, String m_absent, String m_glass, String m_behavior, String m_talk, String m_re, String name, int late1, int late5, int absent, int glass, int behavior, int talk, int re, int id, double salary) {
+        this.m_late1 = m_late1;
+        this.m_late5 = m_late5;
+        this.m_absent = m_absent;
+        this.m_glass = m_glass;
+        this.m_behavior = m_behavior;
+        this.m_talk = m_talk;
+        this.m_re = m_re;
         this.name = name;
-        this.phone = phone;
-        this.age = age;
-        this.level = level;
-        this.s_level = s_level;
-        this.day = day;
-        this.time = time;
-        this.track = track;
-        this.c_name = c_name;
+        this.late1 = late1;
+        this.late5 = late5;
+        this.absent = absent;
+        this.glass = glass;
+        this.behavior = behavior;
+        this.talk = talk;
+        this.re = re;
         this.id = id;
-        this.cost = cost;
-        this.range = range;
-
+        this.salary = salary;
     }
+
+    
 
     Date now = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -97,45 +103,47 @@ public class BillPrintable implements Printable {
                 g2d.drawString(" Print Date :  " + sdf.format(now) + "   ", 10, y);
                 y += yShift;
                 y += headerRectHeight;
-
+                g2d.drawString("-------------------------------------", 12, y);
+                y += yShift;
                 g2d.drawString(" ID    :    " + id, 10, y);
                 y += yShift;
                 g2d.drawString(" Name  :    " + name + "   ", 10, y);
                 y += yShift;
-                g2d.drawString(" Mobile:    " + phone + "    ", 10, y);
+                g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
-                g2d.drawString(" Season:    " + month.format(now), 10, y);
+                g2d.drawString("الخصومات:", 185, y);
                 y += yShift;
-                g2d.drawString(" Year  :    " + year.format(now), 10, y);
+                 g2d.drawString(" العقوبة      " +"عدد المرات"+ "    " + " القيمة", 10, y);
+                y += yShift+5;
+                g2d.drawString(" تأخير    1 دقيقة:  " + m_late1 + "            " + late1+" ", 10, y);
                 y += yShift;
-                g2d.drawString(" Level :    " + s_level, 10, y);
+                g2d.drawString("تأخير     5دقايق :  " + m_late5 + "            " + late5, 10, y);
                 y += yShift;
-                g2d.drawString(" line  :    " + track, 10, y);
+                g2d.drawString("   النضاره+البونيه:  " + m_glass + "            " + glass, 10, y);
                 y += yShift;
-                g2d.drawString(" Day   :    " + day, 10, y);
+                g2d.drawString(" السلوك           :  " + m_behavior + "            " + behavior, 10, y);
                 y += yShift;
-                g2d.drawString(" Time  :    " + time, 10, y);
+                g2d.drawString("التحدث مع ولي الامر:  " + m_talk + "            " + talk, 10, y);
                 y += yShift;
-                g2d.drawString(" Coach :    " + c_name, 10, y);
+                g2d.drawString(" الغياب           :  " + m_absent + "            " + absent, 10, y);
                 y += yShift;
-                g2d.drawString(" Range :    " + range + " Days", 10, y);
+                g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
-                g2d.drawString(" Cost  :    " + cost + " LE", 10, y);
+                g2d.drawString("الاضافات:", 170, y);
                 y += yShift;
-
-                g2d.drawString("-------------------------------------", 10, y);
-                y += headerRectHeight;
-
+                g2d.drawString(" الاحتياطى         :  " + m_re + "            " + re, 10, y);
+                y += yShift;
+                g2d.drawString("-------------------------------------", 12, y);
+                y += yShift;
+                g2d.drawString(" القيمة بعد الخصم و الاضافة:  "+ salary, 20, y);
+                y += yShift;
+                g2d.drawString("-------------------------------------", 12, y);
+                y += yShift;
+                g2d.drawString(" Season: " + month.format(now)+"  "+ year.format(now), 10, y);
+                y += yShift;
                 g2d.drawString("*************************************", 10, y);
                 y += yShift;
-                g2d.drawString("       THANK YOU COME AGAIN            ", 10, y);
-                y += yShift;
-                g2d.drawString("*************************************", 10, y);
-                y += yShift;
-                g2d.drawString("    SOFTWARE BY:Eng MOSTAFA SAMY          ", 10, y);
-                y += yShift;
-                g2d.drawString("         CONTACT: 01010824193       ", 10, y);
-                y += yShift;
+               
 
             } catch (Exception e) {
                 e.printStackTrace();
