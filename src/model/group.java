@@ -12,15 +12,16 @@ package model;
 public class group {
     
     int g_id,c_id;
-    String track,level,time,day;
+    String track,level,time,day,type;
 
-    public group(int g_id, int c_id, String track, String level, String time, String day) {
+    public group(int g_id, int c_id, String track, String level, String time, String day,String type) {
         this.g_id = g_id;
         this.c_id = c_id;
         this.track = track;
         this.level = level;
         this.time = time;
         this.day = day;
+           this.type = type;
     }
 
     public int getG_id() {
@@ -45,6 +46,10 @@ public class group {
 
     public String getDay() {
         return day;
+    }
+
+    public String getType() {
+        return type;
     }
     
     

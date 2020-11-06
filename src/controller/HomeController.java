@@ -97,7 +97,7 @@ public class HomeController implements Initializable {
     private ScrollPane scrooll, scroll_search;
 
     @FXML
-    private JFXComboBox<String> add_group_coach, add_group_day, add_group_line, add_group_level, update_group_day, update_coach, update_group_line, update_group_level, add_s_level;
+    private JFXComboBox<String> add_group_coach, add_group_day,add_group_level, add_group_line, add_group_type, update_group_day, update_coach, update_group_line, update_group_level, add_s_level;
     @FXML
     private DatePicker add_s_age;
     @FXML
@@ -190,17 +190,19 @@ public class HomeController implements Initializable {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار المستوى");
         } else if (add_group_line.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار الحارة");
+        } else if (add_group_type.getSelectionModel().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
         } else {
             System.out.println(add_group_coach.getValue());
             Time time = Time.valueOf(add_group_time.getValue());
             boolean bool = false;
 
             allDb.DB_connection();
-            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)) {
+            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time,add_group_type.getValue())) {
                 JOptionPane.showMessageDialog(null, "الكابتن  " + add_group_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
             } else {
                 allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
-                        add_group_level.getValue(), add_group_day.getValue(), time);
+                        add_group_level.getValue(), add_group_day.getValue(), time,add_group_type.getValue());
                 JOptionPane.showMessageDialog(null, "تم اضافة الجروب");
 
                 for (int i = 0; i < combobox_all_group.getItems().size(); i++) {
@@ -246,7 +248,7 @@ public class HomeController implements Initializable {
             boolean bool = false;
 
             allDb.DB_connection();
-            if (allDb.is_group_exist(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_day.getValue(), time)) {
+            if (allDb.is_group_exist(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_day.getValue(), time,add_group_type.getValue())) {
                 JOptionPane.showMessageDialog(null, "الكابتن  " + update_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
             } else {
 //                allDb.Add_group(coach.get(update_coach.getSelectionModel().getSelectedIndex()).getC_id(), update_group_line.getValue(),
@@ -2462,7 +2464,7 @@ public class HomeController implements Initializable {
         add_group_day.getItems().clear();
         add_group_line.getItems().clear();
         add_group_level.getItems().clear();
-
+   add_group_type.getItems().clear();
         update_coach.getItems().clear();
         update_group_day.getItems().clear();
         update_group_line.getItems().clear();
@@ -2482,6 +2484,7 @@ public class HomeController implements Initializable {
 
             add_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
+            add_group_type.getItems().addAll("المدرسه", "الفرق", "الاطفال", "الشباب", "البنات", "الترفيهي", "الاسبيشيال", "الحاره", "نص حاره");
             update_group_line.getItems().addAll("L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L11",
                     "L12", "L13", "L14", "L15", "L16", "L17", "L18", "L19", "L20");
 
