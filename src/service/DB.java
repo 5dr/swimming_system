@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,10 +50,12 @@ public class DB {
 
         try {
             // connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/swimming", "root", "");
-            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+            //  connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+            connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/swimming?useUnicode=yes&characterEncoding=UTF-8", "root", "");
+
             System.out.println("connected");
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex);
+            JOptionPane.showMessageDialog(null, "connected : " + ex);
         }
     }
 
@@ -130,7 +133,20 @@ public class DB {
 
         return t;
     }
+//UPDATE `couch` SET `c_level` = 'l1' WHERE `couch`.`c_id` = 1001;
 
+ public void update_coach(int id,String phone, String level) throws SQLException {
+
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate("UPDATE `couch` SET `phone` = '"+phone+"', `c_level` = '"+level+"' WHERE `couch`.`c_id` = "+id+";");
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "update_coach :" + ex);
+        }
+
+    }    
+    
     public void addcoach(String name, String phone, String address, String level) throws SQLException {
 
         try {
@@ -161,6 +177,64 @@ public class DB {
         }
 
         return name;
+    }
+
+    public String coach_by_level(int id) throws SQLException {
+
+        String name = null;
+        try {
+            statement = connection.createStatement();
+            ResultSet r = statement
+                    .executeQuery("SELECT c_level FROM `couch` WHERE c_id=" + id + "");
+
+            while (r.next()) {
+                System.out.println(r.getString("c_level"));
+                name = r.getString("c_level");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "coach_by_c_level :" + ex);
+        }
+
+        return name;
+    }
+
+    public String coach_by_phone(int id) throws SQLException {
+
+        String name = null;
+        try {
+            statement = connection.createStatement();
+            ResultSet r = statement
+                    .executeQuery("SELECT phone FROM `couch` WHERE c_id=" + id + "");
+
+            while (r.next()) {
+                System.out.println(r.getString("phone"));
+                name = r.getString("phone");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "coach_by_phone :" + ex);
+        }
+
+        return name;
+    }
+
+    public List<Integer> get_All_Id_Of_coach() {
+        List<Integer> id = new ArrayList<Integer>();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT c_id FROM `couch` ORDER by c_id ASC");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id.add(r.getInt("c_id"));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_All_Id_Of_coach :" + ex);
+        }
+
+        return id;
     }
 
     // SELECT name FROM `couch` WHERE c_id=1000
@@ -256,14 +330,14 @@ public class DB {
 //DELETE FROM `swimmer` WHERE swimmer.s_id=1
 
 //////////////////////////////////////////add swimmer with all methods//////////
-    public boolean check_group_exist(String c_name, Time t, int b) {
+    public boolean check_group_exist(String c_name, String type, Time t, int b) {
 
         boolean bool = false;
         try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + c_name + "'  AND groups.g_day = " + b);
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + c_name + "' AND groups.g_type='" + type + "'  AND groups.g_day = " + b);
             bool = r.next();
         } catch (SQLException ex) {
             System.out.println(" check_group_exist : " + ex);
@@ -271,14 +345,14 @@ public class DB {
         return bool;
     }
 
-    public int get_id_check_group_exist(String c_name, Time t, int b) {
+    public int get_id_check_group_exist(String c_name, String type, Time t, int b) {
 
         int bool = 0;
         try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + c_name + "'  AND groups.g_day = " + b);
+                    .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + c_name + "' AND groups.g_type='" + type + "'  AND groups.g_day = " + b);
 
             while (r.next()) {
                 bool = r.getInt("g_id");
@@ -367,6 +441,42 @@ public class DB {
         }
         return Max_id;
     }
+
+    public int addswimmer_for_trf(String name) throws SQLException {
+        int Max_id = 0;
+        try {
+            Date now = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            System.out.println(sdf.format(now));
+            Calendar c = Calendar.getInstance();
+            c.setTime(now);
+            c.add(Calendar.MONTH, 1);
+            c.set(Calendar.DAY_OF_MONTH, 1);
+            c.add(Calendar.DATE, -1);
+            Date last_day_Month = null;
+            System.out.println(last_day_Month);
+
+            LocalDate currentdate = LocalDate.now();
+            int currentYear = currentdate.getYear();
+            Month currentMonth = currentdate.getMonth();
+            List<LocalDate> ldate = null;
+
+            statement = connection.createStatement();
+            ResultSet r = statement
+                    .executeQuery("SELECT MAX(tr_ld) FROM trfihee");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                Max_id = (r.getInt("MAX(tr_ld)"));
+            }
+            Max_id++;
+            System.out.println(name);
+            statement.executeUpdate("INSERT INTO `trfihee` (`tr_ld`, `tr_name`, `date`) VALUES (" + Max_id + ", '" + name + "', '" + sdf.format(now) + "');");
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Add swimmer :" + ex);
+        }
+        return Max_id;
+    }
     //////////////////////////////////////////add swimmer with all methods//////////
 
     //////////////////////////////swimmer//////////////////////
@@ -439,7 +549,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "");
             while (r.next()) {
                 System.out.println(r.getInt("g_day"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), t, r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), t, r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" all_information_for_group :" + ex);
@@ -447,7 +557,7 @@ public class DB {
         return id;
     }
 
-    public void Add_group(int c_id, String track, String level, String day, Time t,String ty) {
+    public void Add_group(int c_id, String track, String level, String day, Time t, String ty) {
 
         try {
             int b = 0;
@@ -461,7 +571,7 @@ public class DB {
                 b = 2;
             }
             statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO `groups` (`g_id`, `c_id`, `track`, `level`, `g_time`, `g_day`,`g_type`) VALUES (NULL, '" + c_id + "', '" + track + "', '" + level + "', '" + t + "', '" + b +  "', '" + ty +"');");
+            statement.executeUpdate("INSERT INTO `groups` (`g_id`, `c_id`, `track`, `level`, `g_time`, `g_day`,`g_type`) VALUES (NULL, '" + c_id + "', '" + track + "', '" + level + "', '" + t + "', '" + b + "', '" + ty + "');");
         } catch (SQLException ex) {
             System.out.println(" Add_group :" + ex);
         }
@@ -479,33 +589,33 @@ public class DB {
     }
 //DELETE FROM `groups` WHERE g_id=1
 
-    public void update_group(int g_id, int c_id, String track, String level, String day, Time t) {
+    public void update_group(int g_id, int c_id, String track, String level, String day, Time t, String ty) {
 
-         int b = 0;
-            if (day == "Saturday") {
-                b = 0;
-            }
-            if (day == "Sunday") {
-                b = 1;
-            }
-            if (day == "friday") {
-                b = 2;
-            }
+        int b = 0;
+        if (day == "Saturday") {
+            b = 0;
+        }
+        if (day == "Sunday") {
+            b = 1;
+        }
+        if (day == "friday") {
+            b = 2;
+        }
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("UPDATE `groups` SET `c_id` = '" + c_id + "', `track` = '" + track + "', `level` = '" + level + "', `g_time` = '" + t + "', `g_day` = '" + b + "' WHERE `groups`.`g_id` =" + g_id);
+            statement.executeUpdate("UPDATE `groups` SET `c_id` = '" + c_id + "', `track` = '" + track + "', `level` = '" + level + "', `g_time` = '" + t + "', `g_day` = '" + b + "', `g_type` = '" + ty + "' WHERE `groups`.`g_id` =" + g_id);
         } catch (SQLException ex) {
             System.out.println(" update_group :" + ex);
         }
     }
 
     //UPDATE `groups` SET `c_id` = '1016', `track` = 'L4', `level` = 'level 8', `g_time` = '01:00:00', `g_day` = '1' WHERE `groups`.`g_id` = 2027;
-    public boolean is_group_exist(int c_id, String day, Time t,String ty) {
+    public boolean is_group_exist(int c_id, String day, Time t, String ty) {
         boolean bool = false;
         try {
 
-           int b = 0;
+            int b = 0;
             if (day == "Saturday") {
                 b = 0;
             }
@@ -518,7 +628,7 @@ public class DB {
 
             statement = connection.createStatement();
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `groups` WHERE `c_id` = " + c_id + " AND `g_time` = '" + t + "' AND `g_day` = " + b  + " AND `g_type` = '"+ ty +"'");
+                    .executeQuery("SELECT * FROM `groups` WHERE `c_id` = " + c_id + " AND `g_time` = '" + t + "' AND `g_day` = " + b + " AND `g_type` = '" + ty + "'");
             bool = r.next();
         } catch (SQLException ex) {
             System.out.println(" is_group_exist :" + ex);
@@ -560,7 +670,7 @@ public class DB {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO `attend_couch`(`attend_id`, `absent_day`, `g_id`, `replace_c_id`, `year`, `month`) VALUES (NULL, '" + sdf.format(now) + "', " + g_id + "," + re_id + " ," + currentYear + " ," + v_month + ");");
+            statement.executeUpdate("INSERT INTO `attend_couch`(`attend_id`, `absent_day`, `g_id`, `replace_c_id`) VALUES (NULL, '" + sdf.format(now) + "', " + g_id + "," + re_id + ");");
         } catch (SQLException ex) {
             System.out.println(" Add_couch_attend : " + ex);
         }
@@ -584,7 +694,7 @@ public class DB {
             }
 
         } catch (SQLException ex) {
-            System.out.println(" get_att_swimmer :" + ex);
+            System.out.println(" get_att_coach :" + ex);
         }
         return s;
     }
@@ -607,7 +717,7 @@ public class DB {
             s = r.next();
 
         } catch (SQLException ex) {
-            System.out.println(" get_att_swimmer :" + ex);
+            System.out.println(" get_att_coach_bool :" + ex);
         }
         return s;
     }
@@ -677,7 +787,12 @@ public class DB {
 
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println(sdf.format(now));
+        
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        Month currentMonth = currentdate.getMonth();
+        int v_month = currentMonth.getValue();
 
         try {
             statement = connection.createStatement();
@@ -705,11 +820,21 @@ public class DB {
     public boolean get_att(int id, int n) {
 
         boolean b = false;
+
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(sdf.format(now));
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        Month currentMonth = currentdate.getMonth();
+        int v_month = currentMonth.getValue();
+
         try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT * FROM `attend_swimmer` WHERE `s_id` = " + id + " AND `num` = " + n + "");
+                    .executeQuery("SELECT * FROM `attend_swimmer` WHERE `s_id` = " + id + " AND `day` = '" + sdf.format(now) + "' AND `num` = " + n + "");
             b = r.next();
 
         } catch (SQLException ex) {
@@ -858,7 +983,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id ");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -878,7 +1003,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.c_id =" + id_g);
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -899,7 +1024,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -919,7 +1044,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -939,7 +1064,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -960,7 +1085,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b);
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -981,7 +1106,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + " AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1002,7 +1127,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + "  AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1023,7 +1148,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1044,7 +1169,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1065,7 +1190,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1086,7 +1211,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1107,7 +1232,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "' AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1128,7 +1253,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b);
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1149,7 +1274,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + " AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1170,7 +1295,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_time_and_day_and_line : " + ex);
@@ -1191,7 +1316,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1212,7 +1337,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name : " + ex);
@@ -1233,7 +1358,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "' AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1254,7 +1379,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "' AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_line : " + ex);
@@ -1274,7 +1399,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1294,7 +1419,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b);
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_day : " + ex);
@@ -1314,7 +1439,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1335,7 +1460,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1356,7 +1481,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1377,7 +1502,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name : " + ex);
@@ -1398,7 +1523,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1419,7 +1544,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1440,7 +1565,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1461,7 +1586,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b);
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1482,7 +1607,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1503,7 +1628,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -1524,7 +1649,7 @@ public class DB {
                     .executeQuery("SELECT * FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_time='" + t + "'  AND couch.name='" + name + "'  AND groups.g_day = " + b + "  AND groups.track = '" + line + "'  AND groups.level = '" + level + "'");
             while (r.next()) {
                 System.out.println(r.getString("name"));
-                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_group_by_name_and_time_and_day : " + ex);
@@ -2108,7 +2233,7 @@ public class DB {
                     }
                 }
                 if (flag == false) {
-                    id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"),r.getString("g_type")));
+                    id.add(new all_information_for_group(r.getInt("g_id"), r.getInt("c_id"), r.getString("track"), r.getString("level"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("c_level"), r.getTime("g_time"), r.getInt("g_day"), r.getString("g_type")));
 
                 }
 
@@ -2291,6 +2416,20 @@ public class DB {
 
         return id;
     }
+
+    public void update_cost(int tarfih, int coach_cost, int absent, int late_1, int late_5, int glass, int Behavior, int talk, int re) {
+        try {
+            statement = connection.createStatement();
+
+            statement.executeUpdate("UPDATE `cost` SET `total_cost`=" + tarfih + ",`coach_cost`=" + coach_cost + ",`absent`=" + absent + ",`late_1`=" + late_1 + ",`late_5`=" + late_5 + ",`glass`=" + glass + ",`Behavior`=" + Behavior + ",`talk`=" + talk + ",`re`=" + re + " WHERE cost.cost_id=1");
+
+        } catch (SQLException ex) {
+            System.out.println(" update_cost :" + ex);
+        }
+
+    }
+    //UPDATE `type` SET `cost` = "+new_cost+" WHERE `type`.`type_name` = \""+name+"\"
+    //UPDATE `cost` SET `total_cost`=[value-2],`coach_cost`=[value-3],`absent`=[value-4],`late_1`=[value-5],`late_5`=[value-6],`glass`=[value-7],`Behavior`=[value-8],`talk`=[value-9],`re`=[value-10] WHERE cost.cost_id=1
 ////////////////////////////////////////cost/////////////////////////////
 
 ////////////////////////////////////////punish/////////////////////////////
@@ -2387,15 +2526,15 @@ public class DB {
         return s;
     }
 ////////////////////////////////////////punish/////////////////////////////
-    
-       public String get_coach_name_by_g_id(int g_id) {
+
+    public String get_coach_name_by_g_id(int g_id) {
 
         String id = "";
         try {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_id="+g_id);
+                    .executeQuery("SELECT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE groups.g_id=" + g_id);
             while (r.next()) {
                 // System.out.println(r.getInt("g_id"));
                 id = r.getString("couch.name");
@@ -2406,8 +2545,93 @@ public class DB {
 
         return id;
     }
-    //SELECT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.c_id=1000
 
+    ////////////////////////////////////////type/////////////////////////////
+    public List<String> get_type_name() {
+        List<String> id = new ArrayList<String>();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT type.type_name FROM `type`");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id.add(r.getString("type.type_name"));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_type_name :" + ex);
+        }
+
+        return id;
+    }
+
+    public int get_type_cost(String name) {
+        int id = 1;
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT `cost` FROM `type` WHERE `type_name` = '" + name + "'");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id = r.getInt("cost");
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_type_cost :" + ex);
+        }
+
+        return id;
+    }
+
+    public void update_type_cost(int new_cost, String name) {
+        try {
+            statement = connection.createStatement();
+
+            statement.executeUpdate("UPDATE `type` SET `cost` = " + new_cost + " WHERE `type`.`type_name` = \"" + name + "\"");
+
+        } catch (SQLException ex) {
+            System.out.println(" update_type_cost :" + ex);
+        }
+
+    }
+
+    public void insert_type(int new_cost, String name) {
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate("INSERT INTO `type` (`type_id`, `type_name`, `cost`) VALUES (NULL, '" + name + "', '" + new_cost + "');");
+        } catch (SQLException ex) {
+            System.out.println(" insert_type :" + ex);
+        }
+
+    }
+    //UPDATE `type` SET `cost`=100 WHERE type.type_name="المدارس"
+    ////////////////////////////////////////type/////////////////////////////
+
+    ////////////////////////////////////////salary/////////////////////////////
+    public int get_count_of_swimmer_with_caoch(int id) {
+
+        int s = 0;
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT COUNT(*) FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.c_id=" + id);
+            while (r.next()) {
+                s = r.getInt("COUNT(*)");
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(" get_count_of_swimmer_with_caoch :" + ex);
+        }
+        return s;
+    }
+
+    //INSERT INTO `type` (`type_id`, `type_name`, `cost`) VALUES (NULL, 'kk', '0');
+//UPDATE `cost` SET `total_cost`=[value-2],`coach_cost`=[value-3],`absent`=[value-4],`late_1`=[value-5],`late_5`=[value-6],`glass`=[value-7],`Behavior`=[value-8],`talk`=[value-9],`re`=[value-10] WHERE cost.cost_id=1//UPDATE `type` SET `cost`=100 WHERE type.type_name="المدارس"
+//SELECT COUNT(*) FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.c_id=1001    
+//SELECT * FROM `type` WHERE `cost` = 0    
+//SELECT type.type_name FROM `type`       
+//SELECT couch.name FROM `groups` INNER JOIN couch ON groups.c_id=couch.c_id WHERE couch.c_id=1000
 //SELECT COUNT(*) FROM `punishment` WHERE `c_id` = 1000 AND `month` = 10 AND `year` = 0 AND `punish` = 1
 //INSERT INTO `punishment` (`p_id`, `c_id`, `month`, `punish`) VALUES (NULL, '1000', '10', '1');
 //SELECT * FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id INNER JOIN couch ON groups.c_id=couch.c_id

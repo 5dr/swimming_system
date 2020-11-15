@@ -11,7 +11,7 @@
     <jar href="lib\controlsfx-8.40.13.jar" size="1213306" download="eager" />
     <jar href="lib\jfoenix-8.0.1.jar" size="2405715" download="eager" />
     <jar href="lib\mysql-connector-java-5.1.42-bin.jar" size="996444" download="eager" />
-    <jar href="swimm_system.jar" size="218931" download="eager" />
+    <jar href="swimm_system.jar" size="227808" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="swimm_system" >
     <param name="requiredFXVersion" value="8.0+"/>

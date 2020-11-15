@@ -40,21 +40,21 @@ public class Swimm_system extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       // launch(args);
+        launch(args);
         
-               ProcessBuilder P1 = new ProcessBuilder("C:\\xampp\\mysql\\bin\\mysqld.exe");
-        try {
+//               ProcessBuilder P1 = new ProcessBuilder("C:\\xampp\\mysql\\bin\\mysqld.exe");
+//        try {
+//////
+//            P1.start();
+// } catch (IOException ex) {
+////            System.out.println("process");
+//        }
+//            launch(args);
+//        try {
 ////
-            P1.start();
- } catch (IOException ex) {
-//            System.out.println("process");
-        }
-            launch(args);
-        try {
-//
-             Runtime.getRuntime().exec("taskkill /IM mysqld.exe /F");
-        } catch (IOException ex) {
-        }
+//             Runtime.getRuntime().exec("taskkill /IM mysqld.exe /F");
+//        } catch (IOException ex) {
+//        }
 
         LocalDate currentdate = LocalDate.now();
         int currentYear = currentdate.getYear();

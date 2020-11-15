@@ -15,6 +15,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.Date;
@@ -30,6 +31,12 @@ import javax.swing.ImageIcon;
  */
 public class BillPrintable implements Printable {
 
+    Date now = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat month = new SimpleDateFormat("MMMM");
+    SimpleDateFormat year = new SimpleDateFormat("YYYY");
+    SimpleDateFormat t = new SimpleDateFormat("hh:mm:00");
+    
     String name, phone, level, day, time, track, s_level, c_name;
     Date age;
     int group, id, cost, range;
@@ -50,10 +57,7 @@ public class BillPrintable implements Printable {
 
     }
 
-    Date now = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat month = new SimpleDateFormat("MMMM");
-    SimpleDateFormat year = new SimpleDateFormat("YYYY");
+    
 
     private BufferedImage i;
 
@@ -67,6 +71,13 @@ public class BillPrintable implements Printable {
         }
         int result = NO_SUCH_PAGE;
         if (pageIndex == 0) {
+            if(day.equals("====")){
+            time=t.format(now).toString();
+            }
+            
+            LocalDate currentdate = LocalDate.now();
+            day = currentdate.getDayOfWeek().toString();
+            
 
             Graphics2D g2d = (Graphics2D) graphics;
             double width = pageFormat.getImageableWidth();
