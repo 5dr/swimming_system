@@ -14,6 +14,7 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -45,6 +46,7 @@ import model.all_information_for_group;
 import model.swimmer;
 import service.DB;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -65,6 +67,8 @@ import model.all_information_for_swimmer;
 import model.attend_couch;
 import model.attend_swimmer;
 import model.coach;
+import model.group;
+import model.s;
 import org.controlsfx.control.textfield.TextFields;
 import service.BillPrint_coach;
 import service.BillPrintable;
@@ -84,7 +88,7 @@ public class HomeController implements Initializable {
     @FXML
     private AnchorPane pane_table_salary, anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox v_box1_type, p_list, vbox_search_group, vbox_search_coach, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_search_att_s, vbox_search_att_c;
+    private VBox v_box1_type, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
     @FXML
     private StackPane big_Stack;
     @FXML
@@ -103,7 +107,7 @@ public class HomeController implements Initializable {
     @FXML
     private JFXTimePicker add_group_time, update_group_time;
     @FXML
-    private JFXButton inf_c_b_level, inf_c_b_phone, setting_b_coach_cost, setting_b_tr, setting_b_re, setting_b_absent, setting_b_talk, setting_b_behavior, setting_b_glass, setting_b_5, setting_b, b_punish_late_1, b_punish_late_5, b_punish_glass, b_punish_behavior, b_punish_talk, search_group, search_att_s, search_swimmer, search_coach, search_att_c;
+    private JFXButton inf_c_b_level, inf_c_s_level, inf_c_s_phone, inf_c_s_DOB, inf_c_s_end, inf_c_b_phone, setting_b_coach_cost, setting_b_tr, setting_b_re, setting_b_absent, setting_b_talk, setting_b_behavior, setting_b_glass, setting_b_5, setting_b, b_punish_late_1, b_punish_late_5, b_punish_glass, b_punish_behavior, b_punish_talk, search_group, search_att_s, search_swimmer, search_coach, search_att_c;
 
     @FXML
     private JFXRadioButton r_att_c_day, r_att_c_time, r_att_c_name, r_att_c_id, r_att_s_id, r_s_id, r_g_id, r_g_name, r_g_time, r_g_day, r_g_line, r_g_level, r_s_gender, r_s_day, r_s_time, r_s_name, r_att_s_name, r_att_time, r_att_day, r_att_num;
@@ -137,6 +141,66 @@ public class HomeController implements Initializable {
             allDb.DB_connection();
             allDb.update_coach(coach_id_punish, inf_c_phone.getText(), inf_c_level.getValue());
             allDb.DB_close();
+        } catch (SQLException ex) {
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "يجب ادخال القيم ارقام صحيحة");
+        }
+
+    }
+
+    public void update_swimmer_level(ActionEvent actionEvent) {
+
+        try {
+            //add_s_phone.getText().matches("\\d{11}")
+            allDb.DB_connection();
+            allDb.update_swimmer_level(search_s_id.getText(), inf_s_level.getText());
+            allDb.DB_close();
+
+        } catch (SQLException ex) {
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "يجب ادخال القيم ارقام صحيحة");
+        }
+
+    }
+
+    public void update_swimmer_phone(ActionEvent actionEvent) {
+
+        try {
+            //add_s_phone.getText().matches("\\d{11}")
+            allDb.DB_connection();
+            allDb.update_swimmer_phone(inf_s_name.getText(), inf_s_phone.getText());
+            allDb.DB_close();
+
+        } catch (SQLException ex) {
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "يجب ادخال القيم ارقام صحيحة");
+        }
+
+    }
+
+    public void update_swimmer_DOB(ActionEvent actionEvent) {
+
+        try {
+            //add_s_phone.getText().matches("\\d{11}")
+            allDb.DB_connection();
+            allDb.update_swimmer_level(inf_s_name.getText(), inf_s_age.getText());
+            allDb.DB_close();
+
+        } catch (SQLException ex) {
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "يجب ادخال القيم ارقام صحيحة");
+        }
+
+    }
+
+    public void update_swimmer_end(ActionEvent actionEvent) {
+
+        try {
+            //add_s_phone.getText().matches("\\d{11}")
+            allDb.DB_connection();
+            allDb.update_swimmer_level(inf_s_name.getText(), inf_s_end_day.getText());
+            allDb.DB_close();
+
         } catch (SQLException ex) {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "يجب ادخال القيم ارقام صحيحة");
@@ -415,7 +479,7 @@ public class HomeController implements Initializable {
                                 pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, (allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue(), add_s_range.getValue()), getPageFormat(pj));
 
                             }
-                            pj.print();
+                            ///   pj.print();
                             pj.cancel();
 
                             JOptionPane.showMessageDialog(null, "تم اضافه السباح");
@@ -2098,7 +2162,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2111,7 +2175,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2124,7 +2188,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.FRIDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.FRIDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2451,7 +2515,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2464,7 +2528,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
-                                || date.getDayOfWeek() == DayOfWeek.SUNDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.SUNDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2477,7 +2541,7 @@ public class HomeController implements Initializable {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
-                                || date.getDayOfWeek() == DayOfWeek.SATURDAY)
+                                        || date.getDayOfWeek() == DayOfWeek.SATURDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 9) {
                             ldate.remove(8);
@@ -2682,59 +2746,7 @@ public class HomeController implements Initializable {
             System.out.println("initialize" + ex);
         }
 
-//        try {
-//            //////////////Show//////////
-//            allDb.DB_connection();
-//            combobox_all_group.getItems().addAll(allDb.All_time_of_group_without_repeat());
-//          
-//           id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
-//            all_g_id.clear();
-//            for (int i = 0; i < id.size(); i++) {
-//                all_g_id.add(id.get(i).getG_id());
-//            }
-//            t = allDb.get_swimmerWithgroup(all_g_id);
-//            //System.out.println(t.get(0).get(0));
-//            pane_table.getChildren().clear();
-//            table.getChildren().clear();
-//            pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-//            BuildHome(id, t);
-//
-//            allDb.DB_close();
-//
-//            combobox_all_group.setOnAction((event) -> {
-//                try {
-//
-//                    if (combobox_all_group_day.getValue().equals("Saturday")) {
-//                        bool = 0;
-//                    } else if (combobox_all_group_day.getValue().equals("sunday")){
-//                        bool = 1;
-//                    } else if (combobox_all_group_day.getValue().equals("fridey")){
-//                        bool = 2;
-//                    }
-//                    allDb.DB_connection();
-//                    id = allDb.get_all_group_with_time(combobox_all_group.getValue(), bool);
-//                    all_g_id.clear();
-//                    for (int i = 0; i < id.size(); i++) {
-//                        all_g_id.add(id.get(i).getG_id());
-//                    }
-//                    System.out.println(all_g_id);
-//                    t = allDb.get_swimmerWithgroup(all_g_id);
-//                    //System.out.println(t.get(0).get(0));
-//                    pane_table.getChildren().clear();
-//                    table.getChildren().clear();
-//                    pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
-//                    BuildHome(id, t);
-//                    allDb.DB_close();
-//
-//                } catch (SQLException ex) {
-//                    System.out.println("initialize" + ex);
-//                }
-//
-//            });
-//
-//        } catch (SQLException ex) {
-//            System.out.println("initialize" + ex);
-//        }
+//      
     }
 //////////////////////////home/////////////
 
@@ -3404,10 +3416,10 @@ public class HomeController implements Initializable {
                     t = allDb.get_swimmer_by_group(id.get(Integer.parseInt(num1.getText()) - 1).getG_id());
                     allDb.DB_close();
 
-                    Label num_s = make_lable_search_head("N", .04, "b6bec2", 20);
-                    Label id_s = make_lable_search_head("ID", .139, "b6bec2", 20);
-                    Label name_s = make_lable_search_head("Name", 0.18, "b6bec2", 20);
-                    Label gender_s = make_lable_search_head("Gender", .18, "b6bec2", 20);
+                    Label num_s = make_lable_search_head("N", .04, "b6bec2", 15);
+                    Label id_s = make_lable_search_head("ID", .139, "b6bec2", 15);
+                    Label name_s = make_lable_search_head("Name", 0.18, "b6bec2", 15);
+                    Label gender_s = make_lable_search_head("Gender", .18, "b6bec2", 15);
 
                     HBox title_s = new HBox();
                     title_s.setStyle("-fx-background-color:  #b6bec2;");
@@ -3439,6 +3451,7 @@ public class HomeController implements Initializable {
 
                 p_group_inf.toFront();
             });
+
             HBox title_all = new HBox();
             title_all.getChildren().addAll(title2, title1);
 
@@ -3450,8 +3463,144 @@ public class HomeController implements Initializable {
             }
         }
 
+////////////////
         pane_search_table.getChildren().clear();
         pane_search_table.getChildren().add(table_search);
+
+        ////////////
+        java.util.Date now = new java.util.Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Label swimmer_att = make_lable_search_head("The attend swimmer ", .539, "303436", 15);
+        swimmer_att.setTextFill(rgb(255, 255, 255));
+
+        Label num_att_s = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label attend_id_s = make_lable_search_head("attend_id", 0.18, "b6bec2", 15);
+        Label attend_name_s = make_lable_search_head("attend_name", 0.18, "b6bec2", 15);
+        Label time_s = make_lable_search_head("time_c", 0.18, "b6bec2", 15);
+
+        HBox title_s = new HBox();
+        title_s.setStyle("-fx-background-color:  #b6bec2;");
+        title_s.setPrefSize(bounds.getWidth() * .54, 0);
+        title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
+        title_s.setAlignment(Pos.CENTER_RIGHT);
+
+        vbox_report_att_s.getChildren().add(swimmer_att);
+        vbox_report_att_s.getChildren().add(title_s);
+        allDb.DB_connection();
+        List<attend_swimmer> s = new ArrayList<attend_swimmer>();
+ List<s> s_att = new ArrayList<s>();
+ List<group> st_att = new ArrayList<group>();
+
+        s = allDb.s_att(sdf.format(now));
+ s_att = allDb.report_attend_swimmer(sdf.format(now));
+ st_att=allDb.report_attend_s_time(sdf.format(now));
+         allDb.DB_close();
+        for (int x = 0; x < s.size(); x++) {
+
+        Label num_s = make_lable_g((0 + 1) + "", .02);
+        Label Attend_s = make_lable_g(s.get(x).getAttend_id() + "", .16);
+          Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
+              Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
+
+        HBox title_att_s = new HBox();
+        title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
+        title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
+        title_att_s.getChildren().addAll(time_a_s,name_s_att,Attend_s, num_s);
+        title_att_s.setAlignment(Pos.CENTER_RIGHT);
+
+        vbox_report_att_s.getChildren().add(title_att_s);
+        }
+///////////////////////////
+        Label coach_att = make_lable_search_head("The attend coach ", .539, "303436", 15);
+        coach_att.setTextFill(rgb(255, 255, 255));
+
+        Label num_att_c = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label attend_id_c = make_lable_search_head("attend_id", 0.18, "b6bec2", 15);
+        Label attend_name_c = make_lable_search_head("replace_name", 0.18, "b6bec2", 15);
+        Label time_c = make_lable_search_head("time_c", 0.18, "b6bec2", 15);
+
+        HBox title_c = new HBox();
+        title_c.setStyle("-fx-background-color:  #b6bec2;");
+        title_c.setPrefSize(bounds.getWidth() * .54, 0);
+        title_c.getChildren().addAll(time_c, attend_name_c, attend_id_c, num_att_c);
+        title_c.setAlignment(Pos.CENTER_RIGHT);
+
+        vbox_report_att_c.getChildren().add(coach_att);
+        vbox_report_att_c.getChildren().add(title_c);
+        allDb.DB_connection();
+        List<attend_couch> c = new ArrayList<attend_couch>();
+        List<coach> time_co = new ArrayList<coach>();
+        List<group> time_g = new ArrayList<group>();
+        c = allDb.c_att(sdf.format(now));
+        time_co = allDb.report_attend_coach(sdf.format(now));
+        time_g = allDb.report_time_replace(sdf.format(now));
+
+        allDb.DB_close();
+
+        for (int x = 0; x < c.size(); x++) {
+
+            Label num_c = make_lable_g((x + 1) + "", .02);
+            Label Attend_c = make_lable_g(c.get(x).getAttend_id() + "", .16);
+
+            Label Rep_name = make_lable_g(time_co.get(x).getName(), .16);
+
+            Label time_go = make_lable_g(time_g.get(x).getTime(), .16);
+
+            HBox title_att_c = new HBox();
+            title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
+            title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
+            title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
+            title_att_c.setAlignment(Pos.CENTER_RIGHT);
+
+            vbox_report_att_c.getChildren().add(title_att_c);
+
+        }
+        Label swimmer = make_lable_search_head("The Swimmer in Group", .539, "303436", 15);
+        swimmer.setTextFill(rgb(255, 255, 255));
+        Label num_r_s = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label id_s = make_lable_search_head("ID", .18, "b6bec2", 15);
+        Label name_s = make_lable_search_head("Name", 0.18, "b6bec2", 15);
+        Label num_day_s = make_lable_search_head("num_day", 0.18, "b6bec2", 15);
+        HBox title_r_s = new HBox();
+        title_r_s.setStyle("-fx-background-color:  #b6bec2;");
+        title_r_s.setPrefSize(bounds.getWidth() * .54, 0);
+        title_r_s.getChildren().addAll(num_day_s, name_s, id_s, num_r_s);
+        title_r_s.setAlignment(Pos.CENTER_RIGHT);
+
+        vbox_report.getChildren().add(swimmer);
+        vbox_report.getChildren().add(title_r_s);
+
+        allDb.DB_connection();
+
+        List<swimmer> t = new ArrayList<swimmer>();
+  List<group> t_s = new ArrayList<group>();
+       
+        t = allDb.sdate(sdf.format(now));
+        t_s = allDb.report_s_time(sdf.format(now));
+
+        allDb.DB_close();
+
+        for (int x = 0; x < t.size(); x++) {
+
+            Label num_sw = make_lable_g((x + 1) + "", .02);
+            Label id_s1 = make_lable_g(t.get(x).getS_id() + "", .16);
+            Label name_s1 = make_lable_g(t.get(x).getName(), 0.16);
+            Label time_r_s = make_lable_g(t_s.get(x).getTime(), 0.16);
+            List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
+
+            s_t = (allDb.report_swimmer_time(sdf.format(now)));
+
+        //   Label time_s1 = make_lable_g((s_t.get(x).getTime()).toString(), 0.18);
+            HBox title_s1 = new HBox();
+            title_s1.setStyle("-fx-background-color:  #ffb3e6;");
+            title_s1.setPrefSize(bounds.getWidth() * .54, 0);
+            title_s1.getChildren().addAll(time_r_s, name_s1, id_s1, num_sw);
+            title_s1.setAlignment(Pos.CENTER_RIGHT);
+
+            vbox_report.getChildren().add(title_s1);
+
+        }
     }
 
     private Label make_lable_search_head(String name, double d, String color, int font) {
@@ -3499,7 +3648,7 @@ public class HomeController implements Initializable {
             Label age1 = make_lable_search_swimmer(sdf.format(id.get(i).getAge()) + "", .037);
             Label gender1 = make_lable_search_swimmer(id.get(i).getGender(), 0.055);
             Label phone1 = make_lable_search_swimmer(id.get(i).getPhone(), .05);
-            Label level1 = make_lable_search_swimmer(id.get(i).getLevel(), .04);
+            Label level1 = make_lable_search_swimmer(id.get(i).getS_level(), .04);
             Label s_day1 = make_lable_search_swimmer(id.get(i).getStart() + "", .063);
             Label e_day1 = make_lable_search_swimmer(id.get(i).getEnd() + "", .063);
             Label time1 = make_lable_search_swimmer(id.get(i).getG_time() + "", .065);
@@ -3566,7 +3715,10 @@ public class HomeController implements Initializable {
             });
             title1.setOnMouseClicked((MouseEvent event) -> {
                 List<attend_swimmer> s = new ArrayList<attend_swimmer>();
-
+                inf_s_phone.setDisable(false);
+                inf_s_level.setDisable(false);
+                inf_s_end_day.setDisable(false);
+                inf_s_age.setDisable(false);
                 inf_s_name.setText(name1.getText());
                 inf_s_address.setText(address1.getText());
                 inf_s_age.setText(age1.getText());
