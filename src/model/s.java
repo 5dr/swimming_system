@@ -13,13 +13,14 @@ import java.sql.Date;
  */
 public class s {
 
-    int s_id;
+    int s_id,att_id;
     String name,phone,adress,level="1",gender,s_level;
     Date start ,end,age;
 
    
 
-    public s(int s_id, String name, String s_level, String adress, Date age, String gender,String phone, Date start, Date end) {
+    public s(int att_id,int s_id, String name, String s_level, String adress, Date age, String gender,String phone, Date start, Date end) {
+        this.att_id = att_id;
         this.s_id = s_id;
         this.age = age;
       
@@ -30,6 +31,10 @@ public class s {
         this.start = start;
         this.end = end;
          this.s_level = s_level;
+    }
+
+    public int getAtt_id() {
+        return att_id;
     }
 
     public int getS_id() {

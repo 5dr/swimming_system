@@ -219,11 +219,48 @@
                         <TextField fx:id="inf_s_level" alignment="CENTER" disable="true" layoutX="147.0" layoutY="205.0" prefHeight="26.0" prefWidth="213.0" />
                         <TextField fx:id="inf_s_address" alignment="CENTER" disable="true" layoutX="147.0" layoutY="367.0" prefHeight="26.0" prefWidth="213.0" />
                         <TextField fx:id="inf_s_phone" alignment="CENTER" disable="true" layoutX="147.0" layoutY="412.0" prefHeight="26.0" prefWidth="213.0" />
-                        <Label layoutX="37.0" layoutY="455.0" prefHeight="30.0" prefWidth="91.0" text="Age :" textFill="#258bbf">
+                        <Label layoutX="37.0" layoutY="455.0" prefHeight="30.0" prefWidth="91.0" text="DoB :" textFill="#258bbf">
                            <font>
                               <Font name="System Bold Italic" size="20.0" />
                            </font>
                         </Label>
+                          <JFXButton fx:id="inf_c_s_level" layoutX="375.0" layoutY="200.0" onAction="#update_swimmer_level" prefHeight="34.0" prefWidth="41.0" style="-fx-background-color: #258bbf;" text=" ">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/edit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                         <JFXButton fx:id="inf_c_s_phone" layoutX="375.0" layoutY="400.0" onAction="#update_swimmer_phone" prefHeight="34.0" prefWidth="41.0" style="-fx-background-color: #258bbf;" text=" ">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/edit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                         <JFXButton fx:id="inf_c_s_DOB" layoutX="375.0" layoutY="450.0" onAction="#update_swimmer_DOB" prefHeight="34.0" prefWidth="41.0" style="-fx-background-color: #258bbf;" text=" ">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/edit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                         <JFXButton fx:id="inf_c_s_end" layoutX="375.0" layoutY="575.0" onAction="#update_swimmer_end" prefHeight="34.0" prefWidth="41.0" style="-fx-background-color: #258bbf;" text=" ">
+
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/edit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton> 
                         <TextField fx:id="inf_s_age" alignment="CENTER" disable="true" layoutX="147.0" layoutY="457.0" prefHeight="26.0" prefWidth="213.0" />
                         <Label layoutX="37.0" layoutY="498.0" prefHeight="30.0" prefWidth="91.0" text="Gender :" textFill="#258bbf">
                            <font>
@@ -438,7 +475,7 @@
                               <Font name="System Bold Italic" size="40.0" />
                            </font>
                         </Label>
-                        <Label layoutX="435.0" layoutY="280.0" prefHeight="25.0" prefWidth="31.0" text="Age" textFill="DODGERBLUE">
+                        <Label layoutX="435.0" layoutY="280.0" prefHeight="25.0" prefWidth="31.0" text="DoB" textFill="DODGERBLUE">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -1255,7 +1292,18 @@
                            <content>
                               <AnchorPane fx:id="pane_table11" minHeight="0.0" minWidth="0.0" prefHeight="2000.0" prefWidth="690.0" style="-fx-background-color: #dddddd;">
                                  <children>
-                                    <VBox fx:id="vbox_group_inf1" onDragDetected="#print_g_inf" />
+                                    <VBox layoutX="5.0" prefHeight="18.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;">
+                                       <children>
+                                          <VBox fx:id="vbox_report" prefHeight="18.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+      
+                                          <VBox fx:id="vbox_report_att_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                     
+                                          <VBox fx:id="vbox_report_att_c" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                      
+                                          <VBox fx:id="vbox_report_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                       </children>
+                                    </VBox>
+
                                  </children>
                               </AnchorPane>
                            </content>
