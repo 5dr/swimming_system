@@ -37,6 +37,7 @@ import model.group;
 import model.overview;
 import model.s;
 import model.swimmer;
+import model.trfihee;
 
 /**
  *
@@ -1363,7 +1364,25 @@ public class DB {
         return id;
 
     }
+  public List<trfihee> report_trfihee(String date) {
 
+        List<trfihee> id = new ArrayList<trfihee>();
+
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `trfihee` WHERE date = '" + date + "'");
+            while (r.next()) {
+             
+                id.add(new trfihee(r.getInt("tr_ld"), r.getString("tr_name"), r.getString("date")));
+            }
+        } catch (SQLException ex) {
+            System.out.println(" report_trfihee : " + ex);
+        }
+        return id;
+
+    }
     // 0 1 1 1 0
     public List<all_information_for_group> search_group_by_time_and_day_and_line(Time t, int b, String line) {
 
