@@ -1292,15 +1292,23 @@
                            <content>
                               <AnchorPane fx:id="pane_table11" minHeight="0.0" minWidth="0.0" prefHeight="2000.0" prefWidth="690.0" style="-fx-background-color: #dddddd;">
                                  <children>
-                                    <VBox fx:id="vbox_report" layoutX="5.0" layoutY="10.0" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
-
-                                    <VBox fx:id="vbox_report_att_s" layoutX="5.0" layoutY="250.0" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
-                               
-                                    <VBox fx:id="vbox_report_att_c" layoutX="5.0" layoutY="500.0" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
-                                
-                                    <VBox fx:id="vbox_report_trfihee" layoutX="5.0" layoutY="700.0" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
-
-                                 </children>
+                                    <VBox layoutX="5.0" prefHeight="18.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;">
+                                       <children>
+                                          <VBox fx:id="vbox_report" prefHeight="18.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+      
+                                          <VBox fx:id="vbox_report_att_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                     
+                                          <VBox fx:id="vbox_report_att_c" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                      
+                                          <VBox fx:id="vbox_report_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                          <VBox fx:id="vbox_total_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                          <VBox fx:id="vbox_total_add_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                       
+                                       </children>
+                                    </VBox>
+             
+                    </children>
+                                    
                               </AnchorPane>
                            </content>
                         </ScrollPane>
