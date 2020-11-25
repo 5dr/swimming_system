@@ -1301,10 +1301,16 @@
                                           <VBox fx:id="vbox_report_att_c" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
                                       
                                           <VBox fx:id="vbox_report_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+
+                                          <VBox fx:id="vbox_total_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                          <VBox fx:id="vbox_total_add_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                       
                                        </children>
                                     </VBox>
+             
+                    </children>
+                                    
 
-                                 </children>
                               </AnchorPane>
                            </content>
                         </ScrollPane>

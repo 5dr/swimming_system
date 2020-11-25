@@ -922,7 +922,25 @@ public class DB {
         }
         return b;
     }
+     public int get_total_cost() {
+        int id = 1;
+        try {
+            statement = connection.createStatement();
 
+            ResultSet r = statement
+                    .executeQuery("SELECT total_cost FROM `cost`");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id = r.getInt("total_cost");
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_type_cost :" + ex);
+        }
+
+        return id;
+    }
+
+    
     public List<attend_swimmer> get_att_swimmer(int id) {
 
         List<attend_swimmer> s = new ArrayList<attend_swimmer>();
@@ -2674,6 +2692,40 @@ public class DB {
         return id;
     }
 
+     public int get_type_total_cost(String name) {
+        int id = 1;
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT `cost` FROM `type` WHERE `type_name` = '" + name + "'");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id = r.getInt("cost");
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_type_cost :" + ex);
+        }
+
+        return id;
+    }
+      public String get_type_of_swimmer(String name) {
+        String id = "";
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT `s_type` FROM `swimmer` WHERE `name` = '" + name + "'");
+            while (r.next()) {
+                // System.out.println(r.getInt("g_id"));
+                id = r.getString("s_type");
+            }
+        } catch (SQLException ex) {
+            System.out.println(" get_type_of_swimmer :" + ex);
+        }
+
+        return id;
+    }
     public void update_type_cost(int new_cost, String name) {
         try {
             statement = connection.createStatement();
@@ -2736,6 +2788,11 @@ public class DB {
         return s;
     }
       public int get_count_of_all_attend_coach(List<Integer> g_id) {
+
+        int s = 0;
+        try {
+            statement = connection.createStatement();
+
 
         int s = 0;
         try {
