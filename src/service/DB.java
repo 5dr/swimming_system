@@ -2793,6 +2793,11 @@ public class DB {
         try {
             statement = connection.createStatement();
 
+
+        int s = 0;
+        try {
+            statement = connection.createStatement();
+
             for (int i = 0; i < g_id.size(); i++) {
                 ResultSet r = statement
                     .executeQuery("SELECT COUNT(*) FROM swimmer WHERE g_id="+g_id.get(i));

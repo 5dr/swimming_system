@@ -88,7 +88,7 @@ public class HomeController implements Initializable {
     @FXML
     private AnchorPane pane_table_salary, anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox v_box1_type,vbox_report_trfihee, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
+    private VBox v_box1_type, vbox_report_trfihee, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
     @FXML
     private StackPane big_Stack;
     @FXML
@@ -232,7 +232,7 @@ public class HomeController implements Initializable {
             for (int i = 0; i < id_setting.size(); i++) {
                 allDb.update_type_cost(Integer.parseInt(te.get(i).getText()), id_setting.get(i));
             }
-            allDb.update_cost(Integer.parseInt(setting_trfihe.getText()), Integer.parseInt(setting_coach_cost.getText()), Integer.parseInt(setting_absent.getText()), Integer.parseInt(setting_t25er1.getText()), Integer.parseInt(setting_t25er1.getText()), Integer.parseInt(setting_glass.getText()), Integer.parseInt(setting_behaveor.getText()), Integer.parseInt(setting_talk.getText()), Integer.parseInt(setting_re.getText()));
+            allDb.update_cost(Integer.parseInt(setting_trfihe.getText()), Integer.parseInt(setting_coach_cost.getText()), Integer.parseInt(setting_absent.getText()), Integer.parseInt(setting_t25er1.getText()), Integer.parseInt(setting_t25er15.getText()), Integer.parseInt(setting_glass.getText()), Integer.parseInt(setting_behaveor.getText()), Integer.parseInt(setting_talk.getText()), Integer.parseInt(setting_re.getText()));
             allDb.DB_close();
         } catch (SQLException ex) {
         } catch (NumberFormatException ex) {
@@ -556,6 +556,7 @@ public class HomeController implements Initializable {
 
         }
     }
+
     public void print(ActionEvent actionEvent) {
         //  Node p_home = new Circle(100, 200, 200);
 
@@ -1694,7 +1695,7 @@ public class HomeController implements Initializable {
 
         ///////////////////add swimmer///////////
         initialize_add_swimmer();
-     
+
         initialize_search_group();
         ///////////////////////search group//////
 
@@ -1717,51 +1718,52 @@ public class HomeController implements Initializable {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     private void report() throws SQLException {
-     java.util.Date now = new java.util.Date();
+
+    private void report() throws SQLException {
+        java.util.Date now = new java.util.Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-          Label trfihee = make_lable_search_head("trfihee ", .539, "303436", 15);
+        Label trfihee = make_lable_search_head("trfihee ", .539, "303436", 15);
         trfihee.setTextFill(rgb(255, 255, 255));
 
         Label trfihee_n = make_lable_search_head("N", .04, "b6bec2", 15);
         Label trfihee_id = make_lable_search_head("attend_id", 0.18, "b6bec2", 15);
         Label trfihee_name = make_lable_search_head("attend_name", 0.18, "b6bec2", 15);
-      
+
         HBox trfihee_name_r = new HBox();
         trfihee_name_r.setStyle("-fx-background-color:  #b6bec2;");
         trfihee_name_r.setPrefSize(bounds.getWidth() * .54, 0);
-        trfihee_name_r.getChildren().addAll( trfihee_name, trfihee_id, trfihee_n);
+        trfihee_name_r.getChildren().addAll(trfihee_name, trfihee_id, trfihee_n);
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
 
         allDb.DB_connection();
-      
- List<trfihee> r_trfihee = new ArrayList<trfihee>();
+
+        List<trfihee> r_trfihee = new ArrayList<trfihee>();
 
         r_trfihee = allDb.report_trfihee(sdf.format(now));
- 
-         allDb.DB_close();
-         
+
+        allDb.DB_close();
+
         for (int x = 0; x < r_trfihee.size(); x++) {
 
-        Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
-        Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id()+ "", .18);
-          Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.18);
-         if(trfihee_r_name.getText().isEmpty()&&trfihee_r_id.getText().isEmpty()&&trfihee_r_n.getText().isEmpty()){
-         }else{
-             
-        vbox_report_trfihee.getChildren().add(trfihee);
-        vbox_report_trfihee.getChildren().add(trfihee_name_r);
-             HBox title_trfihee = new HBox();
-        title_trfihee.setStyle("-fx-background-color:  #ffb3e6;");
-        title_trfihee.setPrefSize(bounds.getWidth() * .54, 0);
-        title_trfihee.getChildren().addAll(trfihee_r_name,trfihee_r_id, trfihee_r_n);
-        title_trfihee.setAlignment(Pos.CENTER_RIGHT);
+            Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
+            Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .18);
+            Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.18);
+            if (trfihee_r_name.getText().isEmpty() && trfihee_r_id.getText().isEmpty() && trfihee_r_n.getText().isEmpty()) {
+            } else {
 
-        vbox_report_trfihee.getChildren().add(title_trfihee);
+                vbox_report_trfihee.getChildren().add(trfihee);
+                vbox_report_trfihee.getChildren().add(trfihee_name_r);
+                HBox title_trfihee = new HBox();
+                title_trfihee.setStyle("-fx-background-color:  #ffb3e6;");
+                title_trfihee.setPrefSize(bounds.getWidth() * .54, 0);
+                title_trfihee.getChildren().addAll(trfihee_r_name, trfihee_r_id, trfihee_r_n);
+                title_trfihee.setAlignment(Pos.CENTER_RIGHT);
+
+                vbox_report_trfihee.getChildren().add(title_trfihee);
+            }
         }
-        }
-        
+
         Label swimmer_att = make_lable_search_head("The attend swimmer ", .539, "303436", 15);
         swimmer_att.setTextFill(rgb(255, 255, 255));
 
@@ -1776,33 +1778,36 @@ public class HomeController implements Initializable {
         title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
         title_s.setAlignment(Pos.CENTER_RIGHT);
 
-       
         allDb.DB_connection();
-        List<attend_swimmer> s = new ArrayList<attend_swimmer>();
- List<s> s_att = new ArrayList<s>();
- List<group> st_att = new ArrayList<group>();
+        List<s> s_att = new ArrayList<s>();
+        List<group> st_att = new ArrayList<group>();
 
-        s = allDb.s_att(sdf.format(now));
- s_att = allDb.report_attend_swimmer(sdf.format(now));
- st_att=allDb.report_attend_s_time(sdf.format(now));
-         allDb.DB_close();
-        for (int x = 0; x < s.size(); x++) {
+        s_att = allDb.report_attend_swimmer(sdf.format(now));
+        st_att = allDb.report_attend_s_time(sdf.format(now));
+        allDb.DB_close();
 
-        Label num_s = make_lable_g((0 + 1) + "", .02);
-        Label Attend_s = make_lable_g(s.get(x).getAttend_id() + "", .16);
-          Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
-              Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
-if(num_s.getText().isEmpty()&&Attend_s.getText().isEmpty()&&name_s_att.getText().isEmpty()&&time_a_s.getText().isEmpty()){
-       
-}else{HBox title_att_s = new HBox();
-        title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
-        title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
-        title_att_s.getChildren().addAll(time_a_s,name_s_att,Attend_s, num_s);
-        title_att_s.setAlignment(Pos.CENTER_RIGHT);
- vbox_report_att_s.getChildren().add(swimmer_att);
+        vbox_report_att_s.getChildren().addAll(swimmer_att);
         vbox_report_att_s.getChildren().add(title_s);
-        vbox_report_att_s.getChildren().add(title_att_s);
-}  }
+
+        for (int x = 0; x < s_att.size(); x++) {
+
+            Label num_s = make_lable_g((x + 1) + "", .02);
+            Label Attend_s = make_lable_g(s_att.get(x).getAtt_id() + "", .16);
+            Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
+            Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
+//            if (num_s.getText().isEmpty() && Attend_s.getText().isEmpty() && name_s_att.getText().isEmpty() && time_a_s.getText().isEmpty()) {
+//
+//            } else {
+
+            HBox title_att_s = new HBox();
+            title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
+            title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
+            title_att_s.getChildren().addAll(time_a_s, name_s_att, Attend_s, num_s);
+            title_att_s.setAlignment(Pos.CENTER_RIGHT);
+
+            vbox_report_att_s.getChildren().add(title_att_s);
+            //}
+        }
 ///////////////////////////
         Label coach_att = make_lable_search_head("The attend coach ", .539, "303436", 15);
         coach_att.setTextFill(rgb(255, 255, 255));
@@ -1818,7 +1823,6 @@ if(num_s.getText().isEmpty()&&Attend_s.getText().isEmpty()&&name_s_att.getText()
         title_c.getChildren().addAll(time_c, attend_name_c, attend_id_c, num_att_c);
         title_c.setAlignment(Pos.CENTER_RIGHT);
 
-       
         allDb.DB_connection();
         List<attend_couch> c = new ArrayList<attend_couch>();
         List<coach> time_co = new ArrayList<coach>();
@@ -1837,19 +1841,20 @@ if(num_s.getText().isEmpty()&&Attend_s.getText().isEmpty()&&name_s_att.getText()
             Label Rep_name = make_lable_g(time_co.get(x).getName(), .16);
 
             Label time_go = make_lable_g(time_g.get(x).getTime(), .16);
-if(num_c.getText().isEmpty()&&Attend_c.getText().isEmpty()&&Rep_name.getText().isEmpty()&&time_go.getText().isEmpty()){
-       
-}else{
-            HBox title_att_c = new HBox();
-            title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
-            title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
-            title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
-            title_att_c.setAlignment(Pos.CENTER_RIGHT);
- vbox_report_att_c.getChildren().add(coach_att);
-        vbox_report_att_c.getChildren().add(title_c);
-            vbox_report_att_c.getChildren().add(title_att_c);
+            if (num_c.getText().isEmpty() && Attend_c.getText().isEmpty() && Rep_name.getText().isEmpty() && time_go.getText().isEmpty()) {
 
-} }
+            } else {
+                HBox title_att_c = new HBox();
+                title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
+                title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
+                title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
+                title_att_c.setAlignment(Pos.CENTER_RIGHT);
+                vbox_report_att_c.getChildren().add(coach_att);
+                vbox_report_att_c.getChildren().add(title_c);
+                vbox_report_att_c.getChildren().add(title_att_c);
+
+            }
+        }
         Label swimmer = make_lable_search_head("The Swimmer in Group", .539, "303436", 15);
         swimmer.setTextFill(rgb(255, 255, 255));
         Label num_r_s = make_lable_search_head("N", .04, "b6bec2", 15);
@@ -1862,12 +1867,11 @@ if(num_c.getText().isEmpty()&&Attend_c.getText().isEmpty()&&Rep_name.getText().i
         title_r_s.getChildren().addAll(num_day_s, name_s, id_s, num_r_s);
         title_r_s.setAlignment(Pos.CENTER_RIGHT);
 
-       
         allDb.DB_connection();
 
         List<swimmer> t = new ArrayList<swimmer>();
-  List<group> t_s = new ArrayList<group>();
-       
+        List<group> t_s = new ArrayList<group>();
+
         t = allDb.sdate(sdf.format(now));
         t_s = allDb.report_s_time(sdf.format(now));
 
@@ -1882,21 +1886,22 @@ if(num_c.getText().isEmpty()&&Attend_c.getText().isEmpty()&&Rep_name.getText().i
             List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
 
             s_t = (allDb.report_swimmer_time(sdf.format(now)));
-if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEmpty()&&time_r_s.getText().isEmpty()){
-       
-}else{
-            HBox title_s1 = new HBox();
-            title_s1.setStyle("-fx-background-color:  #ffb3e6;");
-            title_s1.setPrefSize(bounds.getWidth() * .54, 0);
-            title_s1.getChildren().addAll(time_r_s, name_s1, id_s1, num_sw);
-            title_s1.setAlignment(Pos.CENTER_RIGHT);
- vbox_report.getChildren().add(swimmer);
-        vbox_report.getChildren().add(title_r_s);
+            if (num_sw.getText().isEmpty() && id_s1.getText().isEmpty() && name_s1.getText().isEmpty() && time_r_s.getText().isEmpty()) {
 
-            vbox_report.getChildren().add(title_s1);
+            } else {
+                HBox title_s1 = new HBox();
+                title_s1.setStyle("-fx-background-color:  #ffb3e6;");
+                title_s1.setPrefSize(bounds.getWidth() * .54, 0);
+                title_s1.getChildren().addAll(time_r_s, name_s1, id_s1, num_sw);
+                title_s1.setAlignment(Pos.CENTER_RIGHT);
+                vbox_report.getChildren().add(swimmer);
+                vbox_report.getChildren().add(title_r_s);
 
+                vbox_report.getChildren().add(title_s1);
+
+            }
         }
-        }    }
+    }
     List<TextField> te = new ArrayList<TextField>();
     List<String> id_setting = new ArrayList<String>();
 
@@ -2321,7 +2326,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2334,7 +2339,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
-                                        || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2347,7 +2352,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                        || date.getDayOfWeek() == DayOfWeek.FRIDAY)
+                                || date.getDayOfWeek() == DayOfWeek.FRIDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2674,7 +2679,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
-                                        || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2687,7 +2692,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
-                                        || date.getDayOfWeek() == DayOfWeek.SUNDAY)
+                                || date.getDayOfWeek() == DayOfWeek.SUNDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 13) {
                             ldate.remove(12);
@@ -2700,7 +2705,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                                 .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
-                                        || date.getDayOfWeek() == DayOfWeek.SATURDAY)
+                                || date.getDayOfWeek() == DayOfWeek.SATURDAY)
                                 .collect(Collectors.toList());
                         if (ldate.size() == 9) {
                             ldate.remove(8);
@@ -3626,11 +3631,8 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
         pane_search_table.getChildren().clear();
         pane_search_table.getChildren().add(table_search);
 
-        ////////////
-       
     }
 
-   
     private Label make_lable_search_head(String name, double d, String color, int font) {
 
         Label l = new Label(name);
@@ -3981,7 +3983,9 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
 
         Label num = make_lable_salary_head("ID", .05);
         Label name = make_lable("Name", 0.1);
-        Label l1 = make_lable("عدد السباحين", .08);
+        Label l1 = make_lable("السبت", .025);
+        Label l1s = make_lable("الاحد", .025);
+        Label l1f = make_lable("الجمعة", .03);
         Label l2 = make_lable("تأخير1دقيقة", .08);
         Label l3 = make_lable("تأخير5دقايق", .08);
         Label l4 = make_lable("النضاره+البونيه", .09);
@@ -3994,7 +3998,7 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
         title.setStyle("-fx-background-color: #ffffff;");
         title.setPrefSize(1000, 0);
         title.setMaxSize(10000, 10000);
-        title.getChildren().addAll(l9, l8, l7, l6, l5, l4, l3, l2, l1, name, num);
+        title.getChildren().addAll(l9, l8, l7, l6, l5, l4, l3, l2, l1f, l1s, l1, name, num);
         title.setAlignment(Pos.CENTER_RIGHT);
         table_salary.getChildren().add(title);
         for (int i = 0; i < id.size(); i++) {
@@ -4002,7 +4006,9 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
             allDb.DB_connection();
             Label num1 = make_lable_salary_bady(id.get(i) + "", .05);
             Label name1 = make_lable_salary_bady(allDb.coach_by_name(id.get(i)), 0.1);
-            Label l11 = make_lable_salary_bady(allDb.get_count_of_swimmer_with_caoch(id.get(i)) + "", .08);
+            Label l11 = make_lable_salary_bady(allDb.get_count_of_swimmer_with_caoch(id.get(i), 0) + "", .025);
+            Label l11s = make_lable_salary_bady(allDb.get_count_of_swimmer_with_caoch(id.get(i), 1) + "", .025);
+            Label l11f = make_lable_salary_bady(allDb.get_count_of_swimmer_with_caoch(id.get(i), 2) + "", .03);
             Label l21 = make_lable_salary_bady(allDb.get_count_of_punish(id.get(i), 1) + "", .08);
             Label l31 = make_lable_salary_bady(allDb.get_count_of_punish(id.get(i), 2) + "", .08);
             Label l41 = make_lable_salary_bady(allDb.get_count_of_punish(id.get(i), 3) + "", .09);
@@ -4010,13 +4016,19 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
             Label l61 = make_lable_salary_bady(allDb.get_count_of_punish(id.get(i), 5) + "", .11);
             Label l71 = make_lable_salary_bady(allDb.get_count_of_punish_of_attend(id.get(i)) + "", .06);
             Label l81 = make_lable_salary_bady(allDb.get_count_of_punish_of_attend_re(id.get(i)) + "", .06);
-            Label l91 = make_lable_salary_bady((allDb.get_count_of_swimmer_with_caoch(id.get(i)) * allDb.get_cost_for_coach_cost()) + minus(id.get(i)) - bouns(id.get(i)) + "", .06);
+            double sut = allDb.get_count_of_swimmer_with_caoch(id.get(i), 0) * count_of_SATURDAY() * allDb.get_cost_for_coach_cost();
+            double sun = allDb.get_count_of_swimmer_with_caoch(id.get(i), 1) * count_of_Sunday() * allDb.get_cost_for_coach_cost();
+            double fri = allDb.get_count_of_swimmer_with_caoch(id.get(i), 2) * count_of_Friday() * allDb.get_cost_for_coach_cost();
+            double all_s = sut + sun + fri;
+            double abse = allDb.get_count_of_all_attend_coach(allDb.get_g_id_of_attend_coach(id.get(i))) * allDb.get_cost_for_coach_cost();
+            double all_salary = all_s + minus(id.get(i)) - (bouns(id.get(i)) + abse);
+            Label l91 = make_lable_salary_bady(all_salary + "", .06);
             allDb.DB_close();
             HBox title1 = new HBox();
             title1.setStyle("-fx-background-color: #ffe6f9;");
             title1.setPrefSize(1000, 0);
             title1.setMaxSize(10000, 10000);
-            title1.getChildren().addAll(l91, l81, l71, l61, l51, l41, l31, l21, l11, name1, num1);
+            title1.getChildren().addAll(l91, l81, l71, l61, l51, l41, l31, l21, l11f, l11s, l11, name1, num1);
             title1.setAlignment(Pos.CENTER_RIGHT);
             title1.setId(id.get(i) + "");
             title1.setOnMouseEntered(event -> {
@@ -4048,7 +4060,9 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
                     allDb.DB_close();
                 } catch (SQLException ex) {
                 }
-
+                System.out.println("count_of_SATURDAY: " + count_of_SATURDAY() + " : " + sut);
+                System.out.println("count_of_SATURDAY: " + count_of_Sunday() + " : " + sun);
+                System.out.println("count_of_SATURDAY: " + count_of_Friday() + " : " + fri + " : " + all_s);
                 p_c_punish.toFront();
             });
             table_salary.getChildren().add(title1);
@@ -4120,5 +4134,86 @@ if(num_sw.getText().isEmpty()&&id_s1.getText().isEmpty()&&name_s1.getText().isEm
 
         allDb.DB_close();
         return minus;
+    }
+
+    private int count_of_SATURDAY() {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        System.out.println(currentYear);
+        Month currentMonth = currentdate.getMonth();
+        System.out.println(currentMonth);
+////////////SATURDAY
+        System.out.println("SATURDAY");
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
+                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 13) {
+            ldate.remove(12);
+        }
+        for (int i = 0; i < ldate.size(); i++) {
+            if (ldate.get(i).isBefore(currentdate)) {
+                c++;
+            }
+        }
+
+        return c;
+    }
+
+    private int count_of_Sunday() {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        System.out.println(currentYear);
+        Month currentMonth = currentdate.getMonth();
+        System.out.println(currentMonth);
+////////////SATURDAY
+        System.out.println("SATURDAY");
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
+                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 13) {
+            ldate.remove(12);
+        }
+        for (int i = 0; i < ldate.size(); i++) {
+            if (ldate.get(i).isBefore(currentdate)) {
+                c++;
+            }
+        }
+
+        return c;
+    }
+
+    private int count_of_Friday() {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        System.out.println(currentYear);
+        Month currentMonth = currentdate.getMonth();
+        System.out.println(currentMonth);
+////////////SATURDAY
+        System.out.println("SATURDAY");
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
+                || date.getDayOfWeek() == DayOfWeek.SATURDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 9) {
+            ldate.remove(8);
+        }
+        for (int i = 0; i < ldate.size(); i++) {
+            if (ldate.get(i).isBefore(currentdate)) {
+                c++;
+            }
+        }
+
+        return c;
     }
 }
