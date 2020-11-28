@@ -13,11 +13,12 @@ import java.sql.Date;
  */
 public class swimmer {
     
-    int s_id,g_id;
+    int s_id,g_id,cost;
     String name,phone,adress,level="1",gender,s_level;
     Date start ,end,age;
 
-    public swimmer(int s_id, String name,String s_level ,String adress, Date age,String gender,String phone, int g_id,  Date start, Date end) {
+    public swimmer(int cost,int s_id, String name,String s_level ,String adress, Date age,String gender,String phone, int g_id,  Date start, Date end) {
+        this.cost = cost;
         this.s_id = s_id;
         this.age = age;
         this.g_id = g_id;
@@ -28,6 +29,10 @@ public class swimmer {
         this.start = start;
         this.end = end;
          this.s_level = s_level;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     public int getS_id() {

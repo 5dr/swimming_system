@@ -32,9 +32,9 @@ public class BillPrint_coach implements Printable {
 
     String  m_late1, m_late5, m_absent, m_glass, m_behavior, m_talk, m_re;
     String name;
-    int late1, late5, absent, glass, behavior, talk, re, id;
+    int late1, late5, absent, glass, behavior, talk, re, id,bouns;
     double  salary;
-    public BillPrint_coach(String m_late1, String m_late5, String m_absent, String m_glass, String m_behavior, String m_talk, String m_re, String name, int late1, int late5, int absent, int glass, int behavior, int talk, int re, int id, double salary) {
+    public BillPrint_coach(String m_late1, String m_late5, String m_absent, String m_glass, String m_behavior, String m_talk, String m_re, String name, int late1, int late5, int absent, int glass, int behavior, int talk, int re, int bouns, int id, double salary) {
         this.m_late1 = m_late1;
         this.m_late5 = m_late5;
         this.m_absent = m_absent;
@@ -50,6 +50,7 @@ public class BillPrint_coach implements Printable {
         this.behavior = behavior;
         this.talk = talk;
         this.re = re;
+        this.bouns = bouns;
         this.id = id;
         this.salary = salary;
     }
@@ -98,8 +99,6 @@ public class BillPrint_coach implements Printable {
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
-                g2d.drawString(" User Name  :    كابتن احمد فوزي  ", 10, y);
-                y += yShift;
                 g2d.drawString(" Print Date :  " + sdf.format(now) + "   ", 10, y);
                 y += yShift;
                 y += headerRectHeight;
@@ -132,6 +131,8 @@ public class BillPrint_coach implements Printable {
                 g2d.drawString("الاضافات:", 170, y);
                 y += yShift;
                 g2d.drawString(" الاحتياطى         :  " + m_re + "            " + re, 10, y);
+                y += yShift;
+                g2d.drawString("البونص : " + bouns, 110, y);
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;

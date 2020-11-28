@@ -36,12 +36,14 @@ public class BillPrintable implements Printable {
     SimpleDateFormat month = new SimpleDateFormat("MMMM");
     SimpleDateFormat year = new SimpleDateFormat("YYYY");
     SimpleDateFormat t = new SimpleDateFormat("hh:mm:00");
-    
+
     String name, phone, level, day, time, track, s_level, c_name;
-    Date age;
+    Date age, s_date, e_date;
     int group, id, cost, range;
 
-    public BillPrintable(String name, String phone, Date age, String level, String s_level, String day, String time, String track, String c_name, int id, int cost, int range) {
+    public BillPrintable(String name, String phone, Date age, String level, String s_level, String day, String time, String track, String c_name, int id, int cost, int range, Date s_date, Date e_date) {
+        this.s_date = s_date;
+        this.e_date = e_date;
         this.name = name;
         this.phone = phone;
         this.age = age;
@@ -57,8 +59,6 @@ public class BillPrintable implements Printable {
 
     }
 
-    
-
     private BufferedImage i;
 
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
@@ -71,13 +71,11 @@ public class BillPrintable implements Printable {
         }
         int result = NO_SUCH_PAGE;
         if (pageIndex == 0) {
-            if(day.equals("====")){
-            time=t.format(now).toString();
+            if (day.equals("====")) {
+                time = t.format(now).toString();
+                LocalDate currentdate = LocalDate.now();
+                day = currentdate.getDayOfWeek().toString();
             }
-            
-            LocalDate currentdate = LocalDate.now();
-            day = currentdate.getDayOfWeek().toString();
-            
 
             Graphics2D g2d = (Graphics2D) graphics;
             double width = pageFormat.getImageableWidth();
@@ -90,20 +88,10 @@ public class BillPrintable implements Printable {
                 int headerRectHeight = 15;
 
                 g2d.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                g2d.drawImage(i, 10, 0, 120, 100, null);
-                g2d.drawString("-------------------------------------", 12, y);
+                g2d.drawImage(i, 95,-10 , 120, 100, null);
                 y += yShift;
-                g2d.drawString("مدرسة الجيل الجديدة", 130, y);
-                y += yShift;
-                g2d.drawString("الخاصة للغات", 150, y);
-                y += yShift;
-                g2d.drawString("الباجور بجوار المستشفى العام", 80, y);
-                y += yShift;
-                g2d.drawString("01008638141", 137, y);
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
-                y += yShift;
-                g2d.drawString(" User Name  :    كابتن احمد فوزي  ", 10, y);
                 y += yShift;
                 g2d.drawString(" Print Date :  " + sdf.format(now) + "   ", 10, y);
                 y += yShift;
@@ -129,6 +117,10 @@ public class BillPrintable implements Printable {
                 y += yShift;
                 g2d.drawString(" Coach :    " + c_name, 10, y);
                 y += yShift;
+                g2d.drawString(" Start :    " + s_date, 10, y);
+                y += yShift;
+                g2d.drawString(" End   :    " + e_date, 10, y);
+                y += yShift;
                 g2d.drawString(" Range :    " + range + " Days", 10, y);
                 y += yShift;
                 g2d.drawString(" Cost  :    " + cost + " LE", 10, y);
@@ -136,7 +128,13 @@ public class BillPrintable implements Printable {
 
                 g2d.drawString("-------------------------------------", 10, y);
                 y += headerRectHeight;
-
+                
+                g2d.drawString("حمام سباحةالجيل الجديدة", 55, y);
+                y += yShift;
+                g2d.drawString("الباجور بجوار المستشفى العام", 40, y);
+                y += yShift;
+                g2d.drawString("01008638141", 110, y);
+                y += yShift;
                 g2d.drawString("*************************************", 10, y);
                 y += yShift;
                 g2d.drawString("       THANK YOU COME AGAIN            ", 10, y);
