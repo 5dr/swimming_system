@@ -6,6 +6,8 @@
 package controller;
 
 import com.jfoenix.controls.*;
+import com.sun.javafx.print.PrintHelper;
+import com.sun.javafx.print.Units;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
@@ -50,6 +52,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javafx.print.PageOrientation;
+import javafx.print.Printer;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.DatePicker;
@@ -68,6 +72,7 @@ import model.attend_swimmer;
 import model.coach;
 import model.group;
 import model.s;
+import model.swimmer_and_group;
 import model.trfihee;
 import org.controlsfx.control.textfield.TextFields;
 import service.BillPrint_coach;
@@ -86,9 +91,9 @@ public class HomeController implements Initializable {
     @FXML
     private Button b_report, b_salary, b_print_home, b_home, b_add_group, b_add_swimmer, b_add_coach, b_search, b_Settings;
     @FXML
-    private AnchorPane pane_table_salary, anchorpane, pane_table, pane_search_table;
+    private AnchorPane pane_table_salary,pane_report, anchorpane, pane_table, pane_search_table;
     @FXML
-    private VBox vbox_total_trfihee, vbox_total_add_s, v_box1_type, vbox_report_trfihee, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
+    private VBox all_report, vbox_total_trfihee, vbox_total_add_s, v_box1_type, vbox_report_trfihee, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
     @FXML
     private StackPane big_Stack;
     @FXML
@@ -103,7 +108,7 @@ public class HomeController implements Initializable {
     @FXML
     private JFXComboBox<String> update_group_type, add_s_type, add_group_coach, add_group_day, add_group_level, add_group_line, add_group_type, update_group_day, update_coach, update_group_line, update_group_level, add_s_level;
     @FXML
-    private DatePicker add_s_age;
+    private DatePicker add_s_age,select_date_report;
     @FXML
     private JFXTimePicker add_group_time, update_group_time;
     @FXML
@@ -607,9 +612,10 @@ public class HomeController implements Initializable {
             p_settings.toFront();
         }
         if (actionEvent.getSource() == b_report) {
-            try {
+              try {
                 ///////////////////////setting//////
-                report();
+             
+                report(LocalDate.now().toString());
             } catch (SQLException ex) {
                 Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1780,54 +1786,56 @@ public class HomeController implements Initializable {
 
         ///////////////////////setting//////
         initialize_Settings();
-        try {
-            ///////////////////////setting//////
-            report();
-        } catch (SQLException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                ///////////////////////setting//////
+        
     }
 
-    private void report() throws SQLException {
-
-        allDb.DB_connection();
-        vbox_report_trfihee.getChildren().clear();
-        vbox_report_att_c.getChildren().clear();
-        vbox_report_att_s.getChildren().clear();
+    public void report_date(ActionEvent actionEvent) throws SQLException {
+   
         vbox_report.getChildren().clear();
-        vbox_total_add_s.getChildren().clear();
-        vbox_total_trfihee.getChildren().clear();
-
-        java.util.Date now = new java.util.Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
+ vbox_total_add_s.getChildren().clear();
+ vbox_report_trfihee.getChildren().clear();
+ vbox_total_trfihee.getChildren().clear();
+  vbox_report_att_s.getChildren().clear();
+  vbox_report_att_c.getChildren().clear();
+        String r_date = select_date_report.getValue().toString();
+        report(r_date);
+    }
+    private String report(String r_date) throws SQLException {
+          vbox_report.getChildren().clear();
+ vbox_total_add_s.getChildren().clear();
+ vbox_report_trfihee.getChildren().clear();
+ vbox_total_trfihee.getChildren().clear();
+  vbox_report_att_s.getChildren().clear();
+  vbox_report_att_c.getChildren().clear();
         Label trfihee = make_lable_search_head("trfihee ", .539, "303436", 15);
         trfihee.setTextFill(rgb(255, 255, 255));
 
-        Label trfihee_n = make_lable_search_head("N", .03, "b6bec2", 15);
-        Label trfihee_id = make_lable_search_head("attend_id", 0.2, "b6bec2", 15);
-        Label trfihee_name = make_lable_search_head("attend_name", 0.2, "b6bec2", 15);
+        Label trfihee_n = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label trfihee_id = make_lable_search_head("trfihee_id", 0.25, "b6bec2", 15);
+        Label trfihee_name = make_lable_search_head("trfihee_name", 0.25, "b6bec2", 15);
 
         HBox trfihee_name_r = new HBox();
         trfihee_name_r.setStyle("-fx-background-color:  #b6bec2;");
         trfihee_name_r.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_name_r.getChildren().addAll(trfihee_name, trfihee_id, trfihee_n);
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
+    vbox_report_trfihee.getChildren().add(trfihee);
+        vbox_report_trfihee.getChildren().add(trfihee_name_r);
+        allDb.DB_connection();
 
         List<trfihee> r_trfihee = new ArrayList<trfihee>();
 
-        r_trfihee = allDb.report_trfihee(sdf.format(now));
+        r_trfihee = allDb.report_trfihee(r_date);
 
-        vbox_report_trfihee.getChildren().add(trfihee);
-        vbox_report_trfihee.getChildren().add(trfihee_name_r);
+        allDb.DB_close();
+    
         for (int x = 0; x < r_trfihee.size(); x++) {
 
-            Label trfihee_r_n = make_lable_g((0 + 1) + "", .03);
-            Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .2);
-            Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.2);
-            if (r_trfihee.size() == 0) {
-            } else {
-
+            Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
+            Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .25);
+            Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.25);
+           
                 HBox title_trfihee = new HBox();
                 title_trfihee.setStyle("-fx-background-color:  #ffb3e6;");
                 title_trfihee.setPrefSize(bounds.getWidth() * .54, 0);
@@ -1836,52 +1844,7 @@ public class HomeController implements Initializable {
 
                 vbox_report_trfihee.getChildren().add(title_trfihee);
 
-//            total_num_trfihee.setText(String.valueOf(r_trfihee.size()));
             }
-        }
-
-        Label swimmer_att = make_lable_search_head("The attend swimmer ", .539, "303436", 15);
-        swimmer_att.setTextFill(rgb(255, 255, 255));
-
-        Label num_att_s = make_lable_search_head("N", .03, "b6bec2", 15);
-        Label attend_id_s = make_lable_search_head("attend_id", 0.1, "b6bec2", 15);
-        Label attend_name_s = make_lable_search_head("attend_name", 0.15, "b6bec2", 15);
-        Label time_s = make_lable_search_head("time_c", 0.15, "b6bec2", 15);
-
-        HBox title_s = new HBox();
-        title_s.setStyle("-fx-background-color:  #b6bec2;");
-        title_s.setPrefSize(bounds.getWidth() * .54, 0);
-        title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
-        title_s.setAlignment(Pos.CENTER_RIGHT);
-
-        List<s> s_att = new ArrayList<s>();
-        List<group> st_att = new ArrayList<group>();
-
-        s_att = allDb.report_attend_swimmer(sdf.format(now));
-        st_att = allDb.report_attend_s_time(sdf.format(now));
-
-        for (int x = 0; x < s_att.size(); x++) {
-
-            Label num_s = make_lable_g((x + 1) + "", .03);
-            Label Attend_s = make_lable_g(s_att.get(x).getAtt_id() + "", .1);
-            Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.15);
-            Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.15);
-            if (s_att.size() == 0) {
-
-            } else {
-                vbox_report_att_s.getChildren().addAll(swimmer_att);
-                vbox_report_att_s.getChildren().add(title_s);
-
-                HBox title_att_s = new HBox();
-                title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
-                title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
-                title_att_s.getChildren().addAll(time_a_s, name_s_att, Attend_s, num_s);
-                title_att_s.setAlignment(Pos.CENTER_RIGHT);
-
-                vbox_report_att_s.getChildren().add(title_att_s);
-//  total_num_s_att.setText(String.valueOf(s_att.size()));            
-            }
-        }
         Label t_trfihee = make_lable_search_head(" total trfihee ", .539, "303436", 15);
         t_trfihee.setTextFill(rgb(255, 255, 255));
 
@@ -1893,13 +1856,15 @@ public class HomeController implements Initializable {
         trfihee_t.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_t.getChildren().addAll(trfihee_t_cost, trfihee_t_n);
         trfihee_t.setAlignment(Pos.CENTER_RIGHT);
-
-        vbox_total_trfihee.getChildren().add(t_trfihee);
+ vbox_total_trfihee.getChildren().add(t_trfihee);
 
         vbox_total_trfihee.getChildren().add(trfihee_t);
 
+        allDb.DB_connection();
+
         Label trfihee_t_num = make_lable_g(String.valueOf(r_trfihee.size()) + "", .3);
         Label trfihee_t_c = make_lable_g(String.valueOf(r_trfihee.size() * allDb.get_total_cost()), 0.3);
+        allDb.DB_close();
 
         HBox title_trfihee_t = new HBox();
         title_trfihee_t.setStyle("-fx-background-color:  #ffb3e6;");
@@ -1908,102 +1873,153 @@ public class HomeController implements Initializable {
         title_trfihee_t.setAlignment(Pos.CENTER_RIGHT);
 
         vbox_total_trfihee.getChildren().add(title_trfihee_t);
+ 
+/////////////////////////
+        Label swimmer_att = make_lable_search_head("The attend swimmer ", .539, "303436", 15);
+        swimmer_att.setTextFill(rgb(255, 255, 255));
 
+        Label num_att_s = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label attend_id_s = make_lable_search_head("attend_id", 0.18, "b6bec2", 15);
+        Label attend_name_s = make_lable_search_head("attend_name", 0.18, "b6bec2", 15);
+        Label time_s = make_lable_search_head("time_c", 0.18, "b6bec2", 15);
+
+        HBox title_s = new HBox();
+        title_s.setStyle("-fx-background-color:  #b6bec2;");
+        title_s.setPrefSize(bounds.getWidth() * .54, 0);
+        title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
+        title_s.setAlignment(Pos.CENTER_RIGHT);
+
+        allDb.DB_connection();
+        List<s> s_att = new ArrayList<s>();
+        List<group> st_att = new ArrayList<group>();
+
+        s_att = allDb.report_attend_swimmer(r_date);
+        st_att = allDb.report_attend_s_time(r_date);
+        allDb.DB_close();
+
+        vbox_report_att_s.getChildren().addAll(swimmer_att);
+        vbox_report_att_s.getChildren().add(title_s);
+
+        for (int x = 0; x < s_att.size(); x++) {
+
+            Label num_s = make_lable_g((x + 1) + "", .02);
+            Label Attend_s = make_lable_g(s_att.get(x).getAtt_id() + "", .16);
+            Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
+            Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
+//            if (num_s.getText().isEmpty() && Attend_s.getText().isEmpty() && name_s_att.getText().isEmpty() && time_a_s.getText().isEmpty()) {
+//
+//            } else {
+
+            HBox title_att_s = new HBox();
+            title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
+            title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
+            title_att_s.getChildren().addAll(time_a_s, name_s_att, Attend_s, num_s);
+            title_att_s.setAlignment(Pos.CENTER_RIGHT);
+
+            vbox_report_att_s.getChildren().add(title_att_s);
+
+        }
+        Label swimmer = make_lable_search_head("add Swimmer in Group", .539, "303436", 15);
+        swimmer.setTextFill(rgb(255, 255, 255));
+        Label num_r_s = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label id_s = make_lable_search_head("ID", .09, "b6bec2", 15);
+        Label name_s = make_lable_search_head("Name", 0.16, "b6bec2", 15);
+        Label num_day_s = make_lable_search_head("num_day", 0.14, "b6bec2", 15);
+        Label type_s = make_lable_search_head("type", 0.14, "b6bec2", 15);
+
+        HBox title_r_s = new HBox();
+        title_r_s.setStyle("-fx-background-color:  #b6bec2;");
+        title_r_s.setPrefSize(bounds.getWidth() * .54, 0);
+        title_r_s.getChildren().addAll(type_s, num_day_s, name_s, id_s, num_r_s);
+        title_r_s.setAlignment(Pos.CENTER_RIGHT);
+        vbox_report.getChildren().add(swimmer);
+        vbox_report.getChildren().add(title_r_s);
+
+        allDb.DB_connection();
+
+        List<swimmer_and_group> s_g = new ArrayList<swimmer_and_group>();
+
+        s_g = allDb.sdate(r_date);
+
+        int sum = 0;
+        int cost = 0;
+        for (int x = 0; x < s_g.size(); x++) {
+
+            Label num_sw = make_lable_g((x + 1) + "", .04);
+            Label id_s1 = make_lable_g(s_g.get(x).getS_id() + "", .09);
+            Label name_s1 = make_lable_g(s_g.get(x).getName(), 0.16);
+            Label time_r_s = make_lable_g(s_g.get(x).getG_time(), 0.14);
+            Label type_r_s = make_lable_g(s_g.get(x).getType(), 0.14);
+
+            allDb.DB_close();
+            List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
+
+            allDb.DB_connection();
+            allDb.get_type_of_swimmer(name_s1.getText());
+            String s = allDb.get_type_of_swimmer(name_s1.getText());
+            cost = allDb.get_type_total_cost(s);
+
+            sum = sum + cost;
+            allDb.DB_close();
+
+            s_t = (allDb.report_swimmer_time(r_date));
+
+            HBox title_s1 = new HBox();
+            title_s1.setStyle("-fx-background-color:  #ffb3e6;");
+            title_s1.setPrefSize(bounds.getWidth() * .54, 0);
+            title_s1.getChildren().addAll(type_r_s, time_r_s, name_s1, id_s1, num_sw);
+            title_s1.setAlignment(Pos.CENTER_RIGHT);
+
+            vbox_report.getChildren().add(title_s1);
+        }
 ///////////////////////////
         Label coach_att = make_lable_search_head("The attend coach ", .539, "303436", 15);
         coach_att.setTextFill(rgb(255, 255, 255));
 
-        Label num_att_c = make_lable_search_head("N", .03, "b6bec2", 15);
-        Label attend_id_c = make_lable_search_head("attend_id", 0.1, "b6bec2", 15);
-        Label attend_name_c = make_lable_search_head("replace_name", 0.15, "b6bec2", 15);
-        Label time_c = make_lable_search_head("time_c", 0.15, "b6bec2", 15);
+        Label num_att_c = make_lable_search_head("N", .04, "b6bec2", 15);
+        Label attend_id_c = make_lable_search_head("attend_id", 0.18, "b6bec2", 15);
+        Label attend_name_c = make_lable_search_head("replace_name", 0.18, "b6bec2", 15);
+        Label time_c = make_lable_search_head("time_c", 0.18, "b6bec2", 15);
 
         HBox title_c = new HBox();
         title_c.setStyle("-fx-background-color:  #b6bec2;");
         title_c.setPrefSize(bounds.getWidth() * .54, 0);
         title_c.getChildren().addAll(time_c, attend_name_c, attend_id_c, num_att_c);
         title_c.setAlignment(Pos.CENTER_RIGHT);
-
+   vbox_report_att_c.getChildren().add(coach_att);
+                vbox_report_att_c.getChildren().add(title_c);
+             
+        allDb.DB_connection();
         List<attend_couch> c = new ArrayList<attend_couch>();
         List<coach> time_co = new ArrayList<coach>();
         List<group> time_g = new ArrayList<group>();
-        c = allDb.c_att(sdf.format(now));
-        time_co = allDb.report_attend_coach(sdf.format(now));
-        time_g = allDb.report_time_replace(sdf.format(now));
+        c = allDb.c_att(r_date);
+        time_co = allDb.report_attend_coach(r_date);
+        time_g = allDb.report_time_replace(r_date);
+
+        allDb.DB_close();
 
         for (int x = 0; x < c.size(); x++) {
 
-            Label num_c = make_lable_g((x + 1) + "", .03);
-            Label Attend_c = make_lable_g(c.get(x).getAttend_id() + "", .1);
+            Label num_c = make_lable_g((x + 1) + "", .02);
+            Label Attend_c = make_lable_g(c.get(x).getAttend_id() + "", .16);
 
-            Label Rep_name = make_lable_g(time_co.get(x).getName(), .15);
+            Label Rep_name = make_lable_g(time_co.get(x).getName(), .16);
 
-            Label time_go = make_lable_g(time_g.get(x).getTime(), .15);
-            if (c.size() == 0) {
-
-            } else {
+            Label time_go = make_lable_g(time_g.get(x).getTime(), .16);
+            
                 HBox title_att_c = new HBox();
                 title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
                 title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
                 title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
                 title_att_c.setAlignment(Pos.CENTER_RIGHT);
-                vbox_report_att_c.getChildren().add(coach_att);
-                vbox_report_att_c.getChildren().add(title_c);
-                vbox_report_att_c.getChildren().add(title_att_c);
-
-            }
-        }
-
-        ////////////
-        Label swimmer = make_lable_search_head("add Swimmer in Group", .539, "303436", 15);
-        swimmer.setTextFill(rgb(255, 255, 255));
-        Label num_r_s = make_lable_search_head("N", .03, "b6bec2", 15);
-        Label id_s = make_lable_search_head("ID", .1, "b6bec2", 15);
-        Label name_s = make_lable_search_head("Name", 0.15, "b6bec2", 15);
-        Label num_day_s = make_lable_search_head("num_day", 0.15, "b6bec2", 15);
-
-        HBox title_r_s = new HBox();
-        title_r_s.setStyle("-fx-background-color:  #b6bec2;");
-        title_r_s.setPrefSize(bounds.getWidth() * .54, 0);
-        title_r_s.getChildren().addAll(num_day_s, name_s, id_s, num_r_s);
-        title_r_s.setAlignment(Pos.CENTER_RIGHT);
-        vbox_report.getChildren().add(swimmer);
-        vbox_report.getChildren().add(title_r_s);
-
-        List<swimmer> t = new ArrayList<swimmer>();
-        List<group> t_s = new ArrayList<group>();
-
-        t = allDb.sdate(sdf.format(now));
-        t_s = allDb.report_s_time(sdf.format(now));
-
-        int sum = 0;
-        int cost = 0;
-        for (int x = 0; x < t.size(); x++) {
-
-            Label num_sw = make_lable_g((x + 1) + "", .03);
-            Label id_s1 = make_lable_g(t.get(x).getS_id() + "", .1);
-            Label name_s1 = make_lable_g(t.get(x).getName(), 0.15);
-            Label time_r_s = make_lable_g(t_s.get(x).getTime(), 0.15);
-
-            List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
-
-            allDb.get_type_of_swimmer(name_s1.getText());
-            String s = allDb.get_type_of_swimmer(name_s1.getText());
-            cost = t.get(x).getCost();
-
-            sum = sum + cost;
-
-            s_t = (allDb.report_swimmer_time(sdf.format(now)));
-
-            HBox title_s1 = new HBox();
-            title_s1.setStyle("-fx-background-color:  #ffb3e6;");
-            title_s1.setPrefSize(bounds.getWidth() * .54, 0);
-            title_s1.getChildren().addAll(time_r_s, name_s1, id_s1, num_sw);
-            title_s1.setAlignment(Pos.CENTER_RIGHT);
-
-            vbox_report.getChildren().add(title_s1);
-
-        }
+             vbox_report_att_c.getChildren().add(title_att_c);
+      
+        //     int size=(int) (vbox_report_att_c.getHeight()+vbox_report_att_s.getHeight()+vbox_report_trfihee.getHeight()+vbox_report.getHeight()+vbox_total_add_s.getHeight()+vbox_total_trfihee.getHeight());
+        
+      //      pane_report.resize(report.getPrefWidth(), report.getPrefHeight());
+    // report.setPrefSize(pane_report.getPrefWidth(), pane_report.getPrefHeight()); //didn't work
+         }
         Label t_add_s = make_lable_search_head(" total add swimmer ", .539, "303436", 15);
         t_add_s.setTextFill(rgb(255, 255, 255));
 
@@ -2019,9 +2035,10 @@ public class HomeController implements Initializable {
         vbox_total_add_s.getChildren().add(t_add_s);
 
         vbox_total_add_s.getChildren().add(total_add_s);
-
-        Label total_add_s_n = make_lable_g(String.valueOf(t.size()) + "", .3);
+        allDb.DB_connection();
+        Label total_add_s_n = make_lable_g(String.valueOf(s_g.size()) + "", .3);
         Label total_add_s_c = make_lable_g(String.valueOf(sum), 0.3);
+        allDb.DB_close();
 
         HBox total_add_swim = new HBox();
         total_add_swim.setStyle("-fx-background-color:  #ffb3e6;");
@@ -2031,9 +2048,9 @@ public class HomeController implements Initializable {
 
         vbox_total_add_s.getChildren().add(total_add_swim);
 
-        allDb.DB_close();
+return r_date;
+        }
 
-    }
 
     List<TextField> te = new ArrayList<TextField>();
     List<TextField> te1 = new ArrayList<TextField>();
@@ -2415,7 +2432,7 @@ public class HomeController implements Initializable {
                 for (int i = 0; i < s.size(); i++) {
                     ch_coach.setSelected(true);
                     l_re_id.indexOf(s.get(0).getRep_name());
-                    t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
+            //        t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
                     t1.setDisable(false);
                 }
             }
@@ -2931,6 +2948,9 @@ public class HomeController implements Initializable {
     }
 
     private void initialize_home() {
+        
+        
+
         ///////////////////////initialize//////////////
         Time sqlTime = Time.valueOf("03:00:00");
         allDb = new DB();
