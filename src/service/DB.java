@@ -38,7 +38,6 @@ import model.overview;
 import model.s;
 import model.swimmer;
 import model.trfihee;
-
 /**
  *
  * @author asd
