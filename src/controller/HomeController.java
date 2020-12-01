@@ -643,20 +643,39 @@ public class HomeController implements Initializable {
         date_print_home.setText(sdf.format(now));
         b_print_home.setVisible(false);
 
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null) {
-            PageLayout pageLayout = job.getJobSettings().getPageLayout();
-            double scaleX = 1.0;
-            if (pageLayout.getPrintableWidth() < p_home.getBoundsInParent().getWidth()) {
-                scaleX = pageLayout.getPrintableWidth() / p_home.getBoundsInParent().getWidth();
-            }
-            double scaleY = 1.0;
-            if (pageLayout.getPrintableHeight() < p_home.getBoundsInParent().getHeight()) {
-                scaleY = pageLayout.getPrintableHeight() / p_home.getBoundsInParent().getHeight();
-            }
-            double scaleXY = Double.min(scaleX, scaleY);
-            Scale scale = new Scale(scaleXY, scaleXY);
-            p_home.getTransforms().add(scale);
+         scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
+       scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
+   Printer printer = Printer.getDefaultPrinter(); 
+ 
+ PrinterJob job = PrinterJob.createPrinterJob();
+         PageLayout pageLayout = job.getJobSettings().getPageLayout();
+ if (job != null ) {
+    double pagePrintableWidth = pageLayout.getPrintableWidth(); 
+        double pagePrintableHeight = pageLayout.getPrintableHeight();
+
+
+        p_home.minHeightProperty().bind(p_home.prefHeightProperty());
+        p_home.maxHeightProperty().bind(p_home.prefHeightProperty());
+
+        double scaleX = pagePrintableWidth / p_home.getBoundsInParent().getWidth();
+        double scaleY = scaleX; 
+        double localScale = scaleX; 
+
+        double numberOfPages = Math.ceil(id.size()/3);
+
+        p_home.getTransforms().add(new Scale(scaleX, (scaleY)));
+        p_home.getTransforms().add(new Translate(0, 0));
+
+        Translate gridTransform = new Translate();
+        p_home.getTransforms().add(gridTransform);
+
+       
+        for(int i = 0; i < numberOfPages; i++)
+        {
+            gridTransform.setY(-i * (pagePrintableHeight / scaleX));
+            job.printPage(pageLayout, p_home);
+        }
+
             boolean success = job.printPage(p_home);
             p_home.getTransforms().remove(scale);
             if (success) {
