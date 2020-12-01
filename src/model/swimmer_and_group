@@ -104,6 +104,5 @@ public class swimmer_and_group {
         return day;
     }
 
-  
-    
+     
 }
