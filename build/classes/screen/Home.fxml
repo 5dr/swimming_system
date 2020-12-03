@@ -144,7 +144,7 @@
                                 <Insets left="50.0" />
                             </padding>
                         </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="22.0" layoutX="10.0" layoutY="657.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" stylesheets="@../../../Swimming/src/styling/style.css" text="Sign Out">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="22.0" layoutX="10.0" layoutY="657.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sign_out" prefHeight="50.0" prefWidth="259.0" stylesheets="@../../../Swimming/src/styling/style.css" text="Sign Out">
                      <graphic>
                         <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -312,41 +312,6 @@
                         <JFXComboBox fx:id="add_C_level" layoutX="158.0" layoutY="365.0" prefHeight="28.0" prefWidth="494.0" />
                      </children>
                   </Pane>
-                  <Pane fx:id="report" layoutX="10.0" layoutY="10.0" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
-                     <children>
-                        <Label layoutX="399.0" layoutY="14.0" prefHeight="58.0" prefWidth="238.0" text="Daily Report" textFill="#258bbf">
-                           <font>
-                              <Font name="System Bold Italic" size="40.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fx:id="scrooll11" layoutX="163.0" layoutY="101.0" prefHeight="511.0" prefWidth="705.0">
-                           <content>
-                              <AnchorPane fx:id="pane_table11" minHeight="0.0" minWidth="0.0" prefHeight="530.0" prefWidth="690.0" style="-fx-background-color: #dddddd;">
-                                 <children>
-                                    <VBox layoutX="5.0" prefHeight="18.0" prefWidth="680.0" spacing="5.0" style="-fx-background-color: #dddddd;">
-                                       <children>
-                                          <VBox fx:id="vbox_report" prefHeight="18.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-      
-                                          <VBox fx:id="vbox_report_att_s" prefHeight="10.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-                                     
-                                          <VBox fx:id="vbox_report_att_c" prefHeight="10.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-                                      
-                                          <VBox fx:id="vbox_report_trfihee" prefHeight="10.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-
-                                          <VBox fx:id="vbox_total_trfihee" prefHeight="10.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-                                          <VBox fx:id="vbox_total_add_s" prefHeight="10.0" prefWidth="680.0" style="-fx-background-color: #dddddd;" />
-                                       
-                                       </children>
-                                    </VBox>
-             
-                    </children>
-                                    
-
-                              </AnchorPane>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </Pane>
                   <Pane fx:id="p_group_inf" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color:#ffccf3;">
                      <children>
                         <Label layoutX="271.0" layoutY="25.0" prefHeight="66.0" prefWidth="407.0" text="Group Information" textFill="WHITE">
@@ -378,28 +343,6 @@
                         </ScrollPane>
                      </children>
                   </Pane>
-                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ffffff;">
-                    
-                            <children>
-                          
-                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
-                                <Button fx:id="b_print_home" alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="582.0" layoutY="13.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
-                  
-                                    <padding>
-                                        <Insets right="50.0" />
-                                    </padding>
-                                </Button>                      
-                                <Line endX="600.0" layoutX="300.0" layoutY="67.0" startX="-251.0" />
-                                <ScrollPane fx:id="scrooll" layoutY="76.0" prefHeight="567.0" prefWidth="611.0">
-                                    <content>
-                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
-                                    </content>
-                                </ScrollPane>
-                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
-                        <JFXTextField fx:id="date_print_home" alignment="CENTER_RIGHT" disable="true" labelFloat="true" layoutX="340.0" layoutY="18.0" prefHeight="28.0" prefWidth="200.0" promptText="تاريخ الطباعه" visible="false" />
-                            </children>
-             
-                        </Pane>
                   <Pane fx:id="information_swimmer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dddddd;">
                      <children>
                         <Label layoutX="189.0" layoutY="32.0" prefHeight="58.0" prefWidth="415.0" text="Information Swimmer" textFill="#258bbf">
@@ -538,20 +481,6 @@
                               <Font size="16.0" />
                            </font>
                         </JFXTextField>
-                     </children>
-                  </Pane>
-                  <Pane fx:id="p_salary" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #b6bec2;">
-                     <children>
-                        <Label layoutX="399.0" layoutY="25.0" prefHeight="66.0" prefWidth="152.0" text="Salary" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="53.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fx:id="scrooll_salary" layoutY="121.0" prefHeight="532.0" prefWidth="611.0">
-                           <content>
-                              <AnchorPane fx:id="pane_table_salary" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
-                           </content>
-                        </ScrollPane>
                      </children>
                   </Pane>
                   <Pane fx:id="p_s_add" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
@@ -1084,9 +1013,80 @@
                         </HBox>
                      </children>
                   </Pane>
+                  <Pane fx:id="p_salary" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #b6bec2;">
+                     <children>
+                        <Label layoutX="399.0" layoutY="25.0" prefHeight="66.0" prefWidth="152.0" text="Salary" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="53.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane fx:id="scrooll_salary" layoutY="121.0" prefHeight="532.0" prefWidth="611.0">
+                           <content>
+                              <AnchorPane fx:id="pane_table_salary" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="report" layoutX="10.0" layoutY="10.0" prefHeight="655.0" prefWidth="1127.0" style="-fx-background-color: #dddddd;">
+                     <children>
+                        <Label layoutX="399.0" layoutY="14.0" prefHeight="58.0" prefWidth="238.0" text="Daily Report" textFill="#258bbf">
+                           <font>
+                              <Font name="System Bold Italic" size="40.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane fx:id="scrooll11" layoutX="163.0" layoutY="101.0" prefHeight="511.0" prefWidth="705.0">
+                           <content>
+                              <AnchorPane fx:id="pane_report" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0">
+                                 <children>
+                                    <VBox fx:id="all_report" layoutX="5.0" prefHeight="18.0" prefWidth="680.0" spacing="5.0" style="-fx-background-color: #dddddd;">
+                                       <children>
+                                           <JFXDatePicker fx:id="select_date_report" disable="false" onAction="#report_date" prefHeight="28.0" prefWidth="140.0" />
+    
+                                                        <VBox fx:id="vbox_report" prefHeight="18.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                                        <VBox fx:id="vbox_total_add_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                       
+                                                        <VBox fx:id="vbox_report_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                                        <VBox fx:id="vbox_total_trfihee" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                        
+                                                        <VBox fx:id="vbox_report_att_s" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                     
+                                                        <VBox fx:id="vbox_report_att_c" prefHeight="10.0" prefWidth="680.0" spacing="3.0" style="-fx-background-color: #dddddd;" />
+                                           </children>
+                                    </VBox>
+             
+                    </children>
+                                    
+
+                              </AnchorPane>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </Pane>
+                        <Pane fx:id="p_home" prefHeight="554.0" prefWidth="793.0" style="-fx-background-color: #ffffff;">
+                    
+                            <children>
+                          
+                                <JFXComboBox fx:id="combobox_all_group" labelFloat="true" layoutX="176.0" layoutY="18.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Time" />
+                                <Button fx:id="b_print_home" alignment="BASELINE_CENTER" graphicTextGap="22.0" layoutX="582.0" layoutY="13.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#print" prefHeight="36.0" prefWidth="119.0" stylesheets="@../../../Swimming/src/styling/style.css" text="print">
+                  
+                                    <padding>
+                                        <Insets right="50.0" />
+                                    </padding>
+                                </Button>                      
+                                <Line endX="600.0" layoutX="300.0" layoutY="67.0" startX="-251.0" />
+                                <ScrollPane fx:id="scrooll" layoutY="76.0" prefHeight="567.0" prefWidth="611.0">
+                                    <content>
+                                        <AnchorPane fx:id="pane_table" minHeight="0.0" minWidth="0.0" prefHeight="603.0" prefWidth="613.0" />
+                                    </content>
+                                </ScrollPane>
+                        <JFXComboBox fx:id="combobox_all_group_day" labelFloat="true" layoutX="14.0" layoutY="17.0" prefHeight="25.0" prefWidth="139.0" promptText="Select Day" />
+                        <JFXTextField fx:id="date_print_home" alignment="CENTER_RIGHT" disable="true" labelFloat="true" layoutX="340.0" layoutY="18.0" prefHeight="28.0" prefWidth="200.0" promptText="تاريخ الطباعه" visible="false" />
+                            </children>
+             
+                        </Pane>
                   <Pane fx:id="p_c_punish" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dddddd;">
                      <children>
-                        <Label layoutX="204.0" layoutY="58.0" prefHeight="58.0" prefWidth="677.0" text="Coach Punishment and Information" textFill="#258bbf">
+                        <Label layoutX="198.0" layoutY="25.0" prefHeight="58.0" prefWidth="677.0" text="Coach Punishment and Information" textFill="#258bbf">
                            <font>
                               <Font name="System Bold Italic" size="40.0" />
                            </font>
@@ -1114,7 +1114,7 @@
                         <TextField fx:id="inf_c_id" alignment="CENTER" disable="true" layoutX="155.0" layoutY="183.0" prefHeight="37.0" prefWidth="213.0" />
                         <TextField fx:id="inf_c_name" alignment="CENTER" disable="true" layoutX="156.0" layoutY="223.0" prefHeight="37.0" prefWidth="213.0" />
                         <TextField fx:id="inf_c_phone" alignment="CENTER" layoutX="155.0" layoutY="306.0" prefHeight="37.0" prefWidth="213.0" />
-                        <VBox layoutX="543.0" layoutY="145.0" prefHeight="236.0" prefWidth="213.0" spacing="4.0">
+                        <VBox layoutX="537.0" layoutY="109.0" prefHeight="236.0" prefWidth="213.0" spacing="4.0">
                            <children>
                               <JFXButton fx:id="b_punish_late_1" buttonType="RAISED" onAction="#punish" prefHeight="37.0" prefWidth="215.0" ripplerFill="#788287" style="-fx-background-color: #ffffff;" text="تأخير 1 دقيقة" textFill="#788287">
                                  <font>
@@ -1155,9 +1155,14 @@
                                     </JFXButton>
                                  </children>
                               </HBox>
+                              <JFXButton buttonType="RAISED" layoutX="10.0" layoutY="170.0" onAction="#delet_coach" prefHeight="37.0" prefWidth="217.0" ripplerFill="WHITE" style="-fx-background-color: #f00;" text="حذف الكابتن" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </JFXButton>
                            </children>
                         </VBox>
-                        <HBox layoutX="37.0" layoutY="397.0" prefHeight="67.0" prefWidth="852.0" spacing="3.0">
+                        <HBox layoutX="33.0" layoutY="425.0" prefHeight="67.0" prefWidth="852.0" spacing="3.0">
                            <children>
                               <VBox prefHeight="76.0" prefWidth="100.0" spacing="2.0">
                                  <children>

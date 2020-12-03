@@ -57,12 +57,14 @@ import javafx.print.Printer;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import static javafx.scene.paint.Color.rgb;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.transform.Translate;
 import javax.swing.JOptionPane;
 import model.all_information_for_attend_coach;
 import model.all_information_for_attend_swimmer;
@@ -73,6 +75,7 @@ import model.coach;
 import model.group;
 import model.s;
 import model.swimmer_and_group;
+//import model.swimmer_and_group;
 import model.trfihee;
 import org.controlsfx.control.textfield.TextFields;
 import service.BillPrint_coach;
@@ -91,7 +94,7 @@ public class HomeController implements Initializable {
     @FXML
     private Button b_report, b_salary, b_print_home, b_home, b_add_group, b_add_swimmer, b_add_coach, b_search, b_Settings;
     @FXML
-    private AnchorPane pane_table_salary,pane_report, anchorpane, pane_table, pane_search_table;
+    private AnchorPane pane_table_salary, pane_report, anchorpane, pane_table, pane_search_table;
     @FXML
     private VBox all_report, vbox_total_trfihee, vbox_total_add_s, v_box1_type, vbox_report_trfihee, vbox_report_att_c, p_list, vbox_search_group, vbox_search_coach, vbox_report_att_s, vbox_search_swimmer, v_s_attend, vbox_group_inf, vbox_report, vbox_search_att_s, vbox_search_att_c;
     @FXML
@@ -108,7 +111,7 @@ public class HomeController implements Initializable {
     @FXML
     private JFXComboBox<String> update_group_type, add_s_type, add_group_coach, add_group_day, add_group_level, add_group_line, add_group_type, update_group_day, update_coach, update_group_line, update_group_level, add_s_level;
     @FXML
-    private DatePicker add_s_age,select_date_report;
+    private DatePicker add_s_age, select_date_report;
     @FXML
     private JFXTimePicker add_group_time, update_group_time;
     @FXML
@@ -138,6 +141,25 @@ public class HomeController implements Initializable {
     private ButtonBar button_bar;
     @FXML
     private Label l_bouns, setting_la, l_punish_minus, l_punish_bouns, l_absent, l_punish_late_1, l_punish_late_5, l_punish_glass, l_punish_behavior, l_punish_re, l_punish_talk;
+
+    public void sign_out(ActionEvent actionEvent) throws SQLException {
+        System.exit(0);
+
+    }
+
+    public void delet_coach(ActionEvent actionEvent) throws SQLException {
+
+        int reply = JOptionPane.showConfirmDialog(null, "هل حقك تريد مسح المجموعة", "تأكيد", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+            allDb.DB_connection();
+            allDb.deletcoach(coach_id_punish);
+            allDb.DB_close();
+            p_c_punish.toBack();
+            JOptionPane.showMessageDialog(null, "تم مسح الكابتن");
+        } else {
+        }
+
+    }
 
     public void add_bouns_for_coach(ActionEvent actionEvent) {
         try {
@@ -312,7 +334,7 @@ public class HomeController implements Initializable {
                     l_punish_talk.getText(), l_punish_re.getText(), inf_c_name.getText(),
                     allDb.get_cost_for_late1(), allDb.get_cost_for_late5(), allDb.get_cost_for_absent(),
                     allDb.get_cost_for_glass(), allDb.get_cost_for_Behavior(), allDb.get_cost_for_talk(),
-                    allDb.get_cost_for_re(), allDb.get_bouns_id(Integer.parseInt(inf_c_id.getText())),Integer.parseInt(inf_c_id.getText()),
+                    allDb.get_cost_for_re(), allDb.get_bouns_id(Integer.parseInt(inf_c_id.getText())), Integer.parseInt(inf_c_id.getText()),
                     get_all_salary(Integer.parseInt(inf_c_id.getText()))), getPageFormat(pj));
             allDb.DB_close();
             pj.print();
@@ -361,12 +383,11 @@ public class HomeController implements Initializable {
         } else if (add_group_type.getSelectionModel().isEmpty()) {
             JOptionPane.showMessageDialog(null, "لم يتم اختيار النوع");
         } else {
-            System.out.println(add_group_coach.getValue());
             Time time = Time.valueOf(add_group_time.getValue());
             boolean bool = false;
 
             allDb.DB_connection();
-            if (allDb.is_group_exist(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time, add_group_type.getValue())) {
+            if (allDb.is_group_exist_without_type(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_day.getValue(), time)) {
                 JOptionPane.showMessageDialog(null, "الكابتن  " + add_group_coach.getValue() + " " + " عنده مجموعة ف نفس المعاد");
             } else {
                 allDb.Add_group(coach.get(add_group_coach.getSelectionModel().getSelectedIndex()).getC_id(), add_group_line.getValue(),
@@ -493,6 +514,8 @@ public class HomeController implements Initializable {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار  المستوى");
             } else if (add_s_type.getSelectionModel().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "لم يتم اختيار  النوع");
+            } else if (add_s_age.getValue() == null) {
+                JOptionPane.showMessageDialog(null, "لم يتم ادخال تاريخ الميلاد");
             } else {
                 int b = 0;
                 if (day_swimmer.getValue() == "Saturday") {
@@ -510,13 +533,13 @@ public class HomeController implements Initializable {
                     boolean boo = false;
                     int count = allDb.get_swimmer_by_group(g_id).size();
                     String n_coach = allDb.get_coach_name_by_g_id(g_id);
-                    System.out.println(count);
                     Date sqlDate = java.sql.Date.valueOf(add_s_age.getValue());
                     // Date date1=   (Date) new SimpleDateFormat("dd/MM/yyyy").parse(add_s_age.getText());  
                     if (add_s_type.getSelectionModel().isSelected(2)) {
                         count = 0;
                     }
                     try {
+
                         boo = allDb.is_swimmer_exist(search_add_s_id.getText().equals("") ? 0 : Integer.parseInt(search_add_s_id.getText()));
                         count = boo ? count - 1 : count;
                     } catch (NumberFormatException e) {
@@ -525,7 +548,7 @@ public class HomeController implements Initializable {
 
                     if (count < 8) {
                         int curr_swimmer_id = 0;
-                        if (boo = true) {
+                        if (boo == true) {
                             curr_swimmer_id = Integer.parseInt(search_add_s_id.getText());
                             allDb.update_swimmer(Integer.parseInt(search_add_s_id.getText()), add_s_name.getText(), sqlDate, add_s_gender.getValue(), add_s_level.getValue(), add_s_phone.getText(), g_id, add_s_range.getValue(), b, ((allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue()), add_s_type.getValue());
                         } else {
@@ -535,8 +558,6 @@ public class HomeController implements Initializable {
                         if (curr_swimmer_id != 0) {
                             List<all_information_for_group> id = new ArrayList<all_information_for_group>();
                             id = allDb.search_group_by_name_and_time_and_day(coach_swimmer.getValue(), time_swimmer.getValue(), b);
-
-                            System.out.println(id);
 
                             java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
                             if (id.get(0).getDay() == 0) {
@@ -577,13 +598,14 @@ public class HomeController implements Initializable {
     }
 
     Time time_to_tranfer_to_add_swimmer;
-    String coach_to_tranfer_to_add_swimmer, day_to_tranfer_to_add_swimmer;
+    String coach_to_tranfer_to_add_swimmer, day_to_tranfer_to_add_swimmer, type_to_tranfer_to_add_swimmer;
 
     public void tranfer_to_add_swimmer(ActionEvent actionEvent) throws SQLException {
 
         coach_swimmer.setValue(coach_to_tranfer_to_add_swimmer);
         time_swimmer.setValue(time_to_tranfer_to_add_swimmer);
         day_swimmer.setValue(day_to_tranfer_to_add_swimmer);
+        add_s_type.setValue(type_to_tranfer_to_add_swimmer);
 
         p_s_add.toFront();
     }
@@ -612,9 +634,9 @@ public class HomeController implements Initializable {
             p_settings.toFront();
         }
         if (actionEvent.getSource() == b_report) {
-              try {
+            try {
                 ///////////////////////setting//////
-             
+
                 report(LocalDate.now().toString());
             } catch (SQLException ex) {
                 Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
@@ -631,53 +653,66 @@ public class HomeController implements Initializable {
 
         }
     }
+//
 
     public void print(ActionEvent actionEvent) {
         //  Node p_home = new Circle(100, 200, 200);
 
         java.util.Date now = new java.util.Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(sdf.format(now));
         date_print_home.setVisible(true);
         date_print_home.setDisable(false);
         date_print_home.setText(sdf.format(now));
         b_print_home.setVisible(false);
 
-         scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
-       scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
-   Printer printer = Printer.getDefaultPrinter(); 
- 
- PrinterJob job = PrinterJob.createPrinterJob();
-         PageLayout pageLayout = job.getJobSettings().getPageLayout();
- if (job != null ) {
-    double pagePrintableWidth = pageLayout.getPrintableWidth(); 
-        double pagePrintableHeight = pageLayout.getPrintableHeight();
+        scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
+        Printer printer = Printer.getDefaultPrinter();
 
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
 
-        p_home.minHeightProperty().bind(p_home.prefHeightProperty());
-        p_home.maxHeightProperty().bind(p_home.prefHeightProperty());
+            PageLayout pageLayout = job.getJobSettings().getPageLayout();
 
-        double scaleX = pagePrintableWidth / p_home.getBoundsInParent().getWidth();
-        double scaleY = scaleX; 
-        double localScale = scaleX; 
+            double pagePrintableWidth = pageLayout.getPrintableWidth();
+            double pagePrintableHeight = pageLayout.getPrintableHeight();
+            double scaleX = 1.0;
+            if (pagePrintableWidth < p_home.getBoundsInParent().getWidth()) {
+                scaleX = pagePrintableWidth / p_home.getBoundsInParent().getWidth();
+            }
+            double scaleY = 1.0;
+            if (pagePrintableHeight < p_home.getBoundsInParent().getHeight()) {
+                scaleY = pagePrintableHeight / p_home.getBoundsInParent().getHeight();
+            }
+            double scaleXY = Double.min(scaleX, scaleY);
+            Scale scale = new Scale(.39, .5);
 
-        double numberOfPages = Math.ceil(id.size()/3);
+//
+//            p_home.minHeightProperty().bind(p_home.prefHeightProperty());
+//            p_home.maxHeightProperty().bind(p_home.prefHeightProperty());
+//           
+            int lengh = id.size() - 5;
+            double numberOfPages = Math.ceil(((lengh > 0) ? lengh : 0) / 6.0);
+            numberOfPages++;
 
-        p_home.getTransforms().add(new Scale(scaleX, (scaleY)));
-        p_home.getTransforms().add(new Translate(0, 0));
+            p_home.getTransforms().add(scale);
+            p_home.getTransforms().add(new Translate(0, 0));
 
-        Translate gridTransform = new Translate();
-        p_home.getTransforms().add(gridTransform);
+            Translate gridTransform = new Translate();
+            p_home.getTransforms().add(gridTransform);
 
-       
-        for(int i = 0; i < numberOfPages; i++)
-        {
-            gridTransform.setY(-i * (pagePrintableHeight / scaleX));
-            job.printPage(pageLayout, p_home);
-        }
+            boolean success = false;
+            for (int i = 0; i < numberOfPages; i++) {
+                int x = (i == 1) ? 1210 : 1268;//1157
+                x = (i == 3) ? (x + 28) : x;
+                gridTransform.setY(-i * x);
+                success = job.printPage(pageLayout, p_home);
 
-            boolean success = job.printPage(p_home);
+            }
+            // boolean success = job.printPage(p_home);
             p_home.getTransforms().remove(scale);
+            p_home.getTransforms().remove(gridTransform);
+            //p_home.getTransforms().remove(new Translate(0, 0));
             if (success) {
                 job.endJob();
             }
@@ -686,6 +721,58 @@ public class HomeController implements Initializable {
         b_print_home.setVisible(true);
     }
 
+//    public void print(ActionEvent actionEvent) {
+//        //  Node p_home = new Circle(100, 200, 200);
+//
+//        java.util.Date now = new java.util.Date();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println(sdf.format(now));
+//        date_print_home.setVisible(true);
+//        date_print_home.setDisable(false);
+//        date_print_home.setText(sdf.format(now));
+//        b_print_home.setVisible(false);
+//
+//        scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
+//        // scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
+//        Printer printer = Printer.getDefaultPrinter();
+//
+//        PrinterJob job = PrinterJob.createPrinterJob();
+//        PageLayout pageLayout = job.getJobSettings().getPageLayout();
+//        if (job != null) {
+//            double pagePrintableWidth = pageLayout.getPrintableWidth();
+//            double pagePrintableHeight = pageLayout.getPrintableHeight();
+//
+////        p_home.minHeightProperty().bind(p_home.prefHeightProperty());
+////        p_home.maxHeightProperty().bind(p_home.prefHeightProperty());
+//            double scaleX = pagePrintableWidth / p_home.getBoundsInParent().getWidth();
+//            double scaleY = scaleX;
+//            double localScale = scaleX;
+//
+//            double numberOfPages = Math.ceil(id.size() / 5);
+//
+//            p_home.getTransforms().add(new Scale(scaleX, scaleY));
+//            p_home.getTransforms().add(new Translate(0, 0));
+//
+//            Translate gridTransform = new Translate();
+//            p_home.getTransforms().add(gridTransform);
+//
+//            p_home.getTransforms().remove(new Scale(scaleX, (scaleY)));
+//            p_home.getTransforms().remove(new Translate(0, 0));
+//
+//            boolean success = false;
+//            for (int i = 0; i < numberOfPages; i++) {
+//                gridTransform.setY(-i * (pagePrintableHeight / scaleX));
+//                success = job.printPage(pageLayout, p_home);
+//            }
+//
+//            // boolean success = job.printPage(p_home);
+//            if (success) {
+//                job.endJob();
+//            }
+//        }
+//        date_print_home.setVisible(false);
+//        b_print_home.setVisible(true);
+//    }
     public void print_search(ActionEvent actionEvent) {
         //  Node p_home = new Circle(100, 200, 200);
         PrinterJob job = PrinterJob.createPrinterJob();
@@ -1772,7 +1859,7 @@ public class HomeController implements Initializable {
     List<Integer> all_g_id;
     List<List<swimmer>> t;
     List<coach> coach;
-    int bool;
+    int bool = 0;
     int coach_id_punish;
 
     @Override
@@ -1805,28 +1892,29 @@ public class HomeController implements Initializable {
 
         ///////////////////////setting//////
         initialize_Settings();
-                ///////////////////////setting//////
-        
+        ///////////////////////setting//////
+
     }
 
     public void report_date(ActionEvent actionEvent) throws SQLException {
-   
+
         vbox_report.getChildren().clear();
- vbox_total_add_s.getChildren().clear();
- vbox_report_trfihee.getChildren().clear();
- vbox_total_trfihee.getChildren().clear();
-  vbox_report_att_s.getChildren().clear();
-  vbox_report_att_c.getChildren().clear();
+        vbox_total_add_s.getChildren().clear();
+        vbox_report_trfihee.getChildren().clear();
+        vbox_total_trfihee.getChildren().clear();
+        vbox_report_att_s.getChildren().clear();
+        vbox_report_att_c.getChildren().clear();
         String r_date = select_date_report.getValue().toString();
         report(r_date);
     }
+
     private String report(String r_date) throws SQLException {
-          vbox_report.getChildren().clear();
- vbox_total_add_s.getChildren().clear();
- vbox_report_trfihee.getChildren().clear();
- vbox_total_trfihee.getChildren().clear();
-  vbox_report_att_s.getChildren().clear();
-  vbox_report_att_c.getChildren().clear();
+        vbox_report.getChildren().clear();
+        vbox_total_add_s.getChildren().clear();
+        vbox_report_trfihee.getChildren().clear();
+        vbox_total_trfihee.getChildren().clear();
+        vbox_report_att_s.getChildren().clear();
+        vbox_report_att_c.getChildren().clear();
         Label trfihee = make_lable_search_head("trfihee ", .539, "303436", 15);
         trfihee.setTextFill(rgb(255, 255, 255));
 
@@ -1839,7 +1927,7 @@ public class HomeController implements Initializable {
         trfihee_name_r.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_name_r.getChildren().addAll(trfihee_name, trfihee_id, trfihee_n);
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
-    vbox_report_trfihee.getChildren().add(trfihee);
+        vbox_report_trfihee.getChildren().add(trfihee);
         vbox_report_trfihee.getChildren().add(trfihee_name_r);
         allDb.DB_connection();
 
@@ -1848,22 +1936,22 @@ public class HomeController implements Initializable {
         r_trfihee = allDb.report_trfihee(r_date);
 
         allDb.DB_close();
-    
+
         for (int x = 0; x < r_trfihee.size(); x++) {
 
             Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
             Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .25);
             Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.25);
-           
-                HBox title_trfihee = new HBox();
-                title_trfihee.setStyle("-fx-background-color:  #ffb3e6;");
-                title_trfihee.setPrefSize(bounds.getWidth() * .54, 0);
-                title_trfihee.getChildren().addAll(trfihee_r_name, trfihee_r_id, trfihee_r_n);
-                title_trfihee.setAlignment(Pos.CENTER_RIGHT);
 
-                vbox_report_trfihee.getChildren().add(title_trfihee);
+            HBox title_trfihee = new HBox();
+            title_trfihee.setStyle("-fx-background-color:  #ffb3e6;");
+            title_trfihee.setPrefSize(bounds.getWidth() * .54, 0);
+            title_trfihee.getChildren().addAll(trfihee_r_name, trfihee_r_id, trfihee_r_n);
+            title_trfihee.setAlignment(Pos.CENTER_RIGHT);
 
-            }
+            vbox_report_trfihee.getChildren().add(title_trfihee);
+
+        }
         Label t_trfihee = make_lable_search_head(" total trfihee ", .539, "303436", 15);
         t_trfihee.setTextFill(rgb(255, 255, 255));
 
@@ -1875,7 +1963,7 @@ public class HomeController implements Initializable {
         trfihee_t.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_t.getChildren().addAll(trfihee_t_cost, trfihee_t_n);
         trfihee_t.setAlignment(Pos.CENTER_RIGHT);
- vbox_total_trfihee.getChildren().add(t_trfihee);
+        vbox_total_trfihee.getChildren().add(t_trfihee);
 
         vbox_total_trfihee.getChildren().add(trfihee_t);
 
@@ -1892,7 +1980,7 @@ public class HomeController implements Initializable {
         title_trfihee_t.setAlignment(Pos.CENTER_RIGHT);
 
         vbox_total_trfihee.getChildren().add(title_trfihee_t);
- 
+
 /////////////////////////
         Label swimmer_att = make_lable_search_head("The attend swimmer ", .539, "303436", 15);
         swimmer_att.setTextFill(rgb(255, 255, 255));
@@ -1958,8 +2046,7 @@ public class HomeController implements Initializable {
 
         List<swimmer_and_group> s_g = new ArrayList<swimmer_and_group>();
 
-        s_g = allDb.sdate(r_date);
-
+        //s_g = allDb.sdate(r_date);
         int sum = 0;
         int cost = 0;
         for (int x = 0; x < s_g.size(); x++) {
@@ -2005,9 +2092,9 @@ public class HomeController implements Initializable {
         title_c.setPrefSize(bounds.getWidth() * .54, 0);
         title_c.getChildren().addAll(time_c, attend_name_c, attend_id_c, num_att_c);
         title_c.setAlignment(Pos.CENTER_RIGHT);
-   vbox_report_att_c.getChildren().add(coach_att);
-                vbox_report_att_c.getChildren().add(title_c);
-             
+        vbox_report_att_c.getChildren().add(coach_att);
+        vbox_report_att_c.getChildren().add(title_c);
+
         allDb.DB_connection();
         List<attend_couch> c = new ArrayList<attend_couch>();
         List<coach> time_co = new ArrayList<coach>();
@@ -2026,19 +2113,18 @@ public class HomeController implements Initializable {
             Label Rep_name = make_lable_g(time_co.get(x).getName(), .16);
 
             Label time_go = make_lable_g(time_g.get(x).getTime(), .16);
-            
-                HBox title_att_c = new HBox();
-                title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
-                title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
-                title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
-                title_att_c.setAlignment(Pos.CENTER_RIGHT);
-             vbox_report_att_c.getChildren().add(title_att_c);
-      
-        //     int size=(int) (vbox_report_att_c.getHeight()+vbox_report_att_s.getHeight()+vbox_report_trfihee.getHeight()+vbox_report.getHeight()+vbox_total_add_s.getHeight()+vbox_total_trfihee.getHeight());
-        
-      //      pane_report.resize(report.getPrefWidth(), report.getPrefHeight());
-    // report.setPrefSize(pane_report.getPrefWidth(), pane_report.getPrefHeight()); //didn't work
-         }
+
+            HBox title_att_c = new HBox();
+            title_att_c.setStyle("-fx-background-color:  #ffb3e6;");
+            title_att_c.setPrefSize(bounds.getWidth() * .54, 0);
+            title_att_c.getChildren().addAll(time_go, Rep_name, Attend_c, num_c);
+            title_att_c.setAlignment(Pos.CENTER_RIGHT);
+            vbox_report_att_c.getChildren().add(title_att_c);
+
+            //     int size=(int) (vbox_report_att_c.getHeight()+vbox_report_att_s.getHeight()+vbox_report_trfihee.getHeight()+vbox_report.getHeight()+vbox_total_add_s.getHeight()+vbox_total_trfihee.getHeight());
+            //      pane_report.resize(report.getPrefWidth(), report.getPrefHeight());
+            // report.setPrefSize(pane_report.getPrefWidth(), pane_report.getPrefHeight()); //didn't work
+        }
         Label t_add_s = make_lable_search_head(" total add swimmer ", .539, "303436", 15);
         t_add_s.setTextFill(rgb(255, 255, 255));
 
@@ -2065,11 +2151,16 @@ public class HomeController implements Initializable {
         total_add_swim.getChildren().addAll(total_add_s_c, total_add_s_n);
         total_add_swim.setAlignment(Pos.CENTER_RIGHT);
 
-        vbox_total_add_s.getChildren().add(total_add_swim);
+        int tot = r_trfihee.size() + s_att.size() + c.size() + 2;
+        if (tot > 5) {
 
-return r_date;
+            pane_report.setPrefHeight(pane_report.getPrefHeight() + ((tot - 5) * 30));
         }
 
+        vbox_total_add_s.getChildren().add(total_add_swim);
+
+        return r_date;
+    }
 
     List<TextField> te = new ArrayList<TextField>();
     List<TextField> te1 = new ArrayList<TextField>();
@@ -2093,9 +2184,7 @@ return r_date;
             for (int i = 0; i < id.size(); i++) {
                 all_g_id.add(id.get(i).getG_id());
             }
-            System.out.println(all_g_id);
             t = allDb.get_swimmerWithgroup(all_g_id);
-            //System.out.println(t.get(0).get(0));
             pane_table.getChildren().clear();
             table.getChildren().clear();
             pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
@@ -2451,7 +2540,7 @@ return r_date;
                 for (int i = 0; i < s.size(); i++) {
                     ch_coach.setSelected(true);
                     l_re_id.indexOf(s.get(0).getRep_name());
-            //        t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
+                    //        t1.setValue(l_name.get(l_re_id.indexOf(s.get(0).getRep_name())));
                     t1.setDisable(false);
                 }
             }
@@ -2501,7 +2590,6 @@ return r_date;
                     int currentYear = currentdate.getYear();
                     Month currentMonth = currentdate.getMonth();
 ////////////SATURDAY
-                    System.out.println("SATURDAY");
                     if (bool == 0) {
                         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
@@ -2538,7 +2626,6 @@ return r_date;
                                 allDb.delet_attend_swimmer(Integer.parseInt(companies[0]));
 
                             } else {
-                                System.out.println(Integer.parseInt(companies[0]) + "  " + Integer.parseInt(companies[1]));
                                 allDb.Add_attend_swimmer(Integer.parseInt(companies[0]), Integer.parseInt(companies[1]));
                             }
                             allDb.DB_close();
@@ -2866,7 +2953,6 @@ return r_date;
                                 allDb.delet_attend_swimmer(Integer.parseInt(companies[0]));
 
                             } else {
-                                System.out.println(Integer.parseInt(companies[0]) + "  " + Integer.parseInt(companies[1]));
                                 allDb.Add_attend_swimmer(Integer.parseInt(companies[0]), Integer.parseInt(companies[1]));
                             }
                             allDb.DB_close();
@@ -2967,8 +3053,6 @@ return r_date;
     }
 
     private void initialize_home() {
-        
-        
 
         ///////////////////////initialize//////////////
         Time sqlTime = Time.valueOf("03:00:00");
@@ -2994,8 +3078,6 @@ return r_date;
         p_list.setPrefSize(bounds.getWidth() * 0.20, bounds.getHeight());
         big_Stack.setPrefSize(bounds.getWidth() * (1 - 0.18), bounds.getHeight());
 
-        System.out.println(bounds.getHeight());
-        System.out.println(bounds.getWidth());
         //////////////size//////////
 
         try {
@@ -3009,7 +3091,6 @@ return r_date;
                 all_g_id.add(id.get(i).getG_id());
             }
             t = allDb.get_swimmerWithgroup(all_g_id);
-            //System.out.println(t.get(0).get(0));
             pane_table.getChildren().clear();
             table.getChildren().clear();
             pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
@@ -3032,9 +3113,7 @@ return r_date;
                     for (int i = 0; i < id.size(); i++) {
                         all_g_id.add(id.get(i).getG_id());
                     }
-                    System.out.println(all_g_id);
                     t = allDb.get_swimmerWithgroup(all_g_id);
-                    //System.out.println(t.get(0).get(0));
                     pane_table.getChildren().clear();
                     table.getChildren().clear();
                     pane_table.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.81);
@@ -3703,6 +3782,7 @@ return r_date;
                     }
                     coach_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getName();
                     day_to_tranfer_to_add_swimmer = day1_inf.getText();
+                    type_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getG_type();
                     time_to_tranfer_to_add_swimmer = id.get(Integer.parseInt(num1.getText()) - 1).getTime();
 
                     HBox title1_inf = new HBox();
@@ -4194,9 +4274,6 @@ return r_date;
                     allDb.DB_close();
                 } catch (SQLException ex) {
                 }
-//                System.out.println("count_of_SATURDAY: " + count_of_SATURDAY() + " : " + sut);
-//                System.out.println("count_of_SATURDAY: " + count_of_Sunday() + " : " + sun);
-//                System.out.println("count_of_SATURDAY: " + count_of_Friday() + " : " + fri + " : " + all_s);
                 p_c_punish.toFront();
             });
             table_salary.getChildren().add(title1);
@@ -4275,11 +4352,8 @@ return r_date;
 
         LocalDate currentdate = LocalDate.now();
         int currentYear = currentdate.getYear();
-        System.out.println(currentYear);
         Month currentMonth = currentdate.getMonth();
-        System.out.println(currentMonth);
 ////////////SATURDAY
-        System.out.println("SATURDAY");
         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
@@ -4302,11 +4376,8 @@ return r_date;
 
         LocalDate currentdate = LocalDate.now();
         int currentYear = currentdate.getYear();
-        System.out.println(currentYear);
         Month currentMonth = currentdate.getMonth();
-        System.out.println(currentMonth);
 ////////////SATURDAY
-        System.out.println("SATURDAY");
         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                 .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
@@ -4329,11 +4400,8 @@ return r_date;
 
         LocalDate currentdate = LocalDate.now();
         int currentYear = currentdate.getYear();
-        System.out.println(currentYear);
         Month currentMonth = currentdate.getMonth();
-        System.out.println(currentMonth);
 ////////////SATURDAY
-        System.out.println("SATURDAY");
         List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
                 .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
                 .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
@@ -4364,5 +4432,9 @@ return r_date;
         double fri = allDb.get_count_of_swimmer_with_caoch(id, 2) * count_of_Friday() * allDb.get_cost_for_coach_cost();
         double all_s = sut + sun + fri;
         return all_s;
+    }
+
+    private int Double(int size) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
