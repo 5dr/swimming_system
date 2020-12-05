@@ -1863,9 +1863,7 @@ public class HomeController implements Initializable {
         initialize_Settings();
         ///////////////////////setting//////
 
-    }
-
-    public void report_date(ActionEvent actionEvent) throws SQLException {
+    } public void report_date(ActionEvent actionEvent) throws SQLException {
 
         vbox_report.getChildren().clear();
         vbox_total_add_s.getChildren().clear();
@@ -1877,7 +1875,7 @@ public class HomeController implements Initializable {
         report(r_date);
     }
 
-    private String report(String r_date) throws SQLException {
+ private String report(String r_date) throws SQLException {
         vbox_report.getChildren().clear();
         vbox_total_add_s.getChildren().clear();
         vbox_report_trfihee.getChildren().clear();
@@ -1898,16 +1896,17 @@ public class HomeController implements Initializable {
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
         vbox_report_trfihee.getChildren().add(trfihee);
         vbox_report_trfihee.getChildren().add(trfihee_name_r);
-
         allDb.DB_connection();
 
         List<trfihee> r_trfihee = new ArrayList<trfihee>();
 
         r_trfihee = allDb.report_trfihee(r_date);
 
+        allDb.DB_close();
+
         for (int x = 0; x < r_trfihee.size(); x++) {
 
-            Label trfihee_r_n = make_lable_g((x + 1) + "", .04);
+            Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
             Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .25);
             Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.25);
 
@@ -1935,8 +1934,11 @@ public class HomeController implements Initializable {
 
         vbox_total_trfihee.getChildren().add(trfihee_t);
 
+        allDb.DB_connection();
+
         Label trfihee_t_num = make_lable_g(String.valueOf(r_trfihee.size()) + "", .3);
         Label trfihee_t_c = make_lable_g(String.valueOf(r_trfihee.size() * allDb.get_total_cost()), 0.3);
+        allDb.DB_close();
 
         HBox title_trfihee_t = new HBox();
         title_trfihee_t.setStyle("-fx-background-color:  #ffb3e6;");
@@ -1961,12 +1963,13 @@ public class HomeController implements Initializable {
         title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
         title_s.setAlignment(Pos.CENTER_RIGHT);
 
+        allDb.DB_connection();
         List<s> s_att = new ArrayList<s>();
         List<group> st_att = new ArrayList<group>();
 
         s_att = allDb.report_attend_swimmer(r_date);
         st_att = allDb.report_attend_s_time(r_date);
-
+     
         vbox_report_att_s.getChildren().addAll(swimmer_att);
         vbox_report_att_s.getChildren().add(title_s);
 
@@ -1976,6 +1979,9 @@ public class HomeController implements Initializable {
             Label Attend_s = make_lable_g(s_att.get(x).getAtt_id() + "", .16);
             Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
             Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
+               allDb.DB_close();
+
+            
 //            if (num_s.getText().isEmpty() && Attend_s.getText().isEmpty() && name_s_att.getText().isEmpty() && time_a_s.getText().isEmpty()) {
 //
 //            } else {
@@ -2005,11 +2011,13 @@ public class HomeController implements Initializable {
         vbox_report.getChildren().add(swimmer);
         vbox_report.getChildren().add(title_r_s);
 
+        allDb.DB_connection();
+
         List<swimmer_and_group> s_g = new ArrayList<swimmer_and_group>();
 
         s_g = allDb.sdate(r_date);
-        int sum = 0;
-        int cost = 0;
+        double sum = 0.0;
+        double cost = 0.0;
         for (int x = 0; x < s_g.size(); x++) {
 
             Label num_sw = make_lable_g((x + 1) + "", .04);
@@ -2017,15 +2025,20 @@ public class HomeController implements Initializable {
             Label name_s1 = make_lable_g(s_g.get(x).getName(), 0.16);
             Label time_r_s = make_lable_g(s_g.get(x).getG_time(), 0.14);
             Label type_r_s = make_lable_g(s_g.get(x).getType(), 0.14);
+            double day_range =s_g.get(x).getDay_range();
 
+            allDb.DB_close();
             List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
 
+            allDb.DB_connection();
             allDb.get_type_of_swimmer(name_s1.getText());
             String s = allDb.get_type_of_swimmer(name_s1.getText());
-            cost = allDb.get_type_total_cost(s);
+             cost = (allDb.get_type_total_cost(s)/12)*day_range;
 
             sum = sum + cost;
-            s_t = (allDb.report_swimmer_time(r_date));
+          
+            s_t = allDb.report_swimmer_time(r_date);
+  allDb.DB_close();
 
             HBox title_s1 = new HBox();
             title_s1.setStyle("-fx-background-color:  #ffb3e6;");
@@ -2052,12 +2065,15 @@ public class HomeController implements Initializable {
         vbox_report_att_c.getChildren().add(coach_att);
         vbox_report_att_c.getChildren().add(title_c);
 
+        allDb.DB_connection();
         List<attend_couch> c = new ArrayList<attend_couch>();
         List<coach> time_co = new ArrayList<coach>();
         List<group> time_g = new ArrayList<group>();
         c = allDb.c_att(r_date);
         time_co = allDb.report_attend_coach(r_date);
         time_g = allDb.report_time_replace(r_date);
+
+        allDb.DB_close();
 
         for (int x = 0; x < c.size(); x++) {
 
@@ -2094,8 +2110,10 @@ public class HomeController implements Initializable {
         vbox_total_add_s.getChildren().add(t_add_s);
 
         vbox_total_add_s.getChildren().add(total_add_s);
+        allDb.DB_connection();
         Label total_add_s_n = make_lable_g(String.valueOf(s_g.size()) + "", .3);
         Label total_add_s_c = make_lable_g(String.valueOf(sum), 0.3);
+        allDb.DB_close();
 
         HBox total_add_swim = new HBox();
         total_add_swim.setStyle("-fx-background-color:  #ffb3e6;");
@@ -2108,8 +2126,6 @@ public class HomeController implements Initializable {
 
             pane_report.setPrefHeight(pane_report.getPrefHeight() + ((tot - 5) * 30));
         }
-
-        allDb.DB_close();
 
         vbox_total_add_s.getChildren().add(total_add_swim);
 
