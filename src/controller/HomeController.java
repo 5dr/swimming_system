@@ -11,6 +11,7 @@ import com.sun.javafx.print.Units;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import javafx.geometry.Rectangle2D;
 import java.net.URL;
 import java.sql.Date;
@@ -140,11 +141,14 @@ public class HomeController implements Initializable {
     @FXML
     private ButtonBar button_bar;
     @FXML
-    private Label l_bouns, setting_la, l_punish_minus, l_punish_bouns, l_absent, l_punish_late_1, l_punish_late_5, l_punish_glass, l_punish_behavior, l_punish_re, l_punish_talk;
+    private Label total_add_s, l_bouns, setting_la, l_punish_minus, l_punish_bouns, l_absent, l_punish_late_1, l_punish_late_5, l_punish_glass, l_punish_behavior, l_punish_re, l_punish_talk;
 
     public void sign_out(ActionEvent actionEvent) throws SQLException {
+        try {
+            Runtime.getRuntime().exec("taskkill /IM mysqld.exe /F");
+        } catch (IOException ex) {
+        }
         System.exit(0);
-
     }
 
     public void delet_coach(ActionEvent actionEvent) throws SQLException {
@@ -561,13 +565,13 @@ public class HomeController implements Initializable {
 
                             java.awt.print.PrinterJob pj = java.awt.print.PrinterJob.getPrinterJob();
                             if (id.get(0).getDay() == 0) {
-                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, (allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue(), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
+                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Saturday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, ((allDb.get_type_cost(add_s_type.getValue()) / 12.0) * add_s_range.getValue()), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
 
                             } else if (id.get(0).getDay() == 1) {
-                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, (allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue(), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
+                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "Sunday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, ((allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue()), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
 
                             } else if (id.get(0).getDay() == 2) {
-                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, (allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue(), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
+                                pj.setPrintable(new BillPrintable(add_s_name.getText(), add_s_phone.getText(), sqlDate, id.get(0).getG_level(), add_s_level.getValue(), "friday", id.get(0).getTime().toString(), id.get(0).getTrack(), n_coach, curr_swimmer_id, ((allDb.get_type_cost(add_s_type.getValue()) / 12) * add_s_range.getValue()), add_s_range.getValue(), allDb.get_start_date(curr_swimmer_id), allDb.get_end_date(curr_swimmer_id)), getPageFormat(pj));
 
                             }
                             pj.print();
@@ -664,9 +668,8 @@ public class HomeController implements Initializable {
         date_print_home.setDisable(false);
         date_print_home.setText(sdf.format(now));
         b_print_home.setVisible(false);
-
-        scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
+
         Printer printer = Printer.getDefaultPrinter();
 
         PrinterJob job = PrinterJob.createPrinterJob();
@@ -719,78 +722,44 @@ public class HomeController implements Initializable {
         }
         date_print_home.setVisible(false);
         b_print_home.setVisible(true);
+        scrooll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+
     }
 
-//    public void print(ActionEvent actionEvent) {
-//        //  Node p_home = new Circle(100, 200, 200);
-//
-//        java.util.Date now = new java.util.Date();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        System.out.println(sdf.format(now));
-//        date_print_home.setVisible(true);
-//        date_print_home.setDisable(false);
-//        date_print_home.setText(sdf.format(now));
-//        b_print_home.setVisible(false);
-//
-//        scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
-//        // scrooll.setVbarPolicy(ScrollBarPolicy.NEVER);
-//        Printer printer = Printer.getDefaultPrinter();
-//
-//        PrinterJob job = PrinterJob.createPrinterJob();
-//        PageLayout pageLayout = job.getJobSettings().getPageLayout();
-//        if (job != null) {
-//            double pagePrintableWidth = pageLayout.getPrintableWidth();
-//            double pagePrintableHeight = pageLayout.getPrintableHeight();
-//
-////        p_home.minHeightProperty().bind(p_home.prefHeightProperty());
-////        p_home.maxHeightProperty().bind(p_home.prefHeightProperty());
-//            double scaleX = pagePrintableWidth / p_home.getBoundsInParent().getWidth();
-//            double scaleY = scaleX;
-//            double localScale = scaleX;
-//
-//            double numberOfPages = Math.ceil(id.size() / 5);
-//
-//            p_home.getTransforms().add(new Scale(scaleX, scaleY));
-//            p_home.getTransforms().add(new Translate(0, 0));
-//
-//            Translate gridTransform = new Translate();
-//            p_home.getTransforms().add(gridTransform);
-//
-//            p_home.getTransforms().remove(new Scale(scaleX, (scaleY)));
-//            p_home.getTransforms().remove(new Translate(0, 0));
-//
-//            boolean success = false;
-//            for (int i = 0; i < numberOfPages; i++) {
-//                gridTransform.setY(-i * (pagePrintableHeight / scaleX));
-//                success = job.printPage(pageLayout, p_home);
-//            }
-//
-//            // boolean success = job.printPage(p_home);
-//            if (success) {
-//                job.endJob();
-//            }
-//        }
-//        date_print_home.setVisible(false);
-//        b_print_home.setVisible(true);
-//    }
     public void print_search(ActionEvent actionEvent) {
         //  Node p_home = new Circle(100, 200, 200);
+        Printer printer = Printer.getDefaultPrinter();
+
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
+
             PageLayout pageLayout = job.getJobSettings().getPageLayout();
-            double scaleX = 1.0;
-            if (pageLayout.getPrintableWidth() < table_search.getBoundsInParent().getWidth()) {
-                scaleX = pageLayout.getPrintableWidth() / table_search.getBoundsInParent().getWidth();
-            }
-            double scaleY = 1.0;
-            if (pageLayout.getPrintableHeight() < table_search.getBoundsInParent().getHeight()) {
-                scaleY = pageLayout.getPrintableHeight() / table_search.getBoundsInParent().getHeight();
-            }
-            double scaleXY = Double.min(scaleX, scaleY);
-            Scale scale = new Scale(scaleXY, scaleXY);
+            Scale scale = new Scale(.66, .8);
+
+            System.out.println("table_search.getHeight() : " + table_search.getHeight());
+            System.out.println("pane_search_table.getHeight() : " + pane_search_table.getHeight());
+
+            double lengh = table_search.getHeight() - 800;
+            double numberOfPages = Math.ceil(((lengh > 0) ? lengh : 0) / 800.0);
+            numberOfPages++;
+            System.out.println("numberOfPages : " + numberOfPages);
+
             table_search.getTransforms().add(scale);
-            boolean success = job.printPage(table_search);
+            table_search.getTransforms().add(new Translate(0, 0));
+
+            Translate gridTransform = new Translate();
+            table_search.getTransforms().add(gridTransform);
+
+            boolean success = false;
+            for (int i = 0; i < numberOfPages; i++) {
+                gridTransform.setY(-i * 810);
+                success = job.printPage(pageLayout, table_search);
+
+            }
+            // boolean success = job.printPage(p_home);
             table_search.getTransforms().remove(scale);
+            table_search.getTransforms().remove(gridTransform);
+            //p_home.getTransforms().remove(new Translate(0, 0));
             if (success) {
                 job.endJob();
             }
@@ -1927,19 +1896,17 @@ public class HomeController implements Initializable {
         trfihee_name_r.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_name_r.getChildren().addAll(trfihee_name, trfihee_id, trfihee_n);
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
-        vbox_report_trfihee.getChildren().add(trfihee);
-        vbox_report_trfihee.getChildren().add(trfihee_name_r);
         allDb.DB_connection();
 
         List<trfihee> r_trfihee = new ArrayList<trfihee>();
 
         r_trfihee = allDb.report_trfihee(r_date);
 
-        allDb.DB_close();
-
         for (int x = 0; x < r_trfihee.size(); x++) {
+            vbox_report_trfihee.getChildren().add(trfihee);
+            vbox_report_trfihee.getChildren().add(trfihee_name_r);
 
-            Label trfihee_r_n = make_lable_g((0 + 1) + "", .04);
+            Label trfihee_r_n = make_lable_g((x + 1) + "", .04);
             Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .25);
             Label trfihee_r_name = make_lable_g(r_trfihee.get(x).getName(), 0.25);
 
@@ -1967,11 +1934,8 @@ public class HomeController implements Initializable {
 
         vbox_total_trfihee.getChildren().add(trfihee_t);
 
-        allDb.DB_connection();
-
         Label trfihee_t_num = make_lable_g(String.valueOf(r_trfihee.size()) + "", .3);
         Label trfihee_t_c = make_lable_g(String.valueOf(r_trfihee.size() * allDb.get_total_cost()), 0.3);
-        allDb.DB_close();
 
         HBox title_trfihee_t = new HBox();
         title_trfihee_t.setStyle("-fx-background-color:  #ffb3e6;");
@@ -1996,13 +1960,11 @@ public class HomeController implements Initializable {
         title_s.getChildren().addAll(time_s, attend_name_s, attend_id_s, num_att_s);
         title_s.setAlignment(Pos.CENTER_RIGHT);
 
-        allDb.DB_connection();
         List<s> s_att = new ArrayList<s>();
         List<group> st_att = new ArrayList<group>();
 
         s_att = allDb.report_attend_swimmer(r_date);
         st_att = allDb.report_attend_s_time(r_date);
-        allDb.DB_close();
 
         vbox_report_att_s.getChildren().addAll(swimmer_att);
         vbox_report_att_s.getChildren().add(title_s);
@@ -2042,11 +2004,9 @@ public class HomeController implements Initializable {
         vbox_report.getChildren().add(swimmer);
         vbox_report.getChildren().add(title_r_s);
 
-        allDb.DB_connection();
-
         List<swimmer_and_group> s_g = new ArrayList<swimmer_and_group>();
 
-        //s_g = allDb.sdate(r_date);
+        s_g = allDb.sdate(r_date);
         int sum = 0;
         int cost = 0;
         for (int x = 0; x < s_g.size(); x++) {
@@ -2057,17 +2017,13 @@ public class HomeController implements Initializable {
             Label time_r_s = make_lable_g(s_g.get(x).getG_time(), 0.14);
             Label type_r_s = make_lable_g(s_g.get(x).getType(), 0.14);
 
-            allDb.DB_close();
             List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
 
-            allDb.DB_connection();
             allDb.get_type_of_swimmer(name_s1.getText());
             String s = allDb.get_type_of_swimmer(name_s1.getText());
             cost = allDb.get_type_total_cost(s);
 
             sum = sum + cost;
-            allDb.DB_close();
-
             s_t = (allDb.report_swimmer_time(r_date));
 
             HBox title_s1 = new HBox();
@@ -2095,15 +2051,12 @@ public class HomeController implements Initializable {
         vbox_report_att_c.getChildren().add(coach_att);
         vbox_report_att_c.getChildren().add(title_c);
 
-        allDb.DB_connection();
         List<attend_couch> c = new ArrayList<attend_couch>();
         List<coach> time_co = new ArrayList<coach>();
         List<group> time_g = new ArrayList<group>();
         c = allDb.c_att(r_date);
         time_co = allDb.report_attend_coach(r_date);
         time_g = allDb.report_time_replace(r_date);
-
-        allDb.DB_close();
 
         for (int x = 0; x < c.size(); x++) {
 
@@ -2140,10 +2093,8 @@ public class HomeController implements Initializable {
         vbox_total_add_s.getChildren().add(t_add_s);
 
         vbox_total_add_s.getChildren().add(total_add_s);
-        allDb.DB_connection();
         Label total_add_s_n = make_lable_g(String.valueOf(s_g.size()) + "", .3);
         Label total_add_s_c = make_lable_g(String.valueOf(sum), 0.3);
-        allDb.DB_close();
 
         HBox total_add_swim = new HBox();
         total_add_swim.setStyle("-fx-background-color:  #ffb3e6;");
@@ -2156,6 +2107,8 @@ public class HomeController implements Initializable {
 
             pane_report.setPrefHeight(pane_report.getPrefHeight() + ((tot - 5) * 30));
         }
+
+        allDb.DB_close();
 
         vbox_total_add_s.getChildren().add(total_add_swim);
 
@@ -3064,7 +3017,8 @@ public class HomeController implements Initializable {
         table.setLayoutX(0);
         table.setLayoutY(0);
         table.setStyle("-fx-background-color:   #fff;");
-        scrooll.setPrefSize(bounds.getWidth() * 0.801, bounds.getHeight() * 0.880);
+        scrooll.setPrefSize(bounds.getWidth() * 0.805, bounds.getHeight() * 0.880);
+        scrooll.setHbarPolicy(ScrollBarPolicy.NEVER);
         pane_table.setPrefSize(bounds.getWidth() * 0.800, bounds.getHeight() * 0.880);
         id = new ArrayList<all_information_for_group>();
         all_g_id = new ArrayList<Integer>();
@@ -3079,7 +3033,6 @@ public class HomeController implements Initializable {
         big_Stack.setPrefSize(bounds.getWidth() * (1 - 0.18), bounds.getHeight());
 
         //////////////size//////////
-
         try {
             //////////////Show//////////
             allDb.DB_connection();
@@ -3202,8 +3155,25 @@ public class HomeController implements Initializable {
             coach_swimmer.getItems().addAll(allDb.search_group_by_name());
             add_s_type.getItems().addAll(allDb.get_type_name());
             allDb.DB_close();
+
+            add_s_range.setOnAction((event) -> {
+                try {
+                    allDb.DB_connection();
+                    total_add_s.setText(((allDb.get_type_cost(add_s_type.getValue()) / 12) * ((add_s_range.getSelectionModel().isEmpty()) ? 0 : add_s_range.getValue())) + "");
+                    allDb.DB_close();
+                } catch (SQLException ex) {
+                }
+            });
             add_s_type.setOnAction((event) -> {
+
                 if (add_s_type.getSelectionModel().isSelected(0)) {
+                    try {
+                        allDb.DB_connection();
+                        total_add_s.setText(allDb.get_cost_for_one_day() + "");
+                        allDb.DB_close();
+                    } catch (SQLException ex) {
+                    }
+
                     add_s_level.setDisable(true);
                     add_s_range.setDisable(true);
                     add_s_age.setDisable(true);
@@ -3213,6 +3183,14 @@ public class HomeController implements Initializable {
                     time_swimmer.setDisable(true);
 
                 } else {
+
+                    try {
+                        allDb.DB_connection();
+                        total_add_s.setText(((allDb.get_type_cost(add_s_type.getValue()) / 12) * ((add_s_range.getSelectionModel().isEmpty()) ? 0 : add_s_range.getValue())) + "");
+                        allDb.DB_close();
+                    } catch (SQLException ex) {
+                    }
+
                     add_s_level.setDisable(false);
                     add_s_range.setDisable(false);
                     add_s_age.setDisable(false);

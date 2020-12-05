@@ -469,7 +469,7 @@ public class DB {
         return b;
     }
 
-    public int addswimmer(String name, Date age, String gender, String s_level, String phone, int group, int range, int b, int cost, String type) throws SQLException {
+    public int addswimmer(String name, Date age, String gender, String s_level, String phone, int group, int range, int b, double cost, String type) throws SQLException {
         int Max_id = 0;
         try {
             Date now = new Date();
@@ -541,7 +541,7 @@ public class DB {
         return Max_id;
     }
 
-    public int update_swimmer(int s_id, String name, Date age, String gender, String s_level, String phone, int group, int range, int b, int cost, String type) throws SQLException {
+    public int update_swimmer(int s_id, String name, Date age, String gender, String s_level, String phone, int group, int range, int b, double cost, String type) throws SQLException {
         int Max_id = 0;
         try {
             Date now = new Date();
@@ -2762,8 +2762,8 @@ public class DB {
         return id;
     }
 
-    public int get_type_cost(String name) {
-        int id = 1;
+    public double get_type_cost(String name) {
+        double id = 1;
         try {
             statement = connection.createStatement();
 
@@ -2872,7 +2872,7 @@ public class DB {
             statement = connection.createStatement();
 
             ResultSet r = statement
-                    .executeQuery("SELECT DISTINCT attend_couch.g_id FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id WHERE groups.c_id=" + id + " And attend_couch.monch='" + v_month + "' And attend_couch.year='" + currentMonth + "'");
+                    .executeQuery("SELECT DISTINCT attend_couch.g_id FROM `attend_couch` INNER JOIN groups ON attend_couch.g_id=groups.g_id WHERE groups.c_id=" + id + " And attend_couch.month='" + v_month + "' And attend_couch.year='" + currentMonth + "'");
             while (r.next()) {
                 s.add(r.getInt("attend_couch.g_id"));
             }

@@ -39,9 +39,10 @@ public class BillPrintable implements Printable {
 
     String name, phone, level, day, time, track, s_level, c_name;
     Date age, s_date, e_date;
-    int group, id, cost, range;
+    int group, id, range;
+    double cost;
 
-    public BillPrintable(String name, String phone, Date age, String level, String s_level, String day, String time, String track, String c_name, int id, int cost, int range, Date s_date, Date e_date) {
+    public BillPrintable(String name, String phone, Date age, String level, String s_level, String day, String time, String track, String c_name, int id, double cost, int range, Date s_date, Date e_date) {
         this.s_date = s_date;
         this.e_date = e_date;
         this.name = name;
@@ -88,7 +89,7 @@ public class BillPrintable implements Printable {
                 int headerRectHeight = 15;
 
                 g2d.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                g2d.drawImage(i, 95,-10 , 120, 100, null);
+                g2d.drawImage(i, 95, -10, 120, 100, null);
                 y += yShift;
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
@@ -128,7 +129,7 @@ public class BillPrintable implements Printable {
 
                 g2d.drawString("-------------------------------------", 10, y);
                 y += headerRectHeight;
-                
+
                 g2d.drawString("حمام سباحةالجيل الجديدة", 55, y);
                 y += yShift;
                 g2d.drawString("الباجور بجوار المستشفى العام", 40, y);

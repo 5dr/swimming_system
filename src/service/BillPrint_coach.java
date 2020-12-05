@@ -86,16 +86,8 @@ public class BillPrint_coach implements Printable {
                 int headerRectHeight = 15;
 
                 g2d.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                g2d.drawImage(i, 10, 0, 120, 100, null);
-                g2d.drawString("-------------------------------------", 12, y);
+                g2d.drawImage(i, 95,-10 , 120, 100, null);
                 y += yShift;
-                g2d.drawString("مدرسة الجيل الجديدة", 130, y);
-                y += yShift;
-                g2d.drawString("الخاصة للغات", 150, y);
-                y += yShift;
-                g2d.drawString("الباجور بجوار المستشفى العام", 80, y);
-                y += yShift;
-                g2d.drawString("01008638141", 137, y);
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
@@ -140,9 +132,17 @@ public class BillPrint_coach implements Printable {
                 y += yShift;
                 g2d.drawString("-------------------------------------", 12, y);
                 y += yShift;
-                g2d.drawString(" Season: " + month.format(now)+"  "+ year.format(now), 10, y);
+                g2d.drawString("حمام سباحةالجيل الجديدة", 55, y);
+                y += yShift;
+                g2d.drawString("الباجور بجوار المستشفى العام", 40, y);
+                y += yShift;
+                g2d.drawString("01008638141", 110, y);
                 y += yShift;
                 g2d.drawString("*************************************", 10, y);
+                y += yShift;
+                g2d.drawString("    SOFTWARE BY:Eng MOSTAFA SAMY          ", 10, y);
+                y += yShift;
+                g2d.drawString("         CONTACT: 01010824193       ", 10, y);
                 y += yShift;
                
 
