@@ -294,8 +294,7 @@ public class DB {
 
         return t;
     }
-
-    public List<swimmer_and_group> sdate(String date) throws SQLException {
+ public List<swimmer_and_group> sdate(String date) throws SQLException {
 
         List<swimmer_and_group> id = new ArrayList<swimmer_and_group>();
 
@@ -305,7 +304,7 @@ public class DB {
             ResultSet r = statement
                     .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE swimmer.start_date='" + date + "'");
             while (r.next()) {
-                id.add(new swimmer_and_group(r.getInt("s_id"), r.getString("s_level"), r.getString("s_type"), r.getDate("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getString("g_time"), r.getInt("g_day")));
+                id.add(new swimmer_and_group(r.getInt("s_id"), r.getInt("day_range"), r.getString("s_level"), r.getString("s_type"), r.getDate("age"), r.getInt("g_id"), r.getInt("c_id"), r.getString("name"), r.getString("phone"), r.getString("address"), r.getString("gender"), r.getString("track"), r.getString("level"), r.getDate("start_date"), r.getDate("end_date"), r.getString("g_time"), r.getInt("g_day")));
             }
         } catch (SQLException ex) {
             System.out.println(" search_swimmer_all : " + ex);
@@ -313,6 +312,7 @@ public class DB {
         return id;
 
     }
+
 
     public List<attend_swimmer> s_att(String date) throws SQLException {
 
