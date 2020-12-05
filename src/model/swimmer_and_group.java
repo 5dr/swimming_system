@@ -14,20 +14,20 @@ import java.sql.Time;
  */
 public class swimmer_and_group {
    
-     int s_id,g_id,c_id;
+     int s_id,g_id,c_id,day_range;
     String name,phone,adress,level,gender,track,s_level,type,g_time;
     Date start ,end,age;
    
     int day;
 
-    public swimmer_and_group(int s_id, String s_level ,String type,Date age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, String g_time, int day) {
+    public swimmer_and_group(int s_id,int day_range ,String s_level ,String type,Date age, int g_id, int c_id, String name, String phone, String adress, String gender, String track,String level, Date start, Date end, String g_time, int day) {
         this.s_id = s_id;
         this.age = age;
         this.g_id = g_id;
         this.c_id = c_id;
         this.name = name;
           this.type = type;
-
+this.day_range=day_range;
         this.phone = phone;
         this.adress = adress;
         this.gender = gender;
@@ -58,6 +58,10 @@ public class swimmer_and_group {
 
     public int getC_id() {
         return c_id;
+    }
+
+    public int getDay_range() {
+        return day_range;
     }
 
     public String getName() {
