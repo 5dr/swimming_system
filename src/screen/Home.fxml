@@ -40,7 +40,7 @@
                         <Line endX="100.0" startX="-100.0" stroke="WHITE" />
                         <Button fx:id="b_home" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Home" textFill="#e7e5e5">
                             <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="28.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/icons8-home-50.png" />
                                     </image>
@@ -61,7 +61,7 @@
                         </Button>
                         <Button fx:id="b_add_swimmer" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Add Swimmer">
                             <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="32.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/icons8-swimmer-back-view-50.png" />
                                     </image>
@@ -73,9 +73,9 @@
                         </Button>
                         <Button fx:id="b_add_group" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Add Group">
                             <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="33.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../images/icons8-coach-100%20(1).png" />
+                                        <Image url="@../images/icons8-add-user-group-man-man-50%20(1).png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -85,7 +85,7 @@
                         </Button>
                   <Button fx:id="b_add_coach" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Add Coach">
                      <graphic>
-                        <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="31.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/icons8-coach-100%20(1).png" />
                            </image>
@@ -97,7 +97,7 @@
                   </Button>
                         <Button fx:id="b_search" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Search">
                             <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="26.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/icons8-search-50.png" />
                                     </image>
@@ -109,9 +109,9 @@
                         </Button>
                         <Button fx:id="b_salary" alignment="BASELINE_LEFT" graphicTextGap="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" stylesheets="@../../../Swimming/src/styling/style.css" text="Salary">
                             <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="42.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../images/icons8-logout-rounded-left-50.png" />
+                                        <Image url="@../images/icons8-salary-male-80.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -121,9 +121,9 @@
                         </Button>
                   <Button fx:id="b_report" alignment="BASELINE_LEFT" graphicTextGap="22.0" layoutX="10.0" layoutY="537.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#swi" prefHeight="50.0" prefWidth="259.0" text="Report">
                      <graphic>
-                        <ImageView fitHeight="23.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="41.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/icons8-slider-50.png" />
+                              <Image url="@../images/icons8-business-report-64.png" />
                            </image>
                         </ImageView>
                      </graphic>

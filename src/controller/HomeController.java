@@ -1896,6 +1896,9 @@ public class HomeController implements Initializable {
         trfihee_name_r.setPrefSize(bounds.getWidth() * .54, 0);
         trfihee_name_r.getChildren().addAll(trfihee_name, trfihee_id, trfihee_n);
         trfihee_name_r.setAlignment(Pos.CENTER_RIGHT);
+        vbox_report_trfihee.getChildren().add(trfihee);
+        vbox_report_trfihee.getChildren().add(trfihee_name_r);
+
         allDb.DB_connection();
 
         List<trfihee> r_trfihee = new ArrayList<trfihee>();
@@ -1903,8 +1906,6 @@ public class HomeController implements Initializable {
         r_trfihee = allDb.report_trfihee(r_date);
 
         for (int x = 0; x < r_trfihee.size(); x++) {
-            vbox_report_trfihee.getChildren().add(trfihee);
-            vbox_report_trfihee.getChildren().add(trfihee_name_r);
 
             Label trfihee_r_n = make_lable_g((x + 1) + "", .04);
             Label trfihee_r_id = make_lable_g(r_trfihee.get(x).getTrfihee_id() + "", .25);
