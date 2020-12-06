@@ -33,6 +33,7 @@ import model.all_information_for_swimmer;
 import model.attend_couch;
 import model.attend_swimmer;
 import model.coach;
+import model.end_start_date;
 import model.group;
 import model.overview;
 import model.s;
@@ -159,11 +160,12 @@ public class DB {
         }
 
     }
-      public void deletcoach(int id) throws SQLException {
+
+    public void deletcoach(int id) throws SQLException {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM `couch` WHERE c_id="+id);
+            statement.executeUpdate("DELETE FROM `couch` WHERE c_id=" + id);
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "deletcoach : " + ex);
@@ -294,7 +296,8 @@ public class DB {
 
         return t;
     }
- public List<swimmer_and_group> sdate(String date) throws SQLException {
+
+    public List<swimmer_and_group> sdate(String date) throws SQLException {
 
         List<swimmer_and_group> id = new ArrayList<swimmer_and_group>();
 
@@ -312,7 +315,6 @@ public class DB {
         return id;
 
     }
-
 
     public List<attend_swimmer> s_att(String date) throws SQLException {
 
@@ -2697,6 +2699,26 @@ public class DB {
             System.out.println(" get_att_swimmer :" + ex);
         }
         return s;
+    }
+
+    public List<end_start_date> get_inf_of_swimmer_with_caoch(int id, int day) {
+        List<end_start_date> t1 = new ArrayList<end_start_date>();
+
+        int s = 0;
+        try {
+            statement = connection.createStatement();
+
+            ResultSet r = statement
+                    .executeQuery("SELECT * FROM `swimmer` INNER JOIN groups ON swimmer.g_id=groups.g_id WHERE groups.c_id=" + id + " And groups.g_day=" + day);
+            while (r.next()) {
+                t1.add(new end_start_date(r.getDate("start_date"), r.getDate("end_date")));
+
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(" get_inf_of_swimmer_with_caoch :" + ex);
+        }
+        return t1;
     }
 
     public int get_count_of_punish_of_attend_re(int id) {

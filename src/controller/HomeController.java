@@ -73,6 +73,7 @@ import model.all_information_for_swimmer;
 import model.attend_couch;
 import model.attend_swimmer;
 import model.coach;
+import model.end_start_date;
 import model.group;
 import model.s;
 import model.swimmer_and_group;
@@ -1863,7 +1864,9 @@ public class HomeController implements Initializable {
         initialize_Settings();
         ///////////////////////setting//////
 
-    } public void report_date(ActionEvent actionEvent) throws SQLException {
+    }
+
+    public void report_date(ActionEvent actionEvent) throws SQLException {
 
         vbox_report.getChildren().clear();
         vbox_total_add_s.getChildren().clear();
@@ -1875,7 +1878,7 @@ public class HomeController implements Initializable {
         report(r_date);
     }
 
- private String report(String r_date) throws SQLException {
+    private String report(String r_date) throws SQLException {
         vbox_report.getChildren().clear();
         vbox_total_add_s.getChildren().clear();
         vbox_report_trfihee.getChildren().clear();
@@ -1969,7 +1972,7 @@ public class HomeController implements Initializable {
 
         s_att = allDb.report_attend_swimmer(r_date);
         st_att = allDb.report_attend_s_time(r_date);
-     
+
         vbox_report_att_s.getChildren().addAll(swimmer_att);
         vbox_report_att_s.getChildren().add(title_s);
 
@@ -1979,13 +1982,11 @@ public class HomeController implements Initializable {
             Label Attend_s = make_lable_g(s_att.get(x).getAtt_id() + "", .16);
             Label name_s_att = make_lable_g(s_att.get(x).getName(), 0.16);
             Label time_a_s = make_lable_g(st_att.get(x).getTime(), 0.16);
-               allDb.DB_close();
+            allDb.DB_close();
 
-            
 //            if (num_s.getText().isEmpty() && Attend_s.getText().isEmpty() && name_s_att.getText().isEmpty() && time_a_s.getText().isEmpty()) {
 //
 //            } else {
-
             HBox title_att_s = new HBox();
             title_att_s.setStyle("-fx-background-color:  #ffb3e6;");
             title_att_s.setPrefSize(bounds.getWidth() * .54, 0);
@@ -2025,7 +2026,7 @@ public class HomeController implements Initializable {
             Label name_s1 = make_lable_g(s_g.get(x).getName(), 0.16);
             Label time_r_s = make_lable_g(s_g.get(x).getG_time(), 0.14);
             Label type_r_s = make_lable_g(s_g.get(x).getType(), 0.14);
-            double day_range =s_g.get(x).getDay_range();
+            double day_range = s_g.get(x).getDay_range();
 
             allDb.DB_close();
             List<all_information_for_group> s_t = new ArrayList<all_information_for_group>();
@@ -2033,12 +2034,12 @@ public class HomeController implements Initializable {
             allDb.DB_connection();
             allDb.get_type_of_swimmer(name_s1.getText());
             String s = allDb.get_type_of_swimmer(name_s1.getText());
-             cost = (allDb.get_type_total_cost(s)/12)*day_range;
+            cost = (allDb.get_type_total_cost(s) / 12) * day_range;
 
             sum = sum + cost;
-          
+
             s_t = allDb.report_swimmer_time(r_date);
-  allDb.DB_close();
+            allDb.DB_close();
 
             HBox title_s1 = new HBox();
             title_s1.setStyle("-fx-background-color:  #ffb3e6;");
@@ -4342,6 +4343,89 @@ public class HomeController implements Initializable {
         return minus;
     }
 
+    private int count_of_SATURDAY_for_all(List<end_start_date> d) {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        Month currentMonth = currentdate.getMonth();
+////////////SATURDAY
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
+                || date.getDayOfWeek() == DayOfWeek.MONDAY || date.getDayOfWeek() == DayOfWeek.WEDNESDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 13) {
+            ldate.remove(12);
+        }
+        for (int x = 0; x < d.size(); x++) {
+            for (int i = 0; i < ldate.size(); i++) {
+                if (d.get(x).getStart().toLocalDate().isBefore(ldate.get(i)) || d.get(x).getStart().toLocalDate().isEqual(ldate.get(i))) {
+                    if ((ldate.get(i).isBefore(currentdate) || ldate.get(i).isEqual(currentdate)) && (ldate.get(i).isBefore(d.get(x).getEnd().toLocalDate()) || ldate.get(i).isEqual(d.get(x).getEnd().toLocalDate()))) {
+                        c++;
+                    }
+                }
+            }
+        }
+        return c;
+    }
+
+    private int count_of_sunday_for_all(List<end_start_date> d) {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        Month currentMonth = currentdate.getMonth();
+////////////SATURDAY
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.SUNDAY
+                || date.getDayOfWeek() == DayOfWeek.TUESDAY || date.getDayOfWeek() == DayOfWeek.THURSDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 13) {
+            ldate.remove(12);
+        }
+
+        for (int x = 0; x < d.size(); x++) {
+            for (int i = 0; i < ldate.size(); i++) {
+                if (d.get(x).getStart().toLocalDate().isBefore(ldate.get(i)) || d.get(x).getStart().toLocalDate().isEqual(ldate.get(i))) {
+                  if ((ldate.get(i).isBefore(currentdate) || ldate.get(i).isEqual(currentdate)) && (ldate.get(i).isBefore(d.get(x).getEnd().toLocalDate()) || ldate.get(i).isEqual(d.get(x).getEnd().toLocalDate()))) {
+                        c++;
+                    }
+                }
+            }
+        }
+
+        return c;
+    }
+
+    private int count_of_fri_for_all(List<end_start_date> d) {
+        int c = 0;
+
+        LocalDate currentdate = LocalDate.now();
+        int currentYear = currentdate.getYear();
+        Month currentMonth = currentdate.getMonth();
+////////////SATURDAY
+        List<LocalDate> ldate = IntStream.rangeClosed(1, YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(currentYear, currentMonth, day))
+                .filter(date -> date.getDayOfWeek() == DayOfWeek.FRIDAY
+                || date.getDayOfWeek() == DayOfWeek.SATURDAY)
+                .collect(Collectors.toList());
+        if (ldate.size() == 9) {
+            ldate.remove(8);
+        }
+        for (int x = 0; x < d.size(); x++) {
+            for (int i = 0; i < ldate.size(); i++) {
+                if (d.get(x).getStart().toLocalDate().isBefore(ldate.get(i)) || d.get(x).getStart().toLocalDate().isEqual(ldate.get(i))) {
+                    if ((ldate.get(i).isBefore(currentdate) || ldate.get(i).isEqual(currentdate)) && (ldate.get(i).isBefore(d.get(x).getEnd().toLocalDate()) || ldate.get(i).isEqual(d.get(x).getEnd().toLocalDate()))) {
+                        c++;
+                    }
+                }
+            }
+        }
+        return c;
+    }
+
     private int count_of_SATURDAY() {
         int c = 0;
 
@@ -4358,6 +4442,7 @@ public class HomeController implements Initializable {
             ldate.remove(12);
         }
         for (int i = 0; i < ldate.size(); i++) {
+
             if (ldate.get(i).isBefore(currentdate)) {
                 c++;
             }
@@ -4422,9 +4507,9 @@ public class HomeController implements Initializable {
     }
 
     private double get_main_salary(int id) throws SQLException {
-        double sut = allDb.get_count_of_swimmer_with_caoch(id, 0) * count_of_SATURDAY() * allDb.get_cost_for_coach_cost();
-        double sun = allDb.get_count_of_swimmer_with_caoch(id, 1) * count_of_Sunday() * allDb.get_cost_for_coach_cost();
-        double fri = allDb.get_count_of_swimmer_with_caoch(id, 2) * count_of_Friday() * allDb.get_cost_for_coach_cost();
+        double sut = count_of_SATURDAY_for_all(allDb.get_inf_of_swimmer_with_caoch(id, 0)) * allDb.get_cost_for_coach_cost();
+        double sun = count_of_sunday_for_all(allDb.get_inf_of_swimmer_with_caoch(id, 1)) * allDb.get_cost_for_coach_cost();
+        double fri = count_of_fri_for_all(allDb.get_inf_of_swimmer_with_caoch(id, 2)) * allDb.get_cost_for_coach_cost();
         double all_s = sut + sun + fri;
         return all_s;
     }
